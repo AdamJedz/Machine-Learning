@@ -29,6 +29,6 @@ LR package does scaling
 
 ```{r}
 regressor <- lm(formula = Salary ~ YearsExperience, data = training_set)
-summary(regressor)
+summary(regressor)ww
 ```
 
