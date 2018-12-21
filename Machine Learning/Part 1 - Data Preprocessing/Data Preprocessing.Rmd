@@ -1,0 +1,56 @@
+---
+title: "Data Preprocessing"
+author: "Igor Adamiec"
+date: "12/21/2018"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+ds <- read_csv(file = "Data.csv")
+```
+
+```{r}
+ds %>% View()
+```
+
+```{r}
+glimpse(ds)
+```
+```{r}
+summary(ds)
+```
+
+# Categorical Data
+
+```{r}
+ds_factored <- ds %>% 
+  mutate(Country = factor(Country, 
+                          levels = c("France", "Spain", "Germany"), 
+                          labels = c(1, 2, 3)),
+         Purchased = factor(Purchased,
+                            levels = c("No", "Yes"),
+                            labels = c(0, 1)))
+```
+
+```{r}
+glimpse(ds)
+```
+
+# Missing data
+
+```{r}
+ds_missing <- ds_factored %>% 
+  mutate(Age = ifelse(is.na(Age), 
+                      mean(Age, na.rm = T), 
+                      Age),
+         Salary = ifelse(is.na(Salary),
+                         mean(Salary, na.rm = T),
+                         Salary))
+
+ds_missing
+```
+
