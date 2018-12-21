@@ -1,0 +1,34 @@
+---
+title: "Simple Linear Regression"
+author: "Igor Adamiec"
+date: "12/21/2018"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+salary <- read_csv("Salary_Data.csv")
+```
+
+```{r}
+ggplot(data = salary, aes(x = YearsExperience, y = Salary)) + geom_point()
+```
+
+```{r}
+library(caTools)
+set.seed(123)
+split <- sample.split(salary$Salary, SplitRatio = 2/3)
+training_set <- salary %>% 
+  subset(split == T)
+
+test_set <- salary %>% 
+  subset(split == F)
+```
+
+LR package does scaling
+
+```{r}
+regressor <- lm(formula = Salary ~ YearsExperience, data = training_set)
+summary(regressor)
+```
+

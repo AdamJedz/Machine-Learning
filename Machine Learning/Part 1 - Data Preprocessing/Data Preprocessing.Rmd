@@ -54,3 +54,33 @@ ds_missing <- ds_factored %>%
 ds_missing
 ```
 
+# Spliting the dataset into training and testing
+```{r}
+library(caTools)
+```
+
+```{r}
+set.seed(123)
+```
+
+```{r}
+split <- sample.split(ds_missing$Purchased,
+                      SplitRatio = .8)
+```
+
+```{r}
+training_set <- subset(ds_missing, split == T)
+test_set <- subset(ds_missing, split == F)
+
+glimpse(test_set)
+```
+
+# Scaling
+```{r}
+training_set <- training_set %>% 
+  mutate_if(is.double, scale)
+
+test_set <- test_set %>% 
+  mutate_if(is.double, scale)
+```
+
