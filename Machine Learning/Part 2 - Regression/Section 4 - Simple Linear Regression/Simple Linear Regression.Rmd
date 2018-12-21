@@ -29,6 +29,35 @@ LR package does scaling
 
 ```{r}
 regressor <- lm(formula = Salary ~ YearsExperience, data = training_set)
-summary(regressor)ww
+summary(regressor)
 ```
+
+```{r}
+y_pred <- predict(regressor, newdata = test_set)
+```
+
+# Train data visualisation
+```{r}
+ggplot(data = training_set, aes(x = training_set$YearsExperience, y = training_set$Salary)) +
+  geom_point(colour = 'red') +
+   geom_line(aes(x = training_set$YearsExperience, y = predict(regressor, newdata = training_set)),
+               colour = 'blue') + 
+    geom_smooth(method = 'lm') +
+    ggtitle('Salary vs Experience (Training set)') +
+    xlab('Years of experience') +
+    ylab('Salary')
+```
+
+
+#Test set visualisation
+```{r}
+ggplot()+
+  geom_point(aes(x = test_set$YearsExperience, y = test_set$Salary),
+             color = "red") +
+  geom_line(aes(x = training_set$YearsExperience, y = predict(regressor,newdata = training_set)),
+            color = "blue") +
+  geom_smooth(method = "lm")
+```
+
+
 
