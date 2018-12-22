@@ -1,0 +1,119 @@
+---
+title: "Multiple Linear Regression"
+output: html_document
+---
+
+### Assumptions of LR ###
+
+*1*. Regression model is linear in parameters
+*2*. Means of residuals is 0:
+```{r}
+mod <- lm(dist ~ speed, data=cars)
+mean(mod$residuals)
+```
+It is ~0
+*3*. Homoscedasticity of residuals or equal variance
+```{r}
+par(mfrow=c(2,2))  # set 2 rows and 2 column plot layout
+mod_1 <- lm(mpg ~ disp, data=mtcars)  # linear model
+plot(mod_1)
+```
+From the first plot (top-left), as the fitted values along x increase, the residuals decrease and then increase. This pattern is indicated by the red line, which should be approximately flat if the disturbances are homoscedastic. The plot on the bottom left also checks this, and is more convenient as the disturbance term in Y axis is standardized.
+
+In this case, there is a definite pattern noticed. So, there is heteroscedasticity. Lets check this on a different model.
+```{r}
+par(mfrow=c(2,2)) 
+mod <- lm(dist ~ speed, data=cars[1:20, ])  #  linear model
+plot(mod)
+```
+Now, the points appear random and the line looks pretty flat, with no increasing or decreasing trend. So, the condition of homoscedasticity can be accepted.
+*4*. No aurtocorrelations of residuals
+This is applicable especially for time series data. Autocorrelation is the correlation of a time Series with lags of itself. When the residuals are autocorrelated, it means that the current value is dependent of the previous (historic) values and that there is a definite unexplained pattern in the Y variable that shows up in the disturbances.
+```{r}
+# Method 1: Visualise with acf plot
+library(ggplot2)
+data(economics)
+lmMod <- lm(pce ~ pop, data=economics)
+acf(lmMod$residuals)  # highly autocorrelated from the picture.
+```
+```{r}
+# Method 2: Runs test to test for randomness
+lawstat::runs.test(lmMod$residuals)
+#=>   Runs Test - Two sided
+
+#=> data:  lmMod$residuals
+#=> Standardized Runs Statistic = -23.812, p-value < 2.2e-16
+```
+With a p-value < 2.2e-16, we reject the null hypothesis that it is random. This means there is a definite pattern in the residuals.
+```{r}
+# Method 3: Durbin-Watson test
+lmtest::dwtest(lmMod)
+#=>   Durbin-Watson test
+
+#=> data:  lmMod
+#=> DW = 0.0021559, p-value < 2.2e-16
+#=> alternative hypothesis: true autocorrelation is greater than 0
+```
+*5*.The X variables and residuals are uncorrelated
+```{r}
+mod.lm <- lm(dist ~ speed, data=cars)
+cor.test(cars$speed, mod.lm$residuals)  # do correlation test 
+#=>   Pearson's product-moment correlation
+#=> 
+#=> data:  cars$speed and mod.lm$residuals
+#=> t = -8.1225e-17, df = 48, p-value = 1
+#=> alternative hypothesis: true correlation is not equal to 0
+#=> 95 percent confidence interval:
+#=> -0.2783477  0.2783477
+#=> sample estimates:
+#=>           cor 
+#=> -1.172376e-17
+```
+p-value is high, so null hypothesis that true correlation is 0 can’t be rejected. So, the assumption holds true for this model.
+
+*6*.The number of observations must be greater than number of Xs
+*7*.The variability in X values is positive
+This means the X values in a given sample must not all be the same (or even nearly the same).
+```{r}
+var(cars$speed) 
+```
+The variance in the X variable above is much larger than 0. So, this assumption is satisfied.
+
+
+
+```{r}
+library(tidyverse)
+library(caTools)
+
+```
+
+```{r}
+startups <- read_csv("50_Startups.csv")
+```
+
+```{r}
+glimpse(startups)
+```
+
+```{r}
+head(startups)
+```
+
+```{r}
+startups$State = factor(startups$State,
+                        levels = unique(startups$State),
+                        labels = c(1:length(unique(startups$State))))
+```
+
+
+```{r}
+set.seed(123)
+split <- sample.split(startups$Profit, SplitRatio = .8)
+training_set <- subset(startups, split == T)
+test_set <- subset(startups, split == F)
+```
+
+```{r}
+
+```
+
