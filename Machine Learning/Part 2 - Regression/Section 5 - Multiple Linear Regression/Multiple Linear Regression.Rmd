@@ -84,11 +84,14 @@ The variance in the X variable above is much larger than 0. So, this assumption 
 ```{r}
 library(tidyverse)
 library(caTools)
+library(fastDummies)
 
 ```
 
 ```{r}
-startups <- read_csv("50_Startups.csv")
+startups <- read_csv("50_Startups.csv") %>% 
+  rename(R.D.Spend = "R&D Spend",
+         Marketing.Spend = "Marketing Spend") 
 ```
 
 ```{r}
@@ -103,6 +106,7 @@ head(startups)
 startups$State = factor(startups$State,
                         levels = unique(startups$State),
                         labels = c(1:length(unique(startups$State))))
+startups <- startups %>% dummy_cols(remove_first_dummy = T)
 ```
 
 
@@ -112,8 +116,37 @@ split <- sample.split(startups$Profit, SplitRatio = .8)
 training_set <- subset(startups, split == T)
 test_set <- subset(startups, split == F)
 ```
+```{r}
+startups %>% colnames()
+```
+```{r}
+startups2 <- startups %>% 
+  select(-State)
+```
 
+```{r}
+regressor <- lm(formula = Profit ~ .*.-State_2:State_3-R.D.Spend:Administration-Administration:State_2-R.D.Spend:Marketing.Spend-State_3-Marketing.Spend:State_3-R.D.Spend:State_3-Administration:State_3-R.D.Spend:State_2-Administration-Administration:Marketing.Spend,
+                data = startups2)
+summary(regressor)
+```
+```{r}
+regressor2 <- lm(formula = Profit ~ R.D.Spend,
+                data = startups2)
+summary(regressor2)
+```
+```{r}
+coef(regressor)
+```
+```{r}
+coef(summary(regressor))
+```
+
+
+```{r}
+y_pred <- predict(regressor, newdata = test_set)
+```
 ```{r}
 
 ```
+
 

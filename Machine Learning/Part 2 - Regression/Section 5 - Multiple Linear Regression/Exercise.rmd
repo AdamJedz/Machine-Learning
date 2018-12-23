@@ -1,0 +1,91 @@
+---
+title: "Ex 1"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(caTools)
+library(ISLR)
+library(fastDummies)
+```
+
+```{r}
+Carseats <- Carseats %>% 
+  dummy_cols(remove_first_dummy = F)
+```
+
+```{r}
+carseats_fin <- Carseats %>% 
+  select(-ShelveLoc, -Urban, -US, -ShelveLoc_Bad, -Urban_No, -US_No)
+```
+
+```{r}
+split <- sample.split(carseats_fin$Sales, SplitRatio = .8)
+training_set <- subset(carseats_fin, split == T)
+test_set <- subset(carseats_fin, split == F)
+```
+
+```{r}
+model_1 <- lm(data = training_set, Sales ~ .)
+summary(model_1)
+```
+
+```{r}
+model_2 <- lm(data = training_set, Sales ~ .-Urban_Yes)
+summary(model_2)
+```
+
+```{r}
+model_3 <- lm(data = training_set, Sales ~ .-Urban_Yes-Population)
+summary(model_3)
+```
+
+```{r}
+model_4 <- lm(data = training_set, Sales ~ .-Urban_Yes-Population-US_Yes)
+summary(model_4)
+```
+
+```{r}
+model_5 <- lm(data = training_set, Sales ~ .-Urban_Yes-Population-US_Yes-Education)
+summary(model_5)
+```
+
+```{r}
+ggplot(data = carseats_fin) + geom_point(aes(x = CompPrice, y = Sales))
+ggplot(data = carseats_fin) + geom_point(aes(x = Income, y = Sales))
+ggplot(data = carseats_fin) + geom_point(aes(x = Advertising, y = Sales))
+ggplot(data = carseats_fin) + geom_point(aes(x = Price, y = Sales))
+ggplot(data = carseats_fin) + geom_point(aes(x = Age, y = Sales))
+```
+
+```{r}
+mean(model_5$residuals)
+```
+
+```{r}
+par(mfrow = c(2, 2))
+plot(model_5)
+```
+
+```{r}
+acf(model_5$residuals)
+lawstat::runs.test(model_5$residuals)
+```
+
+```{r}
+model_6 <- lm(data = carseats_fin, Sales ~ .*.)
+summary(model_6)
+```
+
+
+```{r}
+step(model_6, direction = "backward", trace = F)
+```
+
+```{r}
+step(model_6, direction = "both", trace = F)
+```
+
+
+
