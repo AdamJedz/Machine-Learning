@@ -1,0 +1,34 @@
+---
+title: "SVR"
+author: "Igor Adamiec"
+date: "12/24/2018"
+output: html_document
+---
+```{r}
+library(tidyverse)
+library(e1071)
+```
+
+```{r}
+salaries <- read_csv("Position_Salaries.csv") %>% 
+  select(-Position)
+```
+
+```{r}
+regressor <- svm(formula = Salary ~ ., 
+                 data = salaries,
+                 type = "eps-regression")
+
+summary(regressor)
+```
+
+```{r}
+predict(regressor, data.frame(Level = 6.5))
+```
+
+```{r}
+ggplot() +
+  geom_point(data = salaries, aes(x = Level, y = Salary), color = "red") +
+  geom_line(data = salaries, aes(x = Level, y = predict(regressor, newdata = salaries)), color = "blue")
+```
+

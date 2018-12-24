@@ -73,19 +73,34 @@ acf(model_5$residuals)
 lawstat::runs.test(model_5$residuals)
 ```
 
-```{r}
-model_6 <- lm(data = carseats_fin, Sales ~ .*.)
-summary(model_6)
-```
+
+
+
+
 
 
 ```{r}
-step(model_6, direction = "backward", trace = F)
+library(SignifReg)
+scope <- Sales ~. + 
+elimination <- SignifReg(scope = scope, data = training_set, direction = "forward", criterion = "p-value")
+summary(elimination)
 ```
 
 ```{r}
-step(model_6, direction = "both", trace = F)
+summary(lm(data = training_set, formula = Sales ~. + Age:Income + US_Yes:Age-Population-Urban_Yes-Income:Age-Education-US_Yes))
 ```
 
+```{r}
+MASS::stepAIC(lm(data = training_set, formula = Sales ~.))
+```
+```{r}
+stats::AIC(lm(formula = Sales ~ CompPrice + Income + Advertising + Price + 
+    Age + ShelveLoc_Good + ShelveLoc_Medium + US_Yes, data = training_set))
+```
 
+```{r}
+ long_model <- RcmdrMisc::stepwise(lm(data = training_set, formula = Sales ~ .*.), direction = "backward", criterion = "AIC", trace = F)
+
+stats::AIC(long_model)
+```
 

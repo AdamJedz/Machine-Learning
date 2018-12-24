@@ -1,0 +1,64 @@
+---
+title: "Polynomial Regression"
+author: "Igor Adamiec"
+date: "12/24/2018"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+
+```
+
+```{r}
+salaries <- read_csv("Position_Salaries.csv")
+```
+
+```{r}
+salaries %>% 
+  ggplot(aes(x = Level, y = Salary)) +
+  geom_point()
+```
+
+```{r}
+salaries <- salaries %>% 
+  select(-Position)
+```
+
+```{r}
+lr <- lm(data = salaries, formula = Salary ~ Level)
+summary(lr)
+```
+
+```{r}
+poly_lr <- lm(data = salaries , formula = Salary ~ Level + I(Level^2))
+summary(poly_lr)
+```
+
+```{r}
+poly_l2 <- lm(data = salaries , formula = Salary ~ poly(Level, 2, raw = T))
+summary(poly_l2)
+poly_lr <- lm(data = salaries , formula = Salary ~ Level + I(Level^2))
+summary(poly_lr)
+```
+
+```{r}
+ggplot() +
+  geom_point(data = salaries, aes(x = Level, y = Salary),
+             color = "red") +
+  geom_line(data = salaries, aes(x = Level, y = predict(lr, newdata = salaries)), color = "blue") +
+  geom_line(data = salaries, aes(x = Level, y = predict(poly_lr, newdata = salaries)), color = "green")+
+  geom_line(data = salaries, aes(x = Level, y = predict(poly_l2, newdata = salaries)), color = "yellow", linetype = "dashed")+
+  labs(title = "Truth or Bluff (Linear regression)",
+       x = "Level", 
+       y = "Salary")
+  
+```
+
+```{r}
+predict(poly_lr, newdata = data.frame(Level = 6.5))
+predict(lr, newdata = data.frame(Level = 6.5))
+```
+
+
+
