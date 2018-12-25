@@ -1,0 +1,48 @@
+---
+title: "Decision Tree Regression"
+author: "Igor Adamiec"
+date: "12/25/2018"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(caTools)
+library(rpart)
+```
+
+```{r}
+dataset <- read_csv("Position_Salaries.csv") %>% 
+  select(-Position)
+```
+
+```{r}
+head(dataset)
+```
+
+```{r}
+regressor <- rpart(formula = Salary~., 
+                   data = dataset, 
+                   control = rpart.control(minsplit = 1))
+summary(regressor)
+```
+
+```{r}
+y_pred <- predict(regressor, newdata = data.frame(Level = 6.5))
+```
+
+```{r}
+ggplot(data = dataset) +
+  geom_point(aes(x = Level, y = Salary), color = "red") +
+  geom_line(aes(x = Level, y = predict(regressor, newdata = dataset)), color = "blue")
+```
+
+```{r}
+x_grid <- seq(min(dataset$Level), max(dataset$Level), .01)
+ggplot() +
+  geom_point(data = dataset, aes(x = Level, y = Salary), color = "red") +
+  geom_line(aes(x = x_grid, y = predict(regressor, newdata = data.frame(Level = x_grid))), color = "blue")
+
+```
+
+
