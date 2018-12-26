@@ -1,0 +1,51 @@
+---
+title: "Random Forest Regression"
+author: "Igor Adamiec"
+date: "12/25/2018"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(rpart)
+library(randomForest)
+```
+
+```{r}
+dataset <- read_csv("Position_Salaries.csv") %>% 
+  select(-Position)
+```
+
+```{r}
+head(dataset)
+```
+
+```{r}
+glimpse(dataset)
+```
+
+```{r}
+set.seed(1234)
+regressor <- randomForest(x = dataset %>% select(Level), 
+                          y = dataset %>% pull(Salary),
+                          ntree = 500)
+
+summary(regressor)
+```
+
+```{r}
+y_pred <- predict(regressor, newdata = data_frame(Level = 6.5))
+```
+
+```{r}
+x_grid <- seq(min(dataset$Level, max(dataset$Level)), by = .01)
+
+ggplot() +
+  geom_point(data = dataset, aes(x = Level, y = Salary), color = "red") +
+  geom_line(aes(x = x_grid, y = predict(regressor, newdata = data_frame(Level = x_grid))), color = "blue")
+```
+
+```{r}
+
+```
+
