@@ -1,0 +1,90 @@
+---
+title: "KNN"
+author: "Igor Adamiec"
+date: "12/28/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(caTools)
+```
+```{r}
+dataset <- read_csv("Social_Network_Ads.csv") %>% 
+  select(Age:Purchased) %>% 
+  mutate(Purchased = factor(Purchased, levels = c(0,1)))
+dataset
+```
+
+```{r}
+set.seed(123)
+split <- sample.split(dataset$Purchased, SplitRatio = .75)
+training_set <- subset(dataset, split == T)
+test_set <- subset(dataset, split == F)
+```
+
+```{r}
+training_set <- training_set %>% 
+  mutate_if(is.integer, scale)
+
+test_set <- test_set %>% 
+  mutate_if(is.integer, scale)
+```
+
+```{r}
+library(class)
+```
+
+```{r}
+y_pred <- knn(train = training_set %>% select(-Purchased),
+              test = test_set %>% select(-Purchased),
+              cl = training_set %>% select(Purchased),
+              k = 5)
+```
+```{r}
+training_set[, -3]
+```
+```{r}
+
+```
+
+
+```{r}
+y_pred
+```
+```{r}
+table(test_set[,3], y_pred)
+```
+
+```{r}
+library(ElemStatLearn)
+```
+```{r}
+set <- training_set
+X1 <- seq(min(set[, 1]) - 1, max(set[, 1]) + 1, by = .01)
+X2 <- seq(min(set[, 2]) - 1, max(set[, 2]) + 1, by = .01)
+grid_set = expand.grid(X1, X2)
+colnames(grid_set) = c('Age', 'EstimatedSalary')
+y_grid = knn(train = training_set[, -3], test = grid_set, cl = training_set[, 3], k = 5)
+```
+
+```{r}
+ggplot()+
+  geom_point(data = grid_set, aes(x = Age, y = EstimatedSalary), color = ifelse(y_grid == 1, 'springgreen3', 'tomato'))+
+  geom_point(data = set, aes(x = Age, y = EstimatedSalary), pch = 21, fill = ifelse(set$Purchased == 1,  'green4', 'red3'), color = "black")+
+  labs(title = "Training data plot")
+```
+
+```{r}
+set <- test_set
+X1 <- seq(min(set[, 1]) - 1, max(set[, 1]) + 1, by = .01)
+X2 <- seq(min(set[, 2]) - 1, max(set[, 2]) + 1, by = .01)
+grid_set = expand.grid(X1, X2)
+colnames(grid_set) = c('Age', 'EstimatedSalary')
+y_grid = knn(train = training_set[, -3], test = grid_set, cl = training_set[, 3], k = 5)
+ggplot()+
+  geom_point(data = grid_set, aes(x = Age, y = EstimatedSalary), color = ifelse(y_grid == 1, 'springgreen3', 'tomato'))+
+  geom_point(data = set, aes(x = Age, y = EstimatedSalary), pch = 21, fill = ifelse(set$Purchased == 1,  'green4', 'red3'), color = "black")+
+  labs(title = "Training data plot")
+```
+
