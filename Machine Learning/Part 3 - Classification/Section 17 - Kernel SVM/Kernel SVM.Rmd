@@ -1,0 +1,80 @@
+---
+title: "Kernel SVM"
+author: "Igor Adamiec"
+date: "12/31/2018"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(caTools)
+library(ElemStatLearn)
+library(e1071)
+```
+```{r}
+dataset <- read_csv("Social_Network_Ads.csv") %>% 
+  select(Age:Purchased) %>% 
+  mutate(Purchased = factor(Purchased, levels = c(0, 1)))
+```
+```{r}
+set.seed(123)
+split <- sample.split(dataset$Purchased, SplitRatio = .75)
+training_set <- dataset %>% 
+  subset(split == T) %>% 
+  mutate_if(is.integer, scale)
+test_set <- dataset %>% 
+  subset(split == F) %>% 
+  mutate_if(is.integer, scale)
+```
+
+```{r}
+glimpse(training_set)
+```
+
+```{r}
+classifier = svm(formula = Purchased ~ .,
+                 data = training_set,
+                 type = 'C-classification',
+                 kernel = 'radial')
+```
+
+```{r}
+y_pred <- predict(classifier, newdata = test_set %>% select(-Purchased))
+```
+
+```{r}
+cm <- table(test_set %>% pull(Purchased), y_pred)
+cm
+```
+
+```{r}
+set <- training_set
+X1 <- seq(min(set[, 1]) - 1, max(set[, 1]) + 1, by = .01)
+X2 <- seq(min(set[, 2]) - 1, max(set[, 2]) + 1, by = .01)
+grid_set = expand.grid(X1, X2)
+colnames(grid_set) = c('Age', 'EstimatedSalary')
+y_grid = predict(classifier, newdata = grid_set)
+```
+
+```{r}
+ggplot()+
+  geom_point(data = grid_set, aes(x = Age, y = EstimatedSalary), color = ifelse(y_grid == 1, 'springgreen3', 'tomato'))+
+  geom_point(data = set, aes(x = Age, y = EstimatedSalary), pch = 21, fill = ifelse(set$Purchased == 1,  'green4', 'red3'), color = "black")+
+  labs(title = "Training data plot")
+```
+
+
+```{r}
+set <- test_set
+X1 <- seq(min(set[, 1]) - 1, max(set[, 1]) + 1, by = .01)
+X2 <- seq(min(set[, 2]) - 1, max(set[, 2]) + 1, by = .01)
+grid_set = expand.grid(X1, X2)
+colnames(grid_set) = c('Age', 'EstimatedSalary')
+y_grid = predict(classifier, newdata = grid_set)
+ggplot()+
+  geom_point(data = grid_set, aes(x = Age, y = EstimatedSalary), color = ifelse(y_grid == 1, 'springgreen3', 'tomato'))+
+  geom_point(data = set, aes(x = Age, y = EstimatedSalary), pch = 21, fill = ifelse(set$Purchased == 1,  'green4', 'red3'), color = "black")+
+  labs(title = "Test data plot") +
+  theme(plot.title = element_text(hjust = .5))
+```
+
