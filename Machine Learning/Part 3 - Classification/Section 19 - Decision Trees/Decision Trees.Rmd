@@ -27,14 +27,22 @@ split <- sample.split(dataset %>%
 training_set <- dataset %>% 
   subset(split == T) %>% 
   mutate_if(is.integer, scale)
+
+training_set$Age <- c(training_set$Age)
+training_set$EstimatedSalary <- c(training_set$EstimatedSalary)
+  
 test_set <- dataset %>% 
   subset(split == F) %>% 
   mutate_if(is.integer, scale)
+
+test_set$Age <- c(test_set$Age)
+test_set$EstimatedSalary <- c(test_set$EstimatedSalary)
 ```
 
 ```{r}
 classifier <- rpart(formula = Purchased ~ .,
-                    data = training_set)
+                    data = training_set,
+                    control = rpart.control(minsplit = 1))
 ```
 
 ```{r}
@@ -60,12 +68,24 @@ X1 <- seq(min(set[, 1]) - 1, max(set[, 1]) + 1, by = .01)
 X2 <- seq(min(set[, 2]) - 1, max(set[, 2]) + 1, by = .01)
 grid_set <- expand.grid(X1, X2)
 colnames(grid_set) <- c("Age", "EstimatedSalary")
-
-y_grid <- predict(classifier, newdata = grid_set)
+y_grid <- predict(classifier, newdata = grid_set, type = "class")
+ggplot()+
+  geom_point(data = grid_set, aes(x = Age, y = EstimatedSalary), color = ifelse(y_grid == 1, 'springgreen3', 'tomato'))+
+  geom_point(data = set, aes(x = Age, y = EstimatedSalary), pch = 21, fill = ifelse(set$Purchased == 1,  'green4', 'red3'), color = "black")+
+  labs(title = "Training Data Decision Tree")
 ```
 
 ```{r}
-glimpse(grid_set)
+set <- test_set
+X1 <- seq(min(set[, 1]) - 1, max(set[, 1]) + 1, by = .01)
+X2 <- seq(min(set[, 2]) - 1, max(set[, 2]) + 1, by = .01)
+grid_set <- expand.grid(X1, X2)
+colnames(grid_set) <- c("Age", "EstimatedSalary")
+y_grid <- predict(classifier, newdata = grid_set, type = "class")
+ggplot()+
+  geom_point(data = grid_set, aes(x = Age, y = EstimatedSalary), color = ifelse(y_grid == 1, 'springgreen3', 'tomato'))+
+  geom_point(data = set, aes(x = Age, y = EstimatedSalary), pch = 21, fill = ifelse(set$Purchased == 1,  'green4', 'red3'), color = "black")+
+  labs(title = "Test Data Decision Tree")
 ```
 
 ```{r}
@@ -79,6 +99,6 @@ as.tbl(grid_set) %>% summary()
 ```
 
 ```{r}
-colnames(training_set)
+class(training_set$Age)
 ```
 
