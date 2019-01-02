@@ -1,0 +1,84 @@
+---
+title: "Decision Trees"
+author: "Igor Adamiec"
+date: "1/2/2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(caTools)
+library(rpart)
+library(rattle)
+library(rpart.plot)
+library(ElemStatLearn)
+```
+
+```{r}
+dataset <- read.csv("Social_Network_Ads.csv") %>% 
+  select(Age:Purchased) %>% 
+  mutate(Purchased = factor(Purchased, levels = c(0, 1)))
+```
+
+```{r}
+split <- sample.split(dataset %>% 
+                        pull(Purchased),
+                      SplitRatio = .75)
+training_set <- dataset %>% 
+  subset(split == T) %>% 
+  mutate_if(is.integer, scale)
+test_set <- dataset %>% 
+  subset(split == F) %>% 
+  mutate_if(is.integer, scale)
+```
+
+```{r}
+classifier <- rpart(formula = Purchased ~ .,
+                    data = training_set)
+```
+
+```{r}
+y_pred <- predict(classifier, 
+                  newdata = test_set %>% 
+                    select(-Purchased),
+                  type = "class")
+```
+```{r}
+cm <- table(test_set %>% 
+              pull(Purchased),
+            y_pred)
+cm
+```
+
+```{r}
+prp(classifier, varlen = 0)
+```
+
+```{r}
+set <- training_set
+X1 <- seq(min(set[, 1]) - 1, max(set[, 1]) + 1, by = .01)
+X2 <- seq(min(set[, 2]) - 1, max(set[, 2]) + 1, by = .01)
+grid_set <- expand.grid(X1, X2)
+colnames(grid_set) <- c("Age", "EstimatedSalary")
+
+y_grid <- predict(classifier, newdata = grid_set)
+```
+
+```{r}
+glimpse(grid_set)
+```
+
+```{r}
+glimpse(training_set)
+```
+
+
+
+```{r}
+as.tbl(grid_set) %>% summary()
+```
+
+```{r}
+colnames(training_set)
+```
+
