@@ -1,0 +1,53 @@
+---
+title: "Hierarchical Clustering"
+author: "Igor Adamiec"
+date: "1/4/2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(ggdendro)
+```
+
+```{r}
+dataset <- read_csv("Mall_Customers.csv")
+dataset %>% glimpse()
+```
+
+```{r}
+X <- dataset %>% 
+  select(`Annual Income (k$)` , `Spending Score (1-100)`)
+```
+
+```{r}
+dendrogram <-hclust(dist(X, method = "euclidean"),
+                    method = "ward.D")
+```
+
+```{r}
+ggdendrogram(dendrogram) +
+  labs(title = "Dendrogram")
+```
+
+```{r}
+hc <-hclust(dist(X, method = "euclidean"),
+                    method = "ward.D")
+```
+```{r}
+y_hc <- cutree(hc, k = 5)
+```
+
+```{r}
+X %>% 
+  ggplot(aes(x = `Annual Income (k$)` , y = `Spending Score (1-100)`)) +
+  geom_point(aes(color = as.factor(y_hc)))+
+  stat_ellipse(aes(x = `Annual Income (k$)`, y = `Spending Score (1-100)`,  fill = as.factor(y_hc)),
+               geom = "polygon", alpha = .2)+
+  labs(title = "Hierachical Clustering", 
+       x = "Annual Income",
+       y = "Spending score") +
+  theme(plot.title = element_text(hjust = .5))+
+  guides(color = guide_legend("Cluster"), fill = guide_legend("Cluster"))
+```
+

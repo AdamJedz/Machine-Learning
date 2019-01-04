@@ -1,0 +1,23 @@
+---
+title: "Apriori"
+author: "Igor Adamiec"
+date: "1/4/2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+dataset <- read_csv("Market_Basket_Optimisation.csv")
+```
+
+```{r}
+glimpse(dataset)
+```
+
+```{r}
+summary(dataset)
+```
+
