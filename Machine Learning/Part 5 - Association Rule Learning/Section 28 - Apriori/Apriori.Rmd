@@ -7,10 +7,11 @@ output: html_document
 
 ```{r}
 library(tidyverse)
+library(arules)
 ```
 
 ```{r}
-dataset <- read_csv("Market_Basket_Optimisation.csv")
+dataset <- read_csv("Market_Basket_Optimisation.csv", col_names = F)
 ```
 
 ```{r}
@@ -19,5 +20,18 @@ glimpse(dataset)
 
 ```{r}
 summary(dataset)
+```
+
+```{r}
+matrix <- read.transactions("Market_Basket_Optimisation.csv", 
+                            sep = ",",
+                            rm.duplicates = T)
+```
+```{r}
+summary(matrix)
+```
+
+```{r}
+itemFrequencyPlot(matrix, topN = 10)
 ```
 
