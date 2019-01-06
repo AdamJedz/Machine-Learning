@@ -35,3 +35,13 @@ summary(matrix)
 itemFrequencyPlot(matrix, topN = 10)
 ```
 
+```{r}
+rules <- apriori(matrix, 
+                 parameter = list(support = 0.003, 
+                                  confidence = 0.2))
+```
+
+```{r}
+inspect(sort(rules, by = 'lift')[1:10])
+```
+
