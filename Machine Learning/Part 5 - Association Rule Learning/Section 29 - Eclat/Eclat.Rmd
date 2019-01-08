@@ -1,0 +1,31 @@
+---
+title: "Eclat"
+author: "Igor Adamiec"
+date: "1/8/2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(arules)
+```
+
+```{r}
+dataset <- read.transactions("Market_Basket_Optimisation.csv", sep = ",", rm.duplicates = T)
+```
+```{r}
+summary(dataset)
+```
+
+```{r}
+itemFrequencyPlot(dataset, topN = 10)
+```
+
+```{r}
+rules <- eclat(data = dataset, parameter = list(support = .004, minlen = 2))
+```
+
+```{r}
+inspect(sort(rules, by = "support")[1:10])
+```
+
