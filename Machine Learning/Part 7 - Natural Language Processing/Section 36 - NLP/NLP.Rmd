@@ -1,0 +1,16 @@
+---
+title: "NLP"
+author: "Igor Adamiec"
+date: "1/11/2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+dataset <- read_tsv("Restaurant_Reviews.tsv")
+```
+
+
