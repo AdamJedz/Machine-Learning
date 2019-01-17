@@ -5,6 +5,14 @@ date: "12/24/2018"
 output: html_document
 ---
 
+Zbiór danych składa się z 10 przypadków i trzech zmiennych. Zawiera on uśrednione pensje na poszczególne pułapy stanowiska.
+Poniżej stowrzyłem 3 modele predykcyjne:
+- liniowy,
+- wielomianowy drugiego stopnia,
+- wielomianowy trzeciego stopnia.
+
+Patrząc na dane, na pierwszy rzut oka widać, że nie są one ułożone w sposób liniowy dlatego też od razu zakładam, że model liniowy bedzie najgorszy. Stworzę go jednak, ponieważ chcę porównać go graficznie, a także jego dopasowanie.
+
 ```{r}
 library(tidyverse)
 
@@ -36,10 +44,8 @@ summary(poly_lr)
 ```
 
 ```{r}
-poly_l2 <- lm(data = salaries , formula = Salary ~ poly(Level, 2, raw = T))
-summary(poly_l2)
-poly_lr <- lm(data = salaries , formula = Salary ~ Level + I(Level^2))
-summary(poly_lr)
+poly_l3 <- lm(data = salaries , formula = Salary ~ poly(Level, 3, raw = T))
+summary(poly_l3)
 ```
 
 ```{r}
@@ -48,17 +54,23 @@ ggplot() +
              color = "red") +
   geom_line(data = salaries, aes(x = Level, y = predict(lr, newdata = salaries)), color = "blue") +
   geom_line(data = salaries, aes(x = Level, y = predict(poly_lr, newdata = salaries)), color = "green")+
-  geom_line(data = salaries, aes(x = Level, y = predict(poly_l2, newdata = salaries)), color = "yellow", linetype = "dashed")+
-  labs(title = "Truth or Bluff (Linear regression)",
+  geom_line(data = salaries, aes(x = Level, y = predict(poly_l3, newdata = salaries)), color = "darkviolet")+
+  labs(title = "Trzy modele predykcyjne",
+       subtitle = "Model liniowy (niebieski), Model wielomianowy (2) (zielony), Model 3 stopnia (fioletowy)",
        x = "Level", 
-       y = "Salary")
+       y = "Salary") +
+  theme(plot.title = element_text(hjust = .5))+
+  scale_x_continuous(breaks = 1:10)
   
 ```
 
 ```{r}
-predict(poly_lr, newdata = data.frame(Level = 6.5))
-predict(lr, newdata = data.frame(Level = 6.5))
+kryteria <- data_frame(modele = c("Liniowy", "Wielomianowy drugiego stopnia", "Wielomianowy trzeciego stopnia"),
+                       AIC = c(AIC(lr), AIC(poly_lr), AIC(poly_l3)),
+                       BIC = c(BIC(lr), BIC(poly_lr), BIC(poly_l3)))
+kryteria
 ```
 
 
+Powyższa tabela pokazuje nam, że najlepsze dopasowanie wg obu kryteriów posiada model nr 3. Oczywiście, trzeba brać poprawkę na to, że zbiór danych jest bardzo mały i bardzo łatwo można osiągnąć przeszacowanie (overfitting) modelu. Niemniej skupiając się na tych danych, jakie mamy, to model wielomianowy trzeciego stopnia dopasowuje się prawie idealnie. Można założyć, że model czwartego bądź piątego stopnia będzie się pokrywać praktycznie w 100%.
 
