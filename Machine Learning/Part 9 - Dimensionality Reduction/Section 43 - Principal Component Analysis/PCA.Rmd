@@ -1,0 +1,21 @@
+---
+title: "PCA"
+author: "Igor Adamiec"
+date: "1/21/2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+```{r}
+dataset <- read_csv("Wine.csv")
+```
+```{r}
+dataset %>% head %>% group_by(Alcohol)
+```
+
+```{r}
+dataset %>% glimpse
+```
+
