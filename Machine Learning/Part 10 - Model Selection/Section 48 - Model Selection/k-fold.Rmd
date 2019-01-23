@@ -1,0 +1,115 @@
+---
+title: "k-Fold Cross Validation"
+author: "Igor Adamiec"
+date: "1/23/2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(caTools)
+library(ElemStatLearn)
+library(e1071)
+```
+```{r}
+dataset <- read_csv("Social_Network_Ads.csv") %>% 
+  select(Age:Purchased) %>% 
+  mutate(Purchased = factor(Purchased, levels = c(0, 1)))
+```
+```{r}
+set.seed(123)
+split <- sample.split(dataset$Purchased, SplitRatio = .75)
+training_set <- dataset %>% 
+  subset(split == T) %>% 
+  mutate_if(is.double, scale) %>% 
+  mutate_if(is.matrix, as.numeric)
+test_set <- dataset %>% 
+  subset(split == F) %>% 
+  mutate_if(is.double, scale) %>% 
+  mutate_if(is.matrix, as.numeric)
+```
+
+```{r}
+glimpse(training_set)
+```
+
+```{r}
+classifier = svm(formula = Purchased ~ .,
+                 data = training_set,
+                 type = 'C-classification',
+                 kernel = 'radial')
+```
+
+
+
+
+
+```{r}
+y_pred <- predict(classifier, newdata = test_set %>% select(-Purchased))
+```
+
+```{r}
+cm <- table(test_set %>% pull(Purchased), y_pred)
+cm %>% sum
+```
+
+# k-Fold valitadion
+
+```{r}
+library(caret)
+```
+```{r}
+folds <- createFolds(training_set$Purchased,
+                     k = 10)
+cv <- lapply(folds, function(x) {
+  training_fold <- training_set[-x, ]
+  test_fold <- training_set[x, ]
+  
+  classifier = svm(formula = Purchased ~ .,
+                 data = training_fold,
+                 type = 'C-classification',
+                 kernel = 'radial')
+  
+  y_pred <- predict(classifier, newdata = test_fold %>% select(-Purchased))
+  cm <- table(test_fold %>% pull(Purchased), y_pred)
+  accuracy <-(cm[1, 1] + cm[2, 2]) / sum(cm)
+  accuracy
+})
+```
+```{r}
+cv %>% as.numeric() %>% mean()
+```
+
+
+```{r}
+set <- training_set
+X1 <- seq(min(set[, 1]) - 1, max(set[, 1]) + 1, by = .01)
+X2 <- seq(min(set[, 2]) - 1, max(set[, 2]) + 1, by = .01)
+grid_set = expand.grid(X1, X2)
+colnames(grid_set) = c('Age', 'EstimatedSalary')
+y_grid = predict(classifier, newdata = grid_set)
+```
+
+```{r}
+ggplot()+
+  geom_point(data = grid_set, aes(x = Age, y = EstimatedSalary), color = ifelse(y_grid == 1, 'springgreen3', 'tomato'))+
+  geom_point(data = set, aes(x = Age, y = EstimatedSalary), pch = 21, fill = ifelse(set$Purchased == 1,  'green4', 'red3'), color = "black")+
+  labs(title = "Training data plot")
+```
+
+```{r}
+set <- test_set
+X1 <- seq(min(set[, 1]) - 1, max(set[, 1]) + 1, by = .01)
+X2 <- seq(min(set[, 2]) - 1, max(set[, 2]) + 1, by = .01)
+grid_set = expand.grid(X1, X2)
+colnames(grid_set) = c('Age', 'EstimatedSalary')
+y_grid = predict(classifier, newdata = grid_set)
+```
+
+```{r}
+ggplot()+
+  geom_point(data = grid_set, aes(x = Age, y = EstimatedSalary), color = ifelse(y_grid == 1, 'springgreen3', 'tomato'))+
+  geom_point(data = set, aes(x = Age, y = EstimatedSalary), pch = 21, fill = ifelse(set$Purchased == 1,  'green4', 'red3'), color = "black")+
+  labs(title = "Test data plot")
+```
+

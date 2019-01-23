@@ -1,0 +1,15 @@
+---
+title: "XGBoost"
+author: "Igor Adamiec"
+date: "1/23/2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+dataset <- read_csv("Churn_Modelling.csv")
+```
+
