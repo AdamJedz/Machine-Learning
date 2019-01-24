@@ -5,13 +5,14 @@ date: "12/24/2018"
 output: html_document
 ---
 
-Zbiór danych składa się z 10 przypadków i trzech zmiennych. Zawiera on uśrednione pensje na poszczególne pułapy stanowiska.
-Poniżej stowrzyłem 3 modele predykcyjne:
+Zbior danych sklada sie z trzech zeminnych - nazwy stanowiska, poziomu stanowiska i pensji. Zbior danych skalda sie tylko z 10 obserwacji, poniwaz na tak malym zbiorze danych latwiej jest pokazac dopasowanie modelu regresji wielomianowej nad liniowa.
+
+Stworzylem 3 modele:
 - liniowy,
 - wielomianowy drugiego stopnia,
 - wielomianowy trzeciego stopnia.
 
-Patrząc na dane, na pierwszy rzut oka widać, że nie są one ułożone w sposób liniowy dlatego też od razu zakładam, że model liniowy bedzie najgorszy. Stworzę go jednak, ponieważ chcę porównać go graficznie, a także jego dopasowanie.
+Do wizualizacji uzylem pakietu ggplot2, ktory wchodzi w sklad pakietu tudyverse.
 
 ```{r}
 library(tidyverse)
@@ -25,12 +26,15 @@ salaries <- read_csv("Position_Salaries.csv")
 ```{r}
 salaries %>% 
   ggplot(aes(x = Level, y = Salary)) +
-  geom_point()
-```
-
-```{r}
-salaries <- salaries %>% 
-  select(-Position)
+  geom_point() +
+  labs(title = "Poziom stanowiska względem pensji",
+       x = "Poziom Stanowiska",
+       y = "Roczna pensja [$]") +
+  scale_x_continuous(breaks = 1:10, labels = salaries$Position) +
+  theme(plot.title = element_text(hjust = .5),
+        axis.text.x = element_text(angle = 30),
+        plot.background = element_rect(fill = "azure2"),
+        panel.background = element_rect(fill = "azure2"))
 ```
 
 ```{r}
@@ -60,7 +64,11 @@ ggplot() +
        x = "Level", 
        y = "Salary") +
   theme(plot.title = element_text(hjust = .5))+
-  scale_x_continuous(breaks = 1:10)
+  scale_x_continuous(breaks = 1:10, labels = salaries$Position) +
+  theme(plot.title = element_text(hjust = .5),
+        axis.text.x = element_text(angle = 30),
+        plot.background = element_rect(fill = "azure2"),
+        panel.background = element_rect(fill = "azure2"))
   
 ```
 
@@ -72,5 +80,36 @@ kryteria
 ```
 
 
-Powyższa tabela pokazuje nam, że najlepsze dopasowanie wg obu kryteriów posiada model nr 3. Oczywiście, trzeba brać poprawkę na to, że zbiór danych jest bardzo mały i bardzo łatwo można osiągnąć przeszacowanie (overfitting) modelu. Niemniej skupiając się na tych danych, jakie mamy, to model wielomianowy trzeciego stopnia dopasowuje się prawie idealnie. Można założyć, że model czwartego bądź piątego stopnia będzie się pokrywać praktycznie w 100%.
+Powyzsza tabela pokazuje (wg obu kryteriow), ze najlepiej dopasowany jest model wielomianowy trzeciego stopnia. Jest to oczywiste, poniewaz juz na pierwszym wykresie widac, ze dane nie sa ulozone liniowo, a wykladniczo. Ponizej stworze tez kilka modeli az do momentu, w ktorym p-value dla kolejnych wspolczynnikow bedzie wyzsze niz 0.05.
 
+```{r}
+summary(lm(data = salaries , formula = Salary ~ poly(Level, 4, raw = T)))
+```
+
+```{r}
+summary(lm(data = salaries , formula = Salary ~ poly(Level, 5, raw = T)))
+```
+
+```{r}
+summary(lm(data = salaries , formula = Salary ~ I(Level^2) + I(Level^3) + I(Level^4) + I(Level^5)))
+```
+
+Widzimy, że juz w modelu piatego stopnia, wspolczynnik dla zmiennej niepodniesionej do potegi traci na istotnosci dlatego też w ostatnim kroku usunalem go. Ponizej zwizualizowalem ten model.
+
+```{r}
+ggplot() +
+  geom_point(data = salaries, aes(x = Level, y = Salary),
+             color = "red") +
+  geom_line(data = salaries, aes(x = Level, y = predict(lm(data = salaries , formula = Salary ~ I(Level^2) + I(Level^3) + I(Level^4) + I(Level^5)), newdata = salaries)), color = "blue") +
+  labs(title = "Model ostateczny",
+       subtitle = "Model wielomianowy piatego stopnia bez wspolczynnika pierwszego",
+       x = "Level", 
+       y = "Salary") +
+  theme(plot.title = element_text(hjust = .5))+
+  scale_x_continuous(breaks = 1:10, labels = salaries$Position) +
+  theme(plot.title = element_text(hjust = .5),
+        axis.text.x = element_text(angle = 30),
+        plot.background = element_rect(fill = "azure2"),
+        panel.background = element_rect(fill = "azure2"))
+  
+```
