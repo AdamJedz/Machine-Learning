@@ -1,0 +1,89 @@
+---
+title: "Logistic Regression"
+author: "Igor Adamiec"
+date: "12/26/2018"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(caTools)
+```
+```{r}
+dataset <- read_csv("Social_Network_Ads.csv") %>% 
+  select(-'User ID', - Gender) %>% 
+  mutate(Purchased = as.factor(Purchased)) 
+```
+```{r}
+head(dataset)
+```
+```{r}
+glimpse(dataset)
+```
+
+```{r}
+set.seed(123)
+split <- sample.split(dataset$Purchased, SplitRatio = .75)
+training_set <- subset(dataset, split == T) %>% 
+  mutate_if(is.integer, scale)
+test_set <- subset(dataset, split == F) %>% 
+  mutate_if(is.integer, scale)
+```
+
+```{r}
+classifier <- glm(formula = Purchased ~., 
+                  data = training_set,
+                  family = binomial)
+summary(classifier) %>% typeof
+typeof(classifier)
+```
+
+```{r}
+prob_pred <- predict(classifier, type = 'response', newdata = test_set %>% select(-Purchased))
+```
+
+```{r}
+y_pred <- ifelse(prob_pred > .5, 1, 0)
+```
+
+```{r}
+cm = table(test_set %>% pull(Purchased), y_pred)
+cm
+```
+
+```{r}
+library(ElemStatLearn)
+```
+
+```{r}
+set = training_set
+X1 = seq(min(set[, 1]) - 1, max(set[, 1]) + 1, by = 0.01)
+X2 = seq(min(set[, 2]) - 1, max(set[, 2]) + 1, by = 0.01)
+grid_set = expand.grid(X1, X2)
+colnames(grid_set) = c('Age', 'EstimatedSalary')
+prob_grid = predict(classifier, newdata = grid_set, type = "response")
+y_grid = ifelse(prob_grid > .5, 1, 0)
+plot(set[, -3],
+     main = 'Classifier (Training set)',
+     xlab = 'Age', ylab = 'Estimated Salary',
+     xlim = range(X1), ylim = range(X2))
+contour(X1, X2, matrix(as.numeric(y_grid), length(X1), length(X2)), add = TRUE)
+points(grid_set, pch = '.', col = ifelse(y_grid == 1, 'springgreen3', 'tomato'))
+points(set, pch = 21, bg = ifelse(set[, 3] == 1, 'green4', 'red3'))
+```
+```{r}
+ggplot()+
+  geom_point(data = grid_set, aes(x = Age, y = EstimatedSalary), color = ifelse(y_grid == 1, 'springgreen3', 'tomato'))+
+  geom_point(data = set, aes(x = Age, y = EstimatedSalary), pch = 21, fill = ifelse(set$Purchased == 1,  'green4', 'red3'), color = "black")+
+  labs(title = "Training data plot")
+  
+```
+
+```{r}
+ggplot()+
+  geom_point(data = grid_set, aes(x = Age, y = EstimatedSalary), color = ifelse(y_grid == 1, 'springgreen3', 'tomato'))+
+  geom_point(data = test_set, aes(x = Age, y = EstimatedSalary), pch = 21, fill = ifelse(test_set$Purchased == 1,  'green4', 'red3'), color = "black")+
+  labs(title = "Test data plot")
+  
+```
+

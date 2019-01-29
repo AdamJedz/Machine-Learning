@@ -1,0 +1,389 @@
+---
+title: "Project 1"
+author: "Igor Adamiec"
+date: "1/24/2019"
+output: html_document
+---
+
+
+```{r}
+library(tidyverse)
+library(GGally)
+library(ggcorrplot)
+```
+
+```{r}
+data <- read_delim("wdbc.data.txt", delim = ",", col_names = c('id_number', 'diagnosis', 'radius_mean', 
+         'texture_mean', 'perimeter_mean', 'area_mean', 
+         'smoothness_mean', 'compactness_mean', 
+         'concavity_mean','concave_points_mean', 
+         'symmetry_mean', 'fractal_dimension_mean',
+         'radius_se', 'texture_se', 'perimeter_se', 
+         'area_se', 'smoothness_se', 'compactness_se', 
+         'concavity_se', 'concave_points_se', 
+         'symmetry_se', 'fractal_dimension_se', 
+         'radius_worst', 'texture_worst', 
+         'perimeter_worst', 'area_worst', 
+         'smoothness_worst', 'compactness_worst', 
+         'concavity_worst', 'concave_points_worst', 
+         'symmetry_worst', 'fractal_dimension_worst')) %>% 
+  mutate(diagnosis = factor(diagnosis, levels = c("M", "B"), labels = c(1, 0))) %>% 
+  select(-id_number) 
+```
+
+```{r}
+data %>% glimpse
+```
+```{r}
+data %>% summary
+```
+
+```{r}
+data %>% 
+  head %>% 
+  group_by(diagnosis)
+```
+
+```{r}
+data %>% 
+  tail %>% 
+  group_by(diagnosis)
+```
+```{r}
+data %>% colnames()
+```
+
+```{r}
+ggpairs(data = data, columns = c("radius_mean", "texture_mean", "area_mean", "perimeter_mean", "smoothness_mean"),
+        mapping = aes(color = diagnosis))
+```
+
+```{r}
+data %>% ggplot()+
+  geom_bar(aes(x = diagnosis, fill = diagnosis))
+```
+
+```{r}
+data %>% 
+  ggplot() +
+  geom_point(aes(x = area_mean, y = smoothness_mean, color = diagnosis))
+```
+
+```{r}
+data %>% 
+  select(-diagnosis) %>% 
+  cor() %>% 
+  ggcorrplot()
+```
+
+```{r}
+library(caTools)
+split <- sample.split(data$diagnosis, SplitRatio = .8)
+training_set <- data %>% 
+  subset(split == T)
+test_set <- data %>% 
+  subset(split == F)
+
+```
+
+```{r}
+normalization <- preProcess(training_set)
+norm_train <- predict(normalization, training_set)
+norm_test <- predict(normalization, test_set)
+```
+
+
+
+
+```{r}
+library(e1071)
+classifier = svm(formula = diagnosis ~ .,
+                 data = training_set,
+                 type = 'C-classification',
+                 kernel = 'linear',
+                 cross = 10)
+```
+
+
+```{r}
+y_pred <- predict(classifier, newdata = test_set %>% select(-diagnosis))
+```
+
+```{r}
+cm <- table('actual' = test_set %>% pull(diagnosis), y_pred)
+cm
+```
+
+```{r}
+n = sum(cm) # number of instances
+nc = nrow(cm) # number of classes
+diag = diag(cm) # number of correctly classified instances per class 
+rowsums = apply(cm, 1, sum) # number of instances per class
+colsums = apply(cm, 2, sum) # number of predictions per class
+p = rowsums / n # distribution of instances over the actual classes
+q = colsums / n # distribution of instances over the predicted classes
+```
+
+```{r}
+accuracy = sum(diag) / n
+accuracy
+```
+
+```{r}
+ precision = diag / colsums 
+ recall = diag / rowsums 
+ f1 = 2 * precision * recall / (precision + recall)
+ 
+ support <- c()
+ for (i in 1:nc) {
+   support <- c(support,cm[i, i])
+ }
+ support
+ cr <- data_frame(precision, recall, f1, support)
+ cr
+```
+```{r}
+cr_summary <- cr %>% 
+  summarize(precision = weighted.mean(precision, support),
+            recall = weighted.mean(recall, support),
+            f1 = weighted.mean(f1,support),
+            support = sum(support))
+cr %>% bind_rows(cr_summary) %>% 
+  mutate(desc = c(1, 0, "avg / total")) %>% 
+  select(desc, everything())
+```
+
+#grid search
+
+```{r}
+library(caret)
+```
+
+```{r}
+grid_classifier <- train(form = diagnosis ~., 
+                         data = norm_train,
+                         method = "svmLinear")
+```
+```{r}
+grid_classifier
+```
+```{r}
+grid_classifier$bestTune
+```
+```{r}
+grid_test <- predict(grid_classifier, norm_test)
+grid_test
+```
+```{r}
+table('actual' = test_set %>% pull(diagnosis), grid_test)
+```
+
+# Comparise SVM radial with SVM linear using k-fold
+
+```{r}
+folds <- createFolds(norm_train$diagnosis,
+                     k = 10)
+svm_linear <- lapply(folds, function(x) {
+  training_fold <- norm_train[-x, ]
+  test_fold <- norm_train[x, ]
+  
+ classifier = train(form = diagnosis ~., 
+                         data = norm_train,
+                         method = "svmLinear")
+  
+  y_pred <- predict(classifier, newdata = test_fold %>% select(-diagnosis))
+  cm <- table(test_fold %>% pull(diagnosis), y_pred)
+  accuracy <-(cm[1, 1] + cm[2, 2]) / sum(cm)
+  accuracy
+})
+```
+```{r}
+svm_linear %>% as.numeric() %>% mean()
+```
+
+```{r}
+svm_radial <- lapply(folds, function(x) {
+  training_fold <- norm_train[-x, ]
+  test_fold <- norm_train[x, ]
+  
+ classifier = train(form = diagnosis ~., 
+                         data = norm_train,
+                         method = "svmRadial")
+  
+  y_pred <- predict(classifier, newdata = test_fold %>% select(-diagnosis))
+  cm <- table(test_fold %>% pull(diagnosis), y_pred)
+  accuracy <-(cm[1, 1] + cm[2, 2]) / sum(cm)
+  accuracy
+})
+```
+```{r}
+svm_radial %>% as.numeric() %>% mean()
+```
+
+```{r}
+grid_classifier <- train(form = diagnosis ~., 
+                         data = norm_train,
+                         method = "svmRadial")
+grid_classifier
+```
+
+```{r}
+grid_pred <- predict(grid_classifier, norm_test %>% select(-diagnosis))
+```
+
+```{r}
+table('actual' = test_set %>% pull(diagnosis), grid_pred)
+```
+```{r}
+cm
+```
+
+SVM linear is sligtly better than radial
+
+#PCA
+
+```{r}
+pca <- preProcess(x = norm_train %>% select(-diagnosis),
+                  method = "pca",
+                  pcaComp = 2)
+```
+```{r}
+pca_train_set <- predict(pca, norm_train)
+```
+
+```{r}
+pca_train_set %>% 
+  ggplot() +
+  geom_point(aes(x = PC1, y = PC2, color = diagnosis)) +
+  labs(title = "PCA on train set") +
+  scale_color_manual(breaks = c(1, 0), labels = c("M", "B"), values = c("firebrick4", "darkseagreen4"))
+```
+
+```{r}
+pca_test_set <- predict(pca, norm_test )
+```
+```{r}
+pca_test_set %>% 
+  ggplot() +
+  geom_point(aes(x = PC1, y = PC2, color = diagnosis)) +
+  labs(title = "PCA on test set") +
+  scale_color_manual(breaks = c(1, 0), labels = c("M", "B"), values = c("firebrick4", "darkseagreen4"))
+```
+
+
+```{r}
+pca_folds <- createFolds(pca_train_set$diagnosis,
+                     k = 10)
+pca_svm_linear <- lapply(folds, function(x) {
+  training_fold <- pca_train_set[-x, ]
+  test_fold <- pca_train_set[x, ]
+  
+ classifier = train(form = diagnosis ~., 
+                         data = pca_train_set,
+                         method = "svmLinear")
+  
+  y_pred <- predict(classifier, newdata = test_fold %>% select(-diagnosis))
+  cm <- table(test_fold %>% pull(diagnosis), y_pred)
+  accuracy <-(cm[1, 1] + cm[2, 2]) / sum(cm)
+  accuracy
+})
+```
+```{r}
+pca_svm_linear %>% as.numeric() %>% mean()
+```
+
+```{r}
+pca_folds <- createFolds(pca_train_set$diagnosis,
+                     k = 10)
+pca_svm_radial <- lapply(folds, function(x) {
+  training_fold <- pca_train_set[-x, ]
+  test_fold <- pca_train_set[x, ]
+  
+ classifier = train(form = diagnosis ~., 
+                         data = pca_train_set,
+                         method = "svmRadial")
+  
+  y_pred <- predict(classifier, newdata = test_fold %>% select(-diagnosis))
+  cm <- table(test_fold %>% pull(diagnosis), y_pred)
+  accuracy <-(cm[1, 1] + cm[2, 2]) / sum(cm)
+  accuracy
+})
+```
+```{r}
+pca_svm_radial %>% as.numeric() %>% mean()
+```
+
+```{r}
+pca_svm_linear_classifier <- train(form = diagnosis ~., 
+                         data = pca_train_set,
+                         method = "svmLinear")
+pca_svm_linear_pred <- predict(pca_svm_linear_classifier, pca_test_set)
+```
+
+```{r}
+table("actual" = pca_test_set %>% pull(diagnosis), pca_svm_linear_pred)
+```
+
+
+```{r}
+set <- pca_train_set
+X1 <- seq(set %>% pull(PC1) %>% min() -1, set %>% pull(PC1) %>% max() + 1, by = .01)
+X2 <- seq(set %>% pull(PC2) %>% min() -1, set %>% pull(PC2) %>% max() + 1, by = .01)
+grid_set <- expand.grid(X1, X2)
+colnames(grid_set) <- c("PC1", "PC2")
+grid_pred <- predict(pca_svm_linear_classifier, grid_set)
+ggplot() +
+  geom_point(data = grid_set, aes(x = PC1, y = PC2), color = ifelse(grid_pred == 0, "darkseagreen3", "indianred2")) +
+  geom_point(data = set, aes(x = PC1, y = PC2), color = ifelse(set$diagnosis == 0, "darkseagreen4", "firebrick4")) +
+  labs(title = "Linear SVM on train set")
+```
+
+```{r}
+set <- pca_test_set
+X1 <- seq(set %>% pull(PC1) %>% min() -1, set %>% pull(PC1) %>% max() + 1, by = .01)
+X2 <- seq(set %>% pull(PC2) %>% min() -1, set %>% pull(PC2) %>% max() + 1, by = .01)
+grid_set <- expand.grid(X1, X2)
+colnames(grid_set) <- c("PC1", "PC2")
+grid_pred <- predict(pca_svm_linear_classifier, grid_set)
+ggplot() +
+  geom_point(data = grid_set, aes(x = PC1, y = PC2), color = ifelse(grid_pred == 0, "darkseagreen3", "indianred2")) +
+  geom_point(data = set, aes(x = PC1, y = PC2), color = ifelse(set$diagnosis == 0, "darkseagreen4", "firebrick4")) +
+  labs(title = "Linear SVM on test set")
+```
+
+```{r}
+pca_svm_radial_classifier <- train(form = diagnosis ~., 
+                         data = pca_train_set,
+                         method = "svmRadial")
+pca_svm_radial_pred <- predict(pca_svm_radial_classifier, pca_test_set)
+```
+
+```{r}
+table("actual" = pca_test_set %>% pull(diagnosis), pca_svm_radial_pred)
+```
+
+```{r}
+set <- pca_train_set
+X1 <- seq(set %>% pull(PC1) %>% min() -1, set %>% pull(PC1) %>% max() + 1, by = .01)
+X2 <- seq(set %>% pull(PC2) %>% min() -1, set %>% pull(PC2) %>% max() + 1, by = .01)
+grid_set <- expand.grid(X1, X2)
+colnames(grid_set) <- c("PC1", "PC2")
+grid_pred <- predict(pca_svm_radial_classifier, grid_set)
+ggplot() +
+  geom_point(data = grid_set, aes(x = PC1, y = PC2), color = ifelse(grid_pred == 0, "darkseagreen3", "indianred2")) +
+  geom_point(data = set, aes(x = PC1, y = PC2), color = ifelse(set$diagnosis == 0, "darkseagreen4", "firebrick4")) +
+  labs(title = "Radial SVM on train set")
+```
+
+```{r}
+set <- pca_test_set
+X1 <- seq(set %>% pull(PC1) %>% min() -1, set %>% pull(PC1) %>% max() + 1, by = .01)
+X2 <- seq(set %>% pull(PC2) %>% min() -1, set %>% pull(PC2) %>% max() + 1, by = .01)
+grid_set <- expand.grid(X1, X2)
+colnames(grid_set) <- c("PC1", "PC2")
+grid_pred <- predict(pca_svm_radial_classifier, grid_set)
+ggplot() +
+  geom_point(data = grid_set, aes(x = PC1, y = PC2), color = ifelse(grid_pred == 0, "darkseagreen3", "indianred2")) +
+  geom_point(data = set, aes(x = PC1, y = PC2), color = ifelse(set$diagnosis == 0, "darkseagreen4", "firebrick4")) +
+  labs(title = "Radial SVM on test set")
+```
