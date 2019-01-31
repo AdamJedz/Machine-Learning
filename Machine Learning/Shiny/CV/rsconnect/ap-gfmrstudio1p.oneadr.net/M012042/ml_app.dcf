@@ -1,0 +1,13 @@
+name: ml_app
+title: ML app
+username: M012042
+account: M012042
+server: ap-gfmrstudio1p.oneadr.net
+hostUrl: https://ap-gfmrstudio1p.oneadr.net:3939/__api__
+appId: 63
+bundleId: 244
+url: https://ap-gfmrstudio1p.oneadr.net:3939/content/63/
+when: 1548940102.52153
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Logistic regression.Rmd
