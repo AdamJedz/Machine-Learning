@@ -11,14 +11,15 @@ library(shiny)
 library(tidyverse)
 library(caTools)
 library(caret)
+library(e1071)
 
-
+dataset <- read_csv("Social_Network_Ads.csv") %>% 
+  select(-'User ID', - Gender) %>% 
+  mutate(Purchased = as.factor(Purchased))
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
-  dataset <- read_csv("Social_Network_Ads.csv") %>% 
-    select(-'User ID', - Gender) %>% 
-    mutate(Purchased = as.factor(Purchased))
+
   
   s <- reactive({as.numeric(input$split)})
   
@@ -33,6 +34,8 @@ shinyServer(function(input, output) {
       mutate_if(is.matrix, as.numeric)})
   
   output$training <- renderTable(training_set())
+  
+  
   
   classifier <- reactive({glm(formula = Purchased ~., 
                     data = training_set(),
@@ -58,6 +61,18 @@ shinyServer(function(input, output) {
                                     geom_point(data = grid_set(), aes(x = Age, y = EstimatedSalary), color = ifelse(y_grid() == 1, 'springgreen3', 'tomato'))+
                                     geom_point(data = test_set(), aes(x = Age, y = EstimatedSalary), pch = 21, fill = ifelse(test_set() %>% pull(Purchased) == 1,  'green4', 'red3'), color = "black")+
                                     labs(title = "Test data plot"))
-  cm <- reactive(({table(test_set() %>% pull(Purchased), y_pred())}))
+  cm <- reactive(({table("Actual" = test_set() %>% pull(Purchased), "Predicted" = y_pred())}))
   output$cm <- renderPrint(cm())
+  
+  svm_classifier <- reactive({svm(formula = Purchased ~., 
+                    data = training_set(),
+                    type = "C-classification",
+                    kernel = input$method)})
+  svm_y_pred <- reactive({predict(svm_classifier(), test_set())})
+
+   svm_y_grid = reactive({predict(svm_classifier(), newdata = grid_set())})
+  output$svm_train_plot <- renderPlot(ggplot()+
+                                    geom_point(data = grid_set(), aes(x = Age, y = EstimatedSalary), color = ifelse(svm_y_grid() == 1, 'springgreen3', 'tomato'))+
+                                    geom_point(data = training_set(), aes(x = Age, y = EstimatedSalary), pch = 21, fill = ifelse(training_set() %>% pull(Purchased) == 1,  'green4', 'red3'), color = "black")+
+                                    labs(title = "Training data plot"))
 })

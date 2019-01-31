@@ -1,0 +1,133 @@
+---
+title: "Modele Nieparametryczne"
+author: "Igor Adamiec"
+date: "1/30/2019"
+output: html_document
+---
+Do badania wykorzyształem zbiór danych **Auto** z pakietu **ISLR**. Znajdują się w nich dane dotyczace samochodow takie jak kontynent, rok produkcji, waga, przyspieszenie itd.
+
+```{r}
+library(tidyverse)
+library(ISLR)
+library(mgcv)
+```
+
+```{r}
+dataset <- Auto %>% 
+  mutate(origin = as.factor(origin))
+```
+```{r}
+dataset %>% glimpse
+```
+
+```{r}
+summary(dataset)
+```
+
+Na poniższym wykresie widzimy przyspieszenie w zaleznosci od ilosci koni mechanicznych.
+
+```{r}
+dataset %>% 
+  ggplot() + 
+  geom_point(aes(x = horsepower, y = acceleration), alpha = .4)
+```
+
+# Wygladzanie
+
+## Regresja wielomianowa
+Wybralem wielomian stopnia 5 - do tego poziomu wszystkie parametry sa istotne. Potem zaczynaja tracic na istotnosci.
+
+```{r}
+wielomianowa <- lm(data = dataset, 
+                   formula = acceleration ~ poly(horsepower, 5, raw = T))
+wielomianowa %>% 
+  summary
+```
+
+Przedstawienie modelu na wykresie:
+
+```{r}
+dataset %>% 
+  ggplot() +
+  geom_point(aes(x = horsepower, y = acceleration), alpha = .4) +
+  geom_line(aes(x = horsepower, y = predict(wielomianowa)), color = "red", size = 1.3)
+```
+
+Z powodu dosc wysokiego stopnia wielomianu, widzimy ze model dostosowuje sie do danych rzeczywistych. Nie jest on jednak na tyle wysoki, by wystepowala chropowatosc wykresu. 
+
+# Generalized Additive Model
+
+Zmienna origin zostala wczytana jako factor (1 - Ameryka, 2 - Europa, 3 - Japonia)
+
+W modelu gam_1 zmiennymi wygladzanymi beda:
+- horsepower,
+- weight,
+- mpg (miles per gallon).
+
+
+Zmienna czynnikowa bedzie tylko:
+- origin.
+
+```{r}
+gam_1 <- gam(data = dataset,
+             formula = acceleration ~ s(horsepower) + s(weight)  + s(mpg)  + origin)
+gam_1 %>% summary
+```
+Widzimy, że zmienna Origin2 (Europa) nie jest istotna, ale zostawimy ja dla porownania
+
+
+```{r}
+plot(gam_1, scheme = 1, page = 1, residuals = T, all.terms = T)
+```
+
+Wnioski:
+- im więcej koni tym mniejsze przyspieszenie,
+- wraz ze wzrostem wagi przyspieszenie wzrasta, ale tylko do pewnego momentu,
+- zużycie paliwa raczej nie wpłwa na przyspieszenie,
+- najlepsze przyspieszenie mają japonskie samochody.
+
+Dla porownania zbuduje model liniowy z tych samych zmiennych:
+
+```{r}
+liniowy <- lm(data = dataset,
+              formula = acceleration ~ horsepower + weight  + mpg  + origin)
+liniowy %>% summary
+```
+
+Porownanie modeli
+
+```{r}
+gcv_lin <- mean(liniowy$residuals^2) / (1-7/(dataset %>% nrow())^2)
+kryteria <- data_frame("Model" = c("GAM", "Liniowy"),
+                       "AIC" = c(AIC(gam_1), AIC(liniowy)),
+                       GCV = c(gam_1$gcv.ubre, gcv_lin))
+kryteria
+```
+
+Widzimy, ze zarowno kryterium Akaike jak i GCV sa mniejsze dla modelu GAM.
+
+# Drzewo 
+
+```{r}
+library(tree)
+library(rpart)
+library(rpart.plot)
+```
+
+```{r}
+drzewo <- rpart(data = dataset,
+               origin ~.-name-displacement)
+drzewo %>% summary
+```
+
+```{r}
+drzewo
+```
+
+```{r}
+rpart.plot(drzewo, type = 2,
+           fallen.leaves = F)
+```
+
+Widzimy, ze pierwszy podzial dotyczy liczby cylindrow. Jezeli auto ma ich więcej niż 5, to automatycznie zostaje zakwalifikowane do samochodow amerykanskich.
+Co ciekawe, analizujac powyzsze drzewo mozna pomyslec, ze amerykanskie auta maja wieksze spalanie (mpg < 31) i wydaje sie to byc dobrym oddaniem rzeczywistosci.

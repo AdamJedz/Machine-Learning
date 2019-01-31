@@ -8,6 +8,7 @@ output: html_document
 ```{r}
 library(tidyverse)
 library(caTools)
+library(e1071)
 ```
 
 ```{r}
