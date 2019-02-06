@@ -1,0 +1,584 @@
+---
+title: "Magisterka"
+author: "Igor Adamiec"
+date: "2/5/2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+Unifikacja danych jakościowych:
+- rankingu wiekowego widowni,
+- gatunku filmu,
+- języka filmu, 
+- kraju pochodzenia filmu,
+
+```{r}
+dataset <- read_csv("magisterka.csv") %>% 
+  select(-X1, -ID) %>% 
+  rename("Audience" = "Rating.x",
+         "RottenRating" = "Rating.y") %>% 
+  mutate(Title = as.factor(Title),
+         Audience = case_when(is.na(Audience) ~ "Not Rated",
+                              Audience == "12" ~ "PG",
+                              Audience == "12A" ~ "PG",
+                              Audience == "13" ~ "PG-13",
+                              Audience == "14" ~ "PG-13",
+                              Audience == "15" ~ "PG-13",
+                              Audience == "15A" ~ "PG-13",
+                              Audience == "18" ~ "NC-17",
+                              Audience == "6" ~ "G",
+                              Audience == "AL" ~ "G",
+                              Audience == "All" ~ "G",
+                              Audience == "Approved" ~ "G",
+                              Audience == "Atp" ~ "G",
+                              Audience == "M" ~ "R",
+                              Audience == "MA15+" ~ "R",
+                              Audience == "PG13" ~ "PG-13",
+                              Audience == "TV-14" ~ "PG-13",
+                              Audience == "TV-G" ~ "G",
+                              Audience == "TV-MA" ~ "R",
+                              Audience == "TV-PG" ~ "PG",
+                              Audience == "U" ~ "R",
+                              Audience == "X" ~ "NC-17",
+                              Audience == "Unrated" ~ "Not Rated",
+                              TRUE ~ Audience),
+         Audience = factor(Audience, levels = c("G", "PG", "PG-13", "R", "NC-17", "Not Rated")),
+         Genre = gsub("\\,.*","",Genre),
+         Genre = case_when(is.na(Genre) ~ "(Other)",
+                              TRUE ~ Genre),
+         Genre = as.factor(Genre),
+         Language = case_when(is.na(Language) ~ "English",
+                              TRUE ~ Language),
+         Language = gsub("\\,.*","",Language),
+         Language= as.factor(Language),
+         Country = case_when(is.na(Country) ~ "USA", 
+                             TRUE ~ Country),
+         Country = gsub("\\,.*","",Country),
+         Country = as.factor(Country),
+         Director = as.factor(Director))
+```
+Wypełnianie braków danych w zmiennych ilościowych:
+- oceny z serwisu Metacritic,
+- Oceny z serwisu IMDB,
+- Oceny użytkowników serwisu Rotten Tomatoes,
+- oceny użytnkowników serwisu metacritic,
+- ilosci pieniedzy, jakie zarobiłfilm w tzw. Box office
+
+Oceny z Metacritica na podstawie mediany ocen dla tych samych gatunków, 7 filmów usunąłem (6 noir i jeden adult)
+
+```{r}
+for (i in dataset %>% filter(is.na(Metacritic)) %>% 
+  count(Genre) %>% pull(Genre)) {
+  
+  dataset[is.na(dataset$Metacritic) & dataset$Genre == i, "Metacritic"] <- dataset %>% 
+  filter(!is.na(Metacritic),
+         Genre == i) %>% 
+  pull(Metacritic) %>% 
+  median
+  
+}
+
+dataset <- dataset[!is.na(dataset$Metacritic),]
+```
+
+Tak samo dla ocen z IMDB
+
+```{r}
+for (i in dataset %>% filter(is.na(imdbRating)) %>% 
+  count(Genre) %>% pull(Genre)) {
+  
+  dataset[is.na(dataset$imdbRating) & dataset$Genre == i, "imdbRating"] <- dataset %>% 
+  filter(!is.na(imdbRating),
+         Genre == i) %>% 
+  pull(imdbRating) %>% 
+  median
+  
+}
+```
+
+Dla user meter z rotten tomatoes też
+```{r}
+for (i in dataset %>% filter(is.na(userMeter)) %>% 
+  count(Genre) %>% pull(Genre)) {
+  
+  dataset[is.na(dataset$userMeter) & dataset$Genre == i, "userMeter"] <- dataset %>% 
+  filter(!is.na(userMeter),
+         Genre == i) %>% 
+  pull(userMeter) %>% 
+  median
+  
+}
+```
+
+dla user rating z metacritics też
+
+```{r}
+for (i in dataset %>% filter(is.na(userRating)) %>% 
+  count(Genre) %>% pull(Genre)) {
+  
+  dataset[is.na(dataset$userRating) & dataset$Genre == i, "userRating"] <- dataset %>% 
+  filter(!is.na(userRating),
+         Genre == i) %>% 
+  pull(userRating) %>% 
+  median
+  
+}
+```
+
+
+Dla Box office najpierw kombinacja Gatunek - kraj, potem sam kraj, a potem sam gatunek
+```{r}
+for (i in dataset %>% filter(is.na(BoxOffice)) %>% 
+  count(Genre) %>% pull(Genre)) {
+  
+  for (j in dataset %>% filter(is.na(BoxOffice)) %>% 
+  count(Country) %>% pull(Country)) {
+    dataset[is.na(dataset$BoxOffice) & dataset$Genre == i & dataset$Country == j, "BoxOffice"] <- dataset %>% 
+  filter(!is.na(BoxOffice),
+         Genre == i,
+         Country == j) %>% 
+  pull(BoxOffice) %>% 
+  median
+  }
+  
+}
+
+for (j in dataset %>% filter(is.na(BoxOffice)) %>% 
+  count(Country) %>% pull(Country)) {
+    dataset[is.na(dataset$BoxOffice) & dataset$Country == j, "BoxOffice"] <- dataset %>% 
+  filter(!is.na(BoxOffice),
+         Country == j) %>% 
+  pull(BoxOffice) %>% 
+  median
+}
+
+for (k in dataset %>% filter(is.na(BoxOffice)) %>% 
+  count(Genre) %>% pull(Genre)) {
+    dataset[is.na(dataset$BoxOffice) & dataset$Genre == k, "BoxOffice"] <- dataset %>% 
+  filter(!is.na(BoxOffice),
+         Genre == k) %>% 
+  pull(BoxOffice) %>% 
+  median
+  }
+```
+
+```{r}
+dataset %>% summary
+```
+
+# Podstawowe wykresy
+
+```{r}
+dataset %>% 
+  ggplot() +
+  geom_point(aes(x = userMeter, y = Metacritic, color = Genre)) +
+  facet_wrap(Genre~.) +
+  scale_color_manual(values = rainbow_hcl(22)) +
+  theme(legend.position = "none")
+```
+
+```{r}
+dataset %>% 
+  ggplot() +
+  geom_point(aes(x = imdbRating, y = Metacritic, color = Genre)) +
+  facet_wrap(Genre~.) +
+  scale_color_manual(values = rainbow_hcl(22)) +
+  theme(legend.position = "none")
+```
+
+```{r}
+library(colorspace)
+```
+
+
+```{r}
+dataset %>% 
+  ggplot() +
+  geom_bar(aes(x = Audience, fill = Audience)) +
+  scale_fill_manual(values = rainbow_hcl(6)) +
+  labs(title = "Ilość filmów pod względem kategorii wiekowej",
+       x = "Kategoria wiekowa",
+       y = "Ilość filmów") +
+  theme(plot.title = element_text(hjust = .5),
+        legend.position = "none")
+```
+
+```{r}
+dataset %>% 
+  ggplot() +
+  geom_bar(aes(x = Year), fill = "deepskyblue4") +
+  labs(title = "Ilość filmów pod względem roku produkcji",
+       y = "Ilość filmów",
+       x = "Rok produkcji") +
+  theme(plot.title = element_text(hjust = .5))
+```
+
+```{r}
+dataset %>% 
+  ggplot() +
+  geom_histogram(aes(x = Runtime), fill = "deepskyblue4", bins = 100) +
+  labs(title = "Rozkład czasu trwania filmów",
+       y = "Ilość",
+       x = "Czas trwania filmu (w minutach)") +
+  coord_cartesian(xlim =c(0, 250)) +
+  theme(plot.title = element_text(hjust = .5))
+```
+
+```{r}
+dataset %>%
+  count(Genre) %>% 
+  arrange(desc(n)) %>% 
+  head(8) %>% 
+  ggplot() +
+  geom_col(aes(x = reorder(Genre, -n), y = n, fill = Genre)) +
+  scale_fill_manual(values = rainbow_hcl(8)) +
+  labs(title = "Najwięcej filmów pod względem gatunku",
+       x = "Gatunek",
+       y = "Ilość filmów") +
+  theme(legend.position = "none") +
+  theme(plot.title = element_text(hjust = .5))
+```
+
+```{r}
+dataset %>%
+  count(Genre) %>% 
+  arrange(desc(n)) %>% 
+  tail(8) %>% 
+  ggplot() +
+  geom_col(aes(x = reorder(Genre, n), y = n, fill = Genre)) +
+  scale_fill_manual(values = rainbow_hcl(8)) +
+  labs(title = "Najmnniej filmów pod względem gatunku",
+       x = "Gatunek",
+       y = "Ilość filmów")+
+  theme(legend.position = "none") +
+  theme(plot.title = element_text(hjust = .5))
+```
+
+```{r}
+dataset %>%
+  count(Language) %>% 
+  arrange(desc(n)) %>% 
+  head(8) %>% 
+  ggplot() +
+  geom_col(aes(x = reorder(Language, -n), y = n, fill = Language)) +
+  scale_fill_manual(values = rainbow_hcl(8)) +
+  labs(title = "Najwięcej filmów pod względem języka",
+       x = "Gatunek",
+       y = "Język") +
+  theme(legend.position = "none")
+```
+
+```{r}
+dataset %>%
+  count(Country) %>% 
+  arrange(desc(n)) %>% 
+  head(8) %>% 
+  ggplot() +
+  geom_col(aes(x = reorder(Country, -n), y = n, fill = Country)) +
+  scale_fill_manual(values = rainbow_hcl(8)) +
+  labs(title = "Najwięcej filmów pod względem kraju produkcji",
+       x = "Kraj produkcji",
+       y = "Język") +
+  theme(legend.position = "none")
+```
+
+```{r}
+dataset %>% 
+  ggplot() +
+  geom_histogram(aes(x = Metacritic), fill = "goldenrod1", bins = 10) +
+  labs(title = "Metacritic score",
+       x = "Ilość",
+       y = "Ocena na metacritic")
+```
+
+```{r}
+dataset %>% 
+  ggplot() +
+  geom_histogram(aes(x = userRating), fill = "goldenrod2", bins = 15) +
+  labs(title = "Metacritic User Score",
+       x = "Ilość",
+       y = "Ocena")
+```
+
+```{r}
+dataset %>% 
+  ggplot() +
+  geom_histogram(aes(x = imdbRating), fill = "gray18", bins = 20) +
+  labs(title = "IMDB",
+       x = "Ilość",
+       y = "Ocena")
+```
+
+```{r}
+dataset %>% 
+  ggplot() +
+  geom_histogram(aes(x = RottenRating), fill = "forestgreen", bins = 15) +
+  labs(title = "Rotten Rating",
+       x = "Ilość",
+       y = "Ocena")
+```
+
+```{r}
+dataset %>% 
+  ggplot() +
+  geom_histogram(aes(x = Meter), fill = "gold3", bins = 15) +
+  labs(title = "Rotten Meter",
+       x = "Ilość",
+       y = "Ocena")
+```
+
+```{r}
+dataset %>% 
+  ggplot() +
+  geom_histogram(aes(x = userMeter), fill = "firebrick2", bins = 20) +
+  labs(title = "Rotten  User Meter",
+       x = "Ilość",
+       y = "Ocena")
+```
+
+```{r}
+dataset %>% 
+  ggplot() +
+  geom_histogram(aes(x = BoxOffice), fill = "dodgerblue1", bins = 30) +
+  labs(title = "Box Office (USD)",
+       x = "Ilość zarobionych pieniędzy (USD)",
+       y = "Ocena") +
+  scale_x_continuous(labels = scales::comma) +
+  coord_cartesian(xlim = c(0, 250000000))
+```
+
+#Zmienne jakościowe
+
+```{r}
+library(fastDummies)
+library(data.table)
+```
+
+```{r}
+dataset <- dataset %>% 
+  select(-Title, -Director) %>% 
+  dummy_cols(remove_most_frequent_dummy = T) %>%
+  mutate(Oscar_won = ifelse(Oscars > 0, 1, 0),
+         Oscar_won = as.factor(Oscar_won)) %>% 
+  select(everything(), Oscar_won,-Oscars, -Language, -Country, -Genre, -Audience)
+  
+  
+```
+
+
+# Tworzenie modelu
+
+```{r}
+library(caTools)
+library(caret)
+```
+
+Wyrzucanie zmiennych ze względu na zerową wariancje
+
+```{r}
+dataset_to_model <- dataset %>% 
+  select(-Language_Cree, -Language_Albanian, -Language_Irish, -Language_Khmer, -Language_Tajik, -Language_Neapolitan,
+         -Language_Estonian, -Language_Lao, -Language_Slovak, -Language_Aramaic, -Language_Xhosa, -Language_Telugu,
+         -Language_Acholi, -Country_Bangladesh, -Country_Algeria, -Country_Cameroon, -Language_Malinka, -"Language_Min Nan",
+         -Language_Urdu, -Country_Bhutan, -Country_Malaysia, -Country_Iraq, -Language_Hokkien, -Language_Sicilian, -Country_Botswana, 
+         -Country_Luxembourg, -Country_Lebanon, -"Country_Dominican Republic", -Country_Egypt, -Language_Saami, -Language_Bambara,
+         -Language_Maya, -Language_Lingala, -Country_Slovakia, -Language_Inuktitut, -"Language_Serbo-Croatian", -"Language_North American Indian",
+         -Language_Fur, -Language_Burmese, -Language_Kirghiz, -Language_Tamil, -Country_Croatia, -Country_Jordan, -Country_Serbia,
+         -Country_Morocco, -"Country_Papua New Guinea", -Country_Paraguay, -Language_More, -Language_Panjabi, -Language_Haitian,
+         -"Country_Burkina Faso", -Country_Pakistan, -Language_Kinyarwanda, -Country_Rwanda, -Country_Nigeria, -Language_Guarani,
+         -Country_Tajikistan, -"Country_The Democratic Republic Of Congo", -Country_Cambodia, -Country_Estonia, -Country_Bahamas,
+         -"Country_Burkina Faso", -Language_Chechen, -"Language_Southern Sotho", -Country_Cuba, -Language_Belarusian, -Country_Aruba,
+         -Country_Tunisia, -Country_Mali, -Country_Croatia, -Country_Macedonia, -Country_Thailand, -`Country_Bosnia and Herzegovina` )
+```
+
+
+Podział na zbiory
+
+```{r}
+split <- sample.split(dataset_to_model$Oscar_won, SplitRatio = .8)
+training_set <- dataset_to_model %>% 
+  subset(split == T)
+test_set <- dataset_to_model %>% 
+  subset(split == F)
+```
+
+Normalizacja
+
+
+```{r}
+normalization <- preProcess(training_set)
+training_norm <- predict(normalization, training_set)
+test_norm <- predict(normalization, test_set)
+```
+Model ze wszystkimi zmiennymi
+```{r}
+classifier_1 <- glm(data = training_norm,
+            formula = Oscar_won ~ .,
+            family = binomial)
+summary(classifier_1)
+```
+
+```{r}
+prob_pred_1 <- predict(classifier_1, newdata = test_norm, type = "response")
+y_pred_1 <- ifelse(prob_pred_1 >= .5, 1, 0)
+```
+
+```{r}
+cm_1 <- table(test_norm %>% pull(Oscar_won), y_pred_1)
+cm_1
+```
+
+Selekcja zmiennych do modelu
+
+```{r}
+columns <- c()
+for (i in 1:149 ) {
+  ifelse(length(columns) > 0, zbior <- training_norm %>% 
+    select(-columns), zbior <- training_norm)
+  
+  model <- glm(data = zbior,
+               formula = Oscar_won ~.,
+               family = binomial)
+  podsumowanie <- summary(model)[[12]] %>% 
+    as.data.frame() %>% 
+    setDT(keep.rownames = T) %>% 
+    arrange(desc(`Pr(>|z|)`)) %>% 
+    head(1)
+  
+  if (podsumowanie %>% pull(`Pr(>|z|)`) > 0.05) {
+    zmienna <- podsumowanie %>% pull(rn) 
+    zmienna <- gsub("`", "", zmienna)
+    columns <- c(columns, zmienna)
+  }
+  
+}
+```
+
+Model
+```{r}
+classifier_2 <- glm(data = training_norm %>% select(-columns),
+            formula = Oscar_won ~ .,
+            family = binomial)
+summary(classifier_2)
+```
+
+```{r}
+prob_pred_2 <- predict(classifier_2, newdata = test_norm, type = "response")
+y_pred_2 <- ifelse(prob_pred_2 >= .5, 1, 0)
+```
+
+```{r}
+cm_2 <- table(test_norm %>% pull(Oscar_won), y_pred_2)
+cm_2
+```
+
+# Classification report dla modelu ze wszystkimi zmiennymi
+
+```{r}
+n_1 = sum(cm_1) # number of instances
+nc_1 = nrow(cm_1) # number of classes
+diag_1 = diag(cm_1) # number of correctly classified instances per class 
+rowsums_1 = apply(cm_1, 1, sum) # number of instances per class
+colsums_1 = apply(cm_1, 2, sum) # number of predictions per class
+p = rowsums_1 / n_1 # distribution of instances over the actual classes
+q = colsums_1 / n_1 # distribution of instances over the predicted classes
+```
+
+```{r}
+accuracy_1 = sum(diag_1) / n_1
+accuracy_1
+```
+
+```{r}
+ precision_1 = diag_1 / colsums_1 
+ recall_1 = diag_1 / rowsums_1 
+ f1_1 = 2 * precision_1 * recall_1 / (precision_1 + recall_1)
+ 
+ support_1 <- c()
+ for (i in 1:nc_1) {
+   support_1 <- c(support_1, cm_1[i, i])
+ }
+ cr_1 <- data_frame(precision_1, recall_1, f1_1, support_1)
+ 
+```
+```{r}
+cr_summary_1 <- cr_1 %>% 
+  summarize(precision_1 = weighted.mean(precision_1, support_1),
+            recall_1 = weighted.mean(recall_1, support_1),
+            f1_1 = weighted.mean(f1_1,support_1),
+            support_1 = sum(support_1))
+cr_1 %>% bind_rows(cr_summary_1) %>% 
+  mutate(desc = c(1, 0, "avg / total")) %>% 
+  select(desc, everything())
+```
+
+# Classification report dla modelu drugiego
+
+```{r}
+n_2 = sum(cm_2) # number of instances
+nc_2 = nrow(cm_2) # number of classes
+diag_2 = diag(cm_2) # number of correctly classified instances per class 
+rowsums_2 = apply(cm_1, 1, sum) # number of instances per class
+colsums_2 = apply(cm_1, 2, sum) # number of predictions per class
+p = rowsums_2 / n_2 # distribution of instances over the actual classes
+q = colsums_2 / n_2 # distribution of instances over the predicted classes
+```
+
+```{r}
+accuracy_2 = sum(diag_2) / n_2
+accuracy_2
+```
+
+```{r}
+ precision_2 = diag_2 / colsums_2 
+ recall_2 = diag_2 / rowsums_2 
+ f1_2 = 2 * precision_2 * recall_2 / (precision_2 + recall_2)
+ 
+ support_2 <- c()
+ for (i in 1:nc_2) {
+   support_2 <- c(support_2, cm_2[i, i])
+ }
+ cr_2 <- data_frame(precision_2, recall_2, f1_2, support_2)
+ 
+```
+```{r}
+cr_summary_2 <- cr_2 %>% 
+  summarize(precision_2 = weighted.mean(precision_2, support_2),
+            recall_2 = weighted.mean(recall_2, support_2),
+            f1_2 = weighted.mean(f1_2,support_2),
+            support_2 = sum(support_2))
+cr_2 %>% bind_rows(cr_summary_2) %>% 
+  mutate(desc = c(1, 0, "avg / total")) %>% 
+  select(desc, everything())
+```
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
