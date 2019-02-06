@@ -7,6 +7,7 @@ output: html_document
 
 ```{r}
 library(tidyverse)
+library(colorspace)
 ```
 
 Unifikacja danych jakościowych:
@@ -258,6 +259,23 @@ dataset %>%
 ```
 
 ```{r}
+dataset %>% 
+  count(Director) %>% 
+  arrange(desc(n)) %>%
+  head(10) %>% 
+  ggplot +
+  geom_col(aes(x = reorder(Director, -n), y = n, fill = Director)) +
+  scale_fill_manual(values = rainbow_hcl(10)) +
+  labs(title = "10 najbardziej płodnych reżyserów",
+       x = "Reżyser",
+       y = "Ilość filmów")+
+  theme(legend.position = "none") +
+  theme(plot.title = element_text(hjust = .5),
+        axis.text.x = element_text(angle = 20))
+```
+
+
+```{r}
 dataset %>%
   count(Language) %>% 
   arrange(desc(n)) %>% 
@@ -275,68 +293,94 @@ dataset %>%
 dataset %>%
   count(Country) %>% 
   arrange(desc(n)) %>% 
-  head(8) %>% 
+  head(10) %>% 
   ggplot() +
   geom_col(aes(x = reorder(Country, -n), y = n, fill = Country)) +
-  scale_fill_manual(values = rainbow_hcl(8)) +
+  scale_fill_manual(values = rainbow_hcl(10)) +
   labs(title = "Najwięcej filmów pod względem kraju produkcji",
        x = "Kraj produkcji",
        y = "Język") +
-  theme(legend.position = "none")
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = .5))
 ```
 
 ```{r}
 dataset %>% 
   ggplot() +
   geom_histogram(aes(x = Metacritic), fill = "goldenrod1", bins = 10) +
-  labs(title = "Metacritic score",
-       x = "Ilość",
-       y = "Ocena na metacritic")
+  labs(title = "Rozkład zmiennej Metacritic",
+       y = "Ilość",
+      x = "Ocena na metacritic") +
+  theme(plot.title = element_text(hjust = .5))
 ```
 
 ```{r}
 dataset %>% 
   ggplot() +
   geom_histogram(aes(x = userRating), fill = "goldenrod2", bins = 15) +
-  labs(title = "Metacritic User Score",
-       x = "Ilość",
-       y = "Ocena")
+  labs(title = "Rozkłąd wartości ocen użytkowników portalu Metacritic",
+       y = "Ilość",
+       x = "Ocena") +
+  theme(plot.title = element_text(hjust = .5))
 ```
 
 ```{r}
 dataset %>% 
   ggplot() +
   geom_histogram(aes(x = imdbRating), fill = "gray18", bins = 20) +
-  labs(title = "IMDB",
-       x = "Ilość",
-       y = "Ocena")
+  labs(title = "Rozkład zmiennej imdbRating",
+       y = "Ilość",
+       x = "Srednia ocen na IMDB") +
+  theme(plot.title = element_text(hjust = .5))
 ```
+
+```{r}
+dataset %>% 
+  count(Language) %>% 
+  arrange(desc(n)) %>% 
+  head(11) %>% 
+  tail(10) %>% 
+  ggplot() +
+  geom_col(aes(x = reorder(Language, -n), y = n, fill = Language)) +
+  scale_fill_manual(values = rainbow_hcl(10)) +
+  theme(plot.title = element_text(hjust = .5),
+        legend.position = "none") +
+  labs(title = "Najpopularniejsze języki w filmach",
+       subtitle = "Język angielski znajduje się na pierwszym miejscu z 10377 pozycjami.",
+       x = "Język",
+       y = "Ilość filmów")
+```
+
+
 
 ```{r}
 dataset %>% 
   ggplot() +
   geom_histogram(aes(x = RottenRating), fill = "forestgreen", bins = 15) +
-  labs(title = "Rotten Rating",
-       x = "Ilość",
-       y = "Ocena")
+  labs(title = "Rozkład ocen recenzentów portalu Rotten Tomatoes",
+       y = "Ilość",
+       x = "Ocena") +
+  theme(plot.title = element_text(hjust = .5))
 ```
 
 ```{r}
 dataset %>% 
   ggplot() +
   geom_histogram(aes(x = Meter), fill = "gold3", bins = 15) +
-  labs(title = "Rotten Meter",
-       x = "Ilość",
-       y = "Ocena")
+  labs(title = "Rozkład wartości zmienej Meter",
+       y = "Ilość",
+       x = "Popularność wśród użytkowników Rotten Tomatoes") +
+  theme(plot.title = element_text(hjust= .5))
 ```
 
 ```{r}
 dataset %>% 
   ggplot() +
   geom_histogram(aes(x = userMeter), fill = "firebrick2", bins = 20) +
-  labs(title = "Rotten  User Meter",
-       x = "Ilość",
-       y = "Ocena")
+  labs(title = "Rozkład wartości ocen użytkowników portalu Rotten Tomatoes",
+       y = "Ilość",
+       x = "Ocena") +
+  theme(plot.title = element_text(hjust= .5))
 ```
 
 ```{r}
@@ -349,6 +393,16 @@ dataset %>%
   scale_x_continuous(labels = scales::comma) +
   coord_cartesian(xlim = c(0, 250000000))
 ```
+
+```{r}
+dataset %>% 
+  arrange(desc(BoxOffice)) %>% 
+  select(Title, BoxOffice)
+
+dataset %>% 
+  summarise(sum(Oscars))
+```
+
 
 #Zmienne jakościowe
 
