@@ -100,7 +100,6 @@ for (i in dataset %>% filter(is.na(imdbRating)) %>%
 }
 ```
 
-Dla user meter z rotten tomatoes też
 ```{r}
 for (i in dataset %>% filter(is.na(userMeter)) %>% 
   count(Genre) %>% pull(Genre)) {
@@ -113,8 +112,6 @@ for (i in dataset %>% filter(is.na(userMeter)) %>%
   
 }
 ```
-
-dla user rating z metacritics też
 
 ```{r}
 for (i in dataset %>% filter(is.na(userRating)) %>% 
@@ -401,6 +398,88 @@ dataset %>%
 
 dataset %>% 
   summarise(sum(Oscars))
+```
+```{r}
+dataset %>% colnames
+```
+
+```{r}
+dataset %>% 
+  ggplot() +
+  geom_point(aes(x = userMeter, y = userRating, color = imdbRating)) + 
+  scale_color_gradient2(mid = "firebrick4", low = "darkgoldenrod1", high = "forestgreen", name = "IMDB:") +
+  labs(title = "Porównanie ocen ze wszystkich trzech portali",
+       subtitle = "Metacritic, Rotten Tomatoes i IMDB",
+       x = "Oceny użytkowników Rotten Tomatoes",
+       y = "Oceny użytkowników Metacritic") +
+  theme(plot.title = element_text(hjust = .5))
+```
+```{r}
+dataset %>% 
+  ggplot() +
+  geom_point(aes(x = imdbRating, y = BoxOffice, color = ifelse(Oscars > 0, "Tak", "Nie")))+ 
+  scale_color_manual(breaks = c("Tak", "Nie"),
+                     labels = c("Tak", "Nie"),
+                     name = "Oscar:",
+                     values = c("gray55","goldenrod")) +
+  scale_y_log10(labels = scales::comma) +
+  labs(title = "Zależność wyniku finansowego od oceny z IMDB",
+       subtitle = "Wartośc wyniku finansowego przedstawiona jest w skali logarytmicznej",
+       x = "Ocena z IMDB",
+       y = "Wynik finansowy") +
+  theme(plot.title = element_text(hjust = .5))
+```
+```{r}
+dataset %>% 
+  ggplot() +
+  geom_boxplot(aes(x = Genre, y = BoxOffice, fill = Genre)) +
+  scale_y_log10(labels = scales::comma) +
+  scale_fill_manual(values = rainbow_hcl(22)) +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 30),
+        plot.title = element_text(hjust = .5)) +
+  labs(title = "Zależność wyniku finansowego od gatunku filmu",
+       subtitle = "Wartość wyniku finansowego przedstawiona jest w skali logarytmicznej",
+       x = "Gatunek filmowy",
+       y = "Wynik finansowy")
+```
+
+```{r}
+dataset %>% 
+  ggplot(aes(x = ifelse(Oscars > 0, "Tak", "Nie"), y = BoxOffice, fill = ifelse(Oscars > 0, "Tak", "Nie"), color = ifelse(Oscars > 0, "Tak", "Nie")) ) +
+  geom_boxplot(alpha = .8) +
+  scale_y_log10(labels = scales::comma) +
+  scale_color_manual(values = c("gray70","goldenrod")) +
+  scale_fill_manual(values = c("dimgray","goldenrod")) +
+  labs(title = "Zależność wygrania Oscara od wyniku finansowego",
+       subtitle = "Wartość wyniku finansowego przedstawiona jest w skali logarytmicznej",
+       x = "Czy film zdobył Oscara?",
+       y = "Wynik finansowy") +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = .5))
+```
+
+
+```{r}
+dataset %>%
+  ggplot() +
+  geom_point(aes(x = userMeter, y = RottenRating, color = ifelse(Oscars > 0, "Tak", "Nie"))) +
+  facet_wrap(Genre~.) +
+  scale_color_manual(breaks = c("Tak", "Nie"),
+                     labels = c("Tak", "Nie"),
+                     name = "Oscar:",
+                     values = c("gray55","goldenrod")) +
+  labs(title = "Wykres zależności ocen użytkowników od ocen recenzentów Rotten Tomatoes",
+       x = "Oceny użytkowników",
+       y = "Oceny recenzentów") +
+  theme(plot.title = element_text(hjust = .5))
+```
+
+```{r}
+dataset %>% 
+  filter(Genre == "Musical",
+         Oscars != 0) %>% 
+  select(Title)
 ```
 
 
