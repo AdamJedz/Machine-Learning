@@ -1,0 +1,491 @@
+---
+title: "Tweets"
+author: "Igor Adamiec"
+date: "7/31/2019"
+output: pdf_document
+---
+
+# Background
+
+This analysis base on **Democrat Vs. Republican Tweets** dataset. It contains 200 lastest tweets for hundreds US politicians (tweets were gathered in May 2018).
+
+# Analysis
+
+## Libraries
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(tidytext)
+library(tm)
+library(qdap)
+library(rebus)
+```
+
+## Loading file and exploratory analysis
+
+```{r message= FALSE}
+tweets <- read_csv("./ExtractedTweets.csv")
+```
+
+```{r}
+tweets %>% glimpse()
+```
+
+We can see that dataset contains three columns. First is party of user (either Dem or Rep), second is their account name and the last one is the tweet itself. Dataset contains almost 86,5 thousand tweets. Let's take a closer look which party twitts more.
+
+```{r echo = FALSE}
+tweets %>% 
+  ggplot(aes(x = Party)) +
+  geom_bar(aes(fill = Party)) +
+  scale_fill_manual(values = c("blue", "red")) +
+  theme(legend.position = "none",
+        plot.background = element_rect(fill = "gainsboro"),
+        panel.background = element_rect(fill = "gainsboro"),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major= element_blank(),
+        plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5)) +
+  labs(title = "Number of tweets in dataset", subtitle = "divided by party",
+       y = "Number of tweets")
+  
+```
+
+Above plot shows that Republicans tweet a bit more than democrats. We can see exact numbers below:
+
+```{r echo = FALSE}
+tweets %>% count(Party) %>% mutate(percentage = n / sum(n))
+```
+
+Total difference is around 2300 tweets that is about 2% of all of them. 
+
+I also wanted to see which user tweeted the most but this dataset contains max 200 latest tweets so let's see how many politicians hitted maximum.
+
+
+```{r echo = FALSE}
+tweets %>% 
+  count(Handle, Party) %>% 
+  count(n) %>% 
+  arrange(desc(nn)) %>% 
+  rename("Number of tweets per author" = n,
+         "n" = nn)
+ 
+```
+
+Total number of politicians in this dataset is `r tweets$Handle %>% unique() %>% length()` and representation of Republicans is bit higher.
+
+
+```{r echo = FALSE}
+tweets %>% 
+  group_by(Party) %>% 
+  summarise(politicians = n_distinct(Handle))
+```
+
+## Word counting
+
+First I added new column in which I tidied all tweets. Below code may not look great but it is much faster than writing my own function and using map from **purrr** package. As a stop words I used stop_words set from **tidytext** package with some additions.
+
+```{r}
+custom_stop_words <- tribble(
+  ~word, ~lexicon,
+  "https", "CUSTOM",
+  "t.co", "CUSTOM",
+  "rt", "CUSTOM",
+  "amp", "CUSTOM"
+)
+
+stop_words2 <- stop_words %>% 
+  bind_rows(custom_stop_words)
+
+```
+
+```{r}
+http_pattern <- "https" %R% one_or_more(or(ALNUM, PUNCT))
+
+prepared_tweets <- tweets %>% 
+  mutate(prepared_tweet = str_remove_all(Tweet, http_pattern),
+         prepared_tweet = replace_contraction(prepared_tweet),
+         prepared_tweet = replace_contraction(prepared_tweet),
+         prepared_tweet = str_to_lower(prepared_tweet),
+         prepared_tweet = removePunctuation(prepared_tweet),
+         prepared_tweet = str_remove_all(prepared_tweet, pattern = "…|’"),
+         prepared_tweet = removeWords(prepared_tweet, stop_words2$word),
+         prepared_tweet = stripWhitespace(prepared_tweet),
+         prepared_tweet = str_trim(prepared_tweet))
+```
+
+### Division by words
+
+Below we can see top 10 words used in this dataset. We can find there words describing politics related places (house, congress), law related things (tax, bill, act), classic expressions used by politicians (people, day, time, week) and what is most interesting **Trump**.
+
+```{r echo = FALSE}
+unnest_tweets <- prepared_tweets %>% 
+  select(-Tweet) %>% 
+  unnest_tokens(word, prepared_tweet)
+
+unnest_tweets_count <- unnest_tweets %>%   
+  count(word) %>% 
+  arrange(desc(n))
+
+unnest_tweets_count %>% head(10)
+```
+
+Below plot expands above table and shows all most popular words that occured in the dataset more than 1500 times.
+
+```{r echo = FALSE}
+unnest_tweets_count %>% 
+  filter(n > 1500) %>% 
+  mutate(word2 = fct_reorder(word, n)) %>% 
+  ggplot(aes(x = word2, y = n)) + 
+  geom_col() + 
+  coord_flip() +
+  labs(title = "Most popular words", subtitle = "For both parties",
+       x = "Words", y = "Number of occurences",
+       caption = "Words that occured more than 1500 times.") +
+  theme(legend.position = "none",
+        plot.background = element_rect(fill = "gainsboro"),
+        panel.background = element_rect(fill = "gainsboro"),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major= element_blank(),
+        plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5))
+```
+
+```{r message = FALSE, echo = FALSE}
+unnest_tweets_count_party <- unnest_tweets %>%   
+  count(word, Party) %>% 
+  arrange(desc(n))
+```
+
+Below I divided dataset by party. We can see that Republicans more often repeat words than Democrats (none of "Democratic" words has more than 2000 occurences). 
+
+Republicans in their tweets mostly focus on financial stuff (taxes, bills) ans Democrats focus on Donald Trump. On lower position in Democrats' tweets we can see progressive values such as health, families, support and women. Republicans focuses on words like american and national.
+
+```{r echo = FALSE}
+unnest_tweets_count_party %>% 
+  group_by(Party) %>% 
+  top_n(15, n) %>% 
+  ggplot(aes(x = reorder(word, n), y = n)) +
+  geom_col(aes(fill = Party), show.legend = F) +
+  facet_wrap(.~Party, scales = "free_y")+
+  coord_flip() +
+  scale_fill_manual(values = c("blue", "red")) +
+  theme(plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5)) +
+  labs(title = "Most popular words", subtitle = "Divided by author's party",
+       x = "Words", y = "Number of occurences",
+       caption = "Top 15 most popular word for each party.")
+```
+
+### Division by bigrams
+
+```{r echo = FALSE}
+unnested_bigrams <- prepared_tweets %>% 
+  select(-Tweet) %>% 
+  unnest_tokens(token, prepared_tweet, token = "ngrams", n = 2)
+```
+
+Below I counted every bigram (combination of two words) from tweets. Now the image is much clearer than earlier. We can see that most popular topics are tax reform, tax cuts, town hall and ... President Trump. 
+
+```{r echo = FALSE}
+unnested_bigrams %>% 
+  count(token) %>% 
+  arrange(desc(n)) %>% head(10)
+```
+
+Below plots shows most popular bigrams that occured more than 200 times in dataset. We can see that phrase "happy birthday" is quite popular. Also we can find well known figures such as Barbara Bush and Martin Luther King. Let's see who mentions them more.
+
+```{r echo = FALSE}
+unnested_bigrams %>% 
+  count(token) %>% 
+  filter(n > 200) %>% 
+  mutate(token = fct_reorder(token, n)) %>% 
+  ggplot(aes(x = token, y = n)) + 
+  geom_col() + 
+  coord_flip() +
+  labs(title = "Most popular bigrams", subtitle = "For both parties",
+       x = "Bigrams", y = "Number of occurences",
+       caption = "Bigrams that occured more than 200 times.") +
+  theme(legend.position = "none",
+        plot.background = element_rect(fill = "gainsboro"),
+        panel.background = element_rect(fill = "gainsboro"),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major= element_blank(),
+        plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5))
+```
+
+As we would suspect, Democrats tweet about bad things (gun violence, trump administration) while Republicans mention tax reforms. Both parties mention President Trump (Democrats a bit more) but we can assume that they have different reasons. 
+Democrats mention Martin Luther King but also Scott Pruitt - former chief of EPA that resigned in July 2018 after some scandals.
+
+```{r echo = FALSE}
+unnested_bigrams %>% 
+  count(Party, token) %>% 
+  group_by(Party) %>% 
+  top_n(15, n) %>% 
+  ggplot(aes(x = reorder(token, n), y = n)) +
+  geom_col(aes(fill = Party), show.legend = F) +
+  facet_wrap(.~Party, scales = "free_y")+
+  coord_flip() +
+  scale_fill_manual(values = c("blue", "red")) +
+  theme(plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5)) +
+  labs(title = "Most popular bigrams", subtitle = "Divided by author's party",
+       x = "Bigrams", y = "Number of occurences",
+       caption = "Top 15 most popular bigrams for each party.")
+```
+
+### Division by trigrams
+
+Below I extracted all trigrams - each combination of 3 words.
+```{r echo = FALSE}
+unnested_trigrams <- prepared_tweets %>% 
+  select(-Tweet) %>% 
+  unnest_tokens(token, prepared_tweet, token = "ngrams", n = 3)
+```
+
+Below we can see most popular trigrams. They differ than single words and bigrams. Except phrases that we knew from previous plots now we can see mentions about Mark Zuckerberg.
+
+```{r echo = FALSE}
+unnested_trigrams %>% 
+  count(token) %>% 
+  filter(n > 50) %>% 
+  mutate(token = fct_reorder(token, n)) %>% 
+  ggplot(aes(x = token, y = n)) + 
+  geom_col() + 
+  coord_flip() +
+  labs(title = "Most popular trigrams", subtitle = "For both parties",
+       x = "Trigrams", y = "Number of occurences",
+       caption = "Trigrams that occured more than 50 times.") +
+  theme(legend.position = "none",
+        plot.background = element_rect(fill = "gainsboro"),
+        panel.background = element_rect(fill = "gainsboro"),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major= element_blank(),
+        plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5))
+```
+
+Same trigrams, of course, occure less than bigrams so this analysis can be less accurate but we can see that Republicans also mentioned Martin Luter King quite often.
+
+```{r}
+unnested_trigrams %>% 
+  count(Party, token) %>% 
+  group_by(Party) %>% 
+  top_n(15, n) %>% 
+  ggplot(aes(x = reorder(token, n), y = n)) +
+  geom_col(aes(fill = Party), show.legend = F) +
+  facet_wrap(.~Party, scales = "free_y")+
+  coord_flip() +
+  scale_fill_manual(values = c("blue", "red")) +
+  theme(plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5)) +
+  labs(title = "Most popular trigrams", subtitle = "Divided by author's party",
+       x = "Trigrams", y = "Number of occurences",
+       caption = "Top 15 most popular trigrams for each party.")
+```
+
+# Sentiment analysis
+
+## By Party
+
+To calculate polarity I used Bing lexicon. It rates word as either positive or negative. Polarity is the difference between positive and negative words. Sad conclusion is fact that tweets of both parties are strongly negative. I would really prefer politician that rather join than divide. But as we know complaining and attacking opponents sells more.
+
+```{r echo = FALSE, message=FALSE}
+(tweets_sentiment <- unnest_tweets_count_party %>% 
+  inner_join(get_sentiments("bing")) %>% 
+   count(Party, sentiment) %>% 
+   spread(sentiment, n) %>% 
+   mutate(polarity = positive - negative))
+
+tweets_sentiment %>% 
+  ggplot(aes(x = reorder(Party, -polarity), y = polarity)) +
+  geom_col(aes(fill = Party), show.legend = F)+
+  coord_flip() +
+  scale_fill_manual(values = c("blue", "red")) +
+  theme(plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5)) +
+  labs(title = "Polarity of tweets", subtitle = "Divided by author's party",
+       x = "Party", y = "Polarity score",
+       caption = "Based on Bing lexicon")
+```
+
+## By users
+
+```{r echo = FALSE, message = FALSE}
+
+unnest_tweets_no_stop_person <- unnest_tweets %>%   
+  count(word, Handle, Party) %>% 
+  arrange(desc(n))
+
+person_sentiment <- unnest_tweets_no_stop_person %>% 
+  inner_join(get_sentiments("bing")) %>% 
+   count(Handle, sentiment, Party) %>% 
+   spread(sentiment, n) %>% 
+   mutate(polarity = positive - negative)
+```
+
+I chose 5 most negative and most positive politicians of both parties. Below are the results
+
+```{r echo = FALSE}
+outliers <- person_sentiment %>% 
+  group_by(Party) %>% 
+  top_n(-5, polarity) %>% 
+  bind_rows(person_sentiment %>% 
+  group_by(Party) %>% 
+  top_n(5, polarity))
+
+
+```
+
+```{r echo = FALSE}
+outliers %>% 
+  ggplot(aes(x = reorder(Handle, polarity), y = polarity)) +
+  geom_col(aes(fill = Party), show.legend = F) +
+  facet_wrap(Party~., scales = "free_y") + 
+  coord_flip() +
+  scale_fill_manual(values = c("blue", "red")) +
+  theme(plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5)) +
+  labs(title = "Most positive and negative politicians", subtitle = "Divided by party",
+       x = "Politicians", y = "Sentiment Score",
+       caption = "Based on Bing lexicon")
+```
+
+### Positive Democrats
+
+Looking on 10 most popular bigrams from top 2 positive Democrats, we can see phrase "I'm proud". 
+
+```{r echo = FALSE}
+prepared_tweets %>% 
+  filter(Handle %in% c("SanfordBishop", "JimLangevin")) %>% 
+  select(-Tweet) %>% 
+  unnest_tokens(token, prepared_tweet, token = "ngrams", n = 2) %>% 
+  count(token) %>% 
+  arrange(desc(n)) %>% 
+  head(10)
+```
+
+Looking at words we can see "congratulations", "pleasure" and mentioned previously - "proud".
+
+```{r echo = FALSE}
+prepared_tweets %>% 
+  filter(Handle %in% c("SanfordBishop", "JimLangevin")) %>% 
+  select(-Tweet) %>% 
+  unnest_tokens(token, prepared_tweet, token = "words") %>% 
+  count(token) %>% 
+  arrange(desc(n)) %>% head(10)
+```
+
+# Positive Reps
+
+2 most positive Republicans also were proud. Moreover they were tweeting about some brave women and wished happy.
+
+```{r echo = FALSE}
+prepared_tweets %>% 
+  filter(Handle %in% c("CongressmanHice", "CongMikeSimpson")) %>% 
+  select(-Tweet) %>% 
+  unnest_tokens(token, prepared_tweet, token = "ngrams", n = 2) %>% 
+  count(token) %>% 
+  arrange(desc(n)) %>% head(10)
+```
+
+```{r echo = FALSE}
+prepared_tweets %>% 
+  filter(Handle %in% c("CongressmanHice", "CongMikeSimpson")) %>% 
+  select(-Tweet) %>% 
+  unnest_tokens(token, prepared_tweet, token = "words") %>% 
+  count(token) %>% 
+  arrange(desc(n)) %>% 
+  head(10)
+```
+
+# Negative Democrats
+
+Two most negative Democrats were complaining about white house, living situation of american people, gun violence and... female rap? 
+Also popular phrase is "so called president".
+
+```{r echo = FALSE}
+prepared_tweets %>% 
+  filter(Handle %in% c("RepAdamSchiff", "RepJeffries")) %>% 
+  select(-Tweet) %>% 
+  unnest_tokens(token, prepared_tweet, token = "ngrams", n = 2) %>% 
+  count(token) %>% 
+  arrange(desc(n)) %>% 
+  head(10)
+```
+
+
+```{r echo = FALSE}
+prepared_tweets %>% 
+  filter(Handle %in% c("RepAdamSchiff", "RepJeffries")) %>% 
+  select(-Tweet) %>% 
+  unnest_tokens(token, prepared_tweet, token = "words") %>% 
+  count(token) %>% 
+  arrange(desc(n)) %>% 
+  head(10)
+```
+
+# Negative Reps
+
+```{r}
+prepared_tweets %>% 
+  filter(Handle %in% c("DanaRohrabacher", "RepDeSantis")) %>% 
+  select(-Tweet) %>% 
+  unnest_tokens(token, prepared_tweet, token = "ngrams", n = 2) %>% 
+  count(token) %>% 
+  arrange(desc(n)) %>% 
+  head(10)
+```
+
+```{r echo = FALSE}
+prepared_tweets %>% 
+  filter(Handle %in% c("DanaRohrabacher", "RepDeSantis")) %>% 
+  select(-Tweet) %>% 
+  unnest_tokens(token, prepared_tweet, token = "words") %>% 
+  count(token) %>% 
+  arrange(desc(n)) %>% 
+  head(10)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

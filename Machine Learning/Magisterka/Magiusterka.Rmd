@@ -4,10 +4,15 @@ author: "Igor Adamiec"
 date: "2/5/2019"
 output: html_document
 ---
+```{r}
+set.seed(123)
+```
 
 ```{r}
 library(tidyverse)
 library(colorspace)
+library(data.table)
+library(gridExtra)
 ```
 
 Unifikacja danych jakościowych:
@@ -199,9 +204,12 @@ dataset %>%
   scale_fill_manual(values = rainbow_hcl(6)) +
   labs(title = "Ilość filmów pod względem kategorii wiekowej",
        x = "Kategoria wiekowa",
-       y = "Ilość filmów") +
+       y = "Ilość filmów",
+       caption = "Źródło: opracowanie własne") +
   theme(plot.title = element_text(hjust = .5),
-        legend.position = "none")
+        legend.position = "none",
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"))
 ```
 
 ```{r}
@@ -210,8 +218,13 @@ dataset %>%
   geom_bar(aes(x = Year), fill = "deepskyblue4") +
   labs(title = "Ilość filmów pod względem roku produkcji",
        y = "Ilość filmów",
-       x = "Rok produkcji") +
-  theme(plot.title = element_text(hjust = .5))
+       x = "Rok produkcji",
+       caption = "Źródło: opracowanie własne") +
+  theme(plot.title = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue")
+        
+        )
 ```
 
 ```{r}
@@ -219,10 +232,13 @@ dataset %>%
   ggplot() +
   geom_histogram(aes(x = Runtime), fill = "deepskyblue4", bins = 100) +
   labs(title = "Rozkład czasu trwania filmów",
-       y = "Ilość",
-       x = "Czas trwania filmu (w minutach)") +
+       y = "Ilość filmów",
+       x = "Czas trwania filmu (w minutach)",
+       caption = "Źródło: opracowanie własne") +
   coord_cartesian(xlim =c(0, 250)) +
-  theme(plot.title = element_text(hjust = .5))
+  theme(plot.title = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"))
 ```
 
 ```{r}
@@ -235,9 +251,12 @@ dataset %>%
   scale_fill_manual(values = rainbow_hcl(8)) +
   labs(title = "Najwięcej filmów pod względem gatunku",
        x = "Gatunek",
-       y = "Ilość filmów") +
+       y = "Ilość filmów",
+       caption = "Źródło: opracowanie własne") +
   theme(legend.position = "none") +
-  theme(plot.title = element_text(hjust = .5))
+  theme(plot.title = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"))
 ```
 
 ```{r}
@@ -250,9 +269,12 @@ dataset %>%
   scale_fill_manual(values = rainbow_hcl(8)) +
   labs(title = "Najmnniej filmów pod względem gatunku",
        x = "Gatunek",
-       y = "Ilość filmów")+
+       y = "Ilość filmów",
+       caption = "Źródło: opracowanie własne") +
   theme(legend.position = "none") +
-  theme(plot.title = element_text(hjust = .5))
+  theme(plot.title = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"))
 ```
 
 ```{r}
@@ -263,12 +285,14 @@ dataset %>%
   ggplot +
   geom_col(aes(x = reorder(Director, -n), y = n, fill = Director)) +
   scale_fill_manual(values = rainbow_hcl(10)) +
-  labs(title = "10 najbardziej płodnych reżyserów",
+  labs(title = "Dziesięciu reżyserów z największą ilością filmów w zbiorze danych",
        x = "Reżyser",
-       y = "Ilość filmów")+
+       y = "Ilość filmów",caption = "Źródło: opracowanie własne")+
   theme(legend.position = "none") +
   theme(plot.title = element_text(hjust = .5),
-        axis.text.x = element_text(angle = 20))
+        axis.text.x = element_text(angle = 20),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"))
 ```
 
 
@@ -296,40 +320,43 @@ dataset %>%
   scale_fill_manual(values = rainbow_hcl(10)) +
   labs(title = "Najwięcej filmów pod względem kraju produkcji",
        x = "Kraj produkcji",
-       y = "Język") +
+       y = "Ilość filmów",
+       caption = "Źródło: opracowanie własne") +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = .5))
+        plot.title = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"))
 ```
 
-```{r}
-dataset %>% 
+```{r fig.height=7, fig.width=7}
+ plot_metacritic <- dataset %>% 
   ggplot() +
-  geom_histogram(aes(x = Metacritic), fill = "goldenrod1", bins = 10) +
+  geom_histogram(aes(x = Metacritic), fill = "goldenrod1", bins = 12) +
   labs(title = "Rozkład zmiennej Metacritic",
-       y = "Ilość",
-      x = "Ocena na metacritic") +
-  theme(plot.title = element_text(hjust = .5))
-```
+       y = "Ilość filmów",
+      x = "Ocena na metacritic",
+      caption = "Źródło: opracowanie własne") +
+  theme(plot.title = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue")) +
+  coord_cartesian(xlim = c(0, 100))
 
-```{r}
-dataset %>% 
-  ggplot() +
-  geom_histogram(aes(x = userRating), fill = "goldenrod2", bins = 15) +
-  labs(title = "Rozkłąd wartości ocen użytkowników portalu Metacritic",
-       y = "Ilość",
-       x = "Ocena") +
-  theme(plot.title = element_text(hjust = .5))
-```
-
-```{r}
-dataset %>% 
+plot_imdb <- dataset %>% 
   ggplot() +
   geom_histogram(aes(x = imdbRating), fill = "gray18", bins = 20) +
   labs(title = "Rozkład zmiennej imdbRating",
-       y = "Ilość",
-       x = "Srednia ocen na IMDB") +
-  theme(plot.title = element_text(hjust = .5))
+       y = "Ilość filmów",
+       x = "Srednia ocen na IMDB",
+       caption = "Źródło: opracowanie własne") +
+  theme(plot.title = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"))
+grid.arrange(plot_metacritic, plot_imdb, ncol = 1)
 ```
+
+
+
+
 
 ```{r}
 dataset %>% 
@@ -341,55 +368,72 @@ dataset %>%
   geom_col(aes(x = reorder(Language, -n), y = n, fill = Language)) +
   scale_fill_manual(values = rainbow_hcl(10)) +
   theme(plot.title = element_text(hjust = .5),
-        legend.position = "none") +
+        legend.position = "none",
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue")) +
   labs(title = "Najpopularniejsze języki w filmach",
        subtitle = "Język angielski znajduje się na pierwszym miejscu z 10377 pozycjami.",
        x = "Język",
-       y = "Ilość filmów")
+       y = "Ilość filmów",
+       caption = "Źródło: opracowanie własne")
 ```
 
 
 
-```{r}
-dataset %>% 
+```{r fig.height=7, fig.width=7}
+plot_rotten <- dataset %>% 
   ggplot() +
   geom_histogram(aes(x = RottenRating), fill = "forestgreen", bins = 15) +
-  labs(title = "Rozkład ocen recenzentów portalu Rotten Tomatoes",
-       y = "Ilość",
-       x = "Ocena") +
-  theme(plot.title = element_text(hjust = .5))
-```
+  labs(title = "Rozkład zmiennej RottenRating",
+       y = "Ilość filmów",
+       x = "Ocena",
+       caption = "Źródło: opracowanie własne") +
+  theme(plot.title = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"))
 
-```{r}
-dataset %>% 
+plot_meter <- dataset %>% 
   ggplot() +
   geom_histogram(aes(x = Meter), fill = "gold3", bins = 15) +
-  labs(title = "Rozkład wartości zmienej Meter",
-       y = "Ilość",
-       x = "Popularność wśród użytkowników Rotten Tomatoes") +
-  theme(plot.title = element_text(hjust= .5))
+  labs(title = "Rozkład zmiennej Meter",
+       y = "Ilość filmów",
+       x = "Popularność wśród użytkowników Rotten Tomatoes",
+       caption = "Źródło: opracowanie własne") +
+  theme(plot.title = element_text(hjust= .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"))
+grid.arrange(plot_rotten, plot_meter, ncol = 1)
 ```
 
-```{r}
-dataset %>% 
+
+
+```{r fig.width= 7, fig.height=7}
+plot_usermeter <- dataset %>% 
   ggplot() +
   geom_histogram(aes(x = userMeter), fill = "firebrick2", bins = 20) +
-  labs(title = "Rozkład wartości ocen użytkowników portalu Rotten Tomatoes",
-       y = "Ilość",
-       x = "Ocena") +
-  theme(plot.title = element_text(hjust= .5))
+  labs(title = "Rozkład zmiennej userMeter",
+       y = "Ilość filmów",
+       x = "Ocena użytkowników portalu Rotten Tomatoes.",
+       caption = "Źródło: opracowanie własne") +
+  theme(plot.title = element_text(hjust= .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"))
+
+ploterrating <- dataset %>% 
+  ggplot() +
+  geom_histogram(aes(x = userRating), fill = "goldenrod2", bins = 15) +
+  labs(title = "Rozkład zmiennej userRating",
+       y = "Ilość filmów",
+       x = "Ocena użytkowników portalu Metacritic",
+       caption = "Źródło: opracowanie własne") +
+  theme(plot.title = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"))
+
+grid.arrange(plot_usermeter, ploterrating, ncol = 1)
 ```
 
-```{r}
-dataset %>% 
-  ggplot() +
-  geom_histogram(aes(x = BoxOffice), fill = "dodgerblue1", bins = 30) +
-  labs(title = "Box Office (USD)",
-       x = "Ilość zarobionych pieniędzy (USD)",
-       y = "Ocena") +
-  scale_x_continuous(labels = scales::comma) +
-  coord_cartesian(xlim = c(0, 250000000))
-```
+
 
 ```{r}
 dataset %>% 
@@ -411,8 +455,13 @@ dataset %>%
   labs(title = "Porównanie ocen ze wszystkich trzech portali",
        subtitle = "Metacritic, Rotten Tomatoes i IMDB",
        x = "Oceny użytkowników Rotten Tomatoes",
-       y = "Oceny użytkowników Metacritic") +
-  theme(plot.title = element_text(hjust = .5))
+       y = "Oceny użytkowników Metacritic",
+       caption = "Źródło: opracowanie własne") +
+  theme(plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"),
+        legend.background = element_rect(fill = "aliceblue"))
 ```
 ```{r}
 dataset %>% 
@@ -424,10 +473,15 @@ dataset %>%
                      values = c("gray55","goldenrod")) +
   scale_y_log10(labels = scales::comma) +
   labs(title = "Zależność wyniku finansowego od oceny z IMDB",
-       subtitle = "Wartośc wyniku finansowego przedstawiona jest w skali logarytmicznej",
+       subtitle = "Wartość wyniku finansowego przedstawiona jest w skali logarytmicznej",
        x = "Ocena z IMDB",
-       y = "Wynik finansowy") +
-  theme(plot.title = element_text(hjust = .5))
+       y = "Wynik finansowy",
+       caption = "Źródło: opracowanie własne") +
+  theme(plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"),
+        legend.background = element_rect(fill = "aliceblue"))
 ```
 ```{r}
 dataset %>% 
@@ -437,11 +491,14 @@ dataset %>%
   scale_fill_manual(values = rainbow_hcl(22)) +
   theme(legend.position = "none",
         axis.text.x = element_text(angle = 30),
-        plot.title = element_text(hjust = .5)) +
+        plot.title = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue")) +
   labs(title = "Zależność wyniku finansowego od gatunku filmu",
        subtitle = "Wartość wyniku finansowego przedstawiona jest w skali logarytmicznej",
        x = "Gatunek filmowy",
-       y = "Wynik finansowy")
+       y = "Wynik finansowy",
+       caption = "Źródło: opracowanie własne")
 ```
 
 ```{r}
@@ -454,9 +511,33 @@ dataset %>%
   labs(title = "Zależność wygrania Oscara od wyniku finansowego",
        subtitle = "Wartość wyniku finansowego przedstawiona jest w skali logarytmicznej",
        x = "Czy film zdobył Oscara?",
-       y = "Wynik finansowy") +
+       y = "Wynik finansowy",
+       caption = "Źródło: opracowanie własne") +
   theme(legend.position = "none",
-        plot.title = element_text(hjust = .5))
+        plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"))
+```
+
+
+```{r}
+dataset %>%
+  ggplot() +
+  geom_point(aes(x = userRating, y = Metacritic, color = ifelse(Oscars > 0, "Tak", "Nie"))) +
+  facet_wrap(Genre~.) +
+  scale_color_manual(breaks = c("Tak", "Nie"),
+                     labels = c("Tak", "Nie"),
+                     name = "Oscar:",
+                     values = c("gray55","goldenrod")) +
+  labs(title = "Wykres zależności ocen użytkowników od ocen recenzentów Metacritic",
+       x = "Oceny użytkowników",
+       y = "Oceny recenzentów",
+       caption = "Źródło: obliczenia własne") +
+  theme(plot.title = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"),
+        legend.background = element_rect(fill = "aliceblue"))
 ```
 
 
@@ -471,8 +552,12 @@ dataset %>%
                      values = c("gray55","goldenrod")) +
   labs(title = "Wykres zależności ocen użytkowników od ocen recenzentów Rotten Tomatoes",
        x = "Oceny użytkowników",
-       y = "Oceny recenzentów") +
-  theme(plot.title = element_text(hjust = .5))
+       y = "Oceny recenzentów",
+       caption = "Źródło: obliczenia własne") +
+  theme(plot.title = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"),
+        legend.background = element_rect(fill = "aliceblue"))
 ```
 
 ```{r}
@@ -482,6 +567,263 @@ dataset %>%
   select(Title)
 ```
 
+```{r}
+library(corrplot)
+```
+```{r}
+col1 <- colorRampPalette(c("firebrick4", "white", "forestgreen"))
+library(GGally)
+```
+
+```{r message = FALSE, fig.height= 30, fig.width=30}
+dataset %>% 
+  select_if(is.numeric) %>% ggpairs()
+  
+  cor(use = "complete.obs") %>% 
+  corrplot.mixed(tl.pos = "lt",
+                 order = "AOE",
+           tl.srt = 45,
+           lower.col = "black",
+           number.cex = .7)
+```
+# Porównania Oscarowe 
+```{r}
+dataset %>% summarise(sum(Oscars))
+```
+
+```{r}
+dataset %>% 
+  mutate(Oscar_won = as.factor(ifelse(Oscars > 0, "Yes", "No"))) %>% 
+  count(Oscar_won) %>% 
+  ggplot() +
+  geom_col(aes(x = Oscar_won, y = n), fill = c("gray55","goldenrod")) +
+  geom_text(aes(x = Oscar_won, y = n, label = n), nudge_y = 400) +
+  labs(title = "Porównanie filmów oscarowych z filmami nienagrodzonymi",
+       y = "Ilość filmów",
+       x = "Czy film został nagrodzony Oscarem?",
+       caption = "Źródło: opracowanie własne") +
+  scale_x_discrete(breaks = c("No", "Yes"), labels = c("Nie", "Tak")) +
+  theme(plot.title = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"))
+```
+
+```{r}
+oscar_data <- dataset %>% 
+  filter(Oscars != 0)
+```
+
+```{r}
+oscar_data %>% 
+  group_by(Genre) %>% 
+  summarize(sum = sum(Oscars)) %>% 
+  arrange(desc(sum)) %>% 
+  head(10) %>% 
+  ggplot() +
+  geom_col(aes(x = reorder(Genre, -sum), y = sum, fill = Genre))+
+  theme(plot.title = element_text(hjust = .5),
+        legend.position = "none",
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue")) +
+  scale_fill_manual(values = rainbow_hcl(10)) +
+  labs(title = "Dziesięć najczęściej nagradzanych gatunków filmowych",
+       x = "Gatunek filmowy",
+       y = "Ilość zdobytych Oscarów",
+       caption = "Źródło: opracowanie własne")
+```
+
+```{r}
+oscar_data %>% 
+  group_by(Country) %>% 
+  summarize(sum = sum(Oscars)) %>% 
+  arrange(desc(sum)) %>% 
+  head(10) %>% 
+  ggplot() +
+  geom_col(aes(x = reorder(Country, -sum), y = sum, fill = Country))+
+  theme(plot.title = element_text(hjust = .5),
+        legend.position = "none",
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue")) +
+  scale_fill_manual(values = rainbow_hcl(10)) +
+  labs(title = "Dziesięć najczęściej nagradzanych krajów",
+       x = "Kraj produkcji",
+       y = "Ilość zdobytych Oscarów",
+       caption = "Źródło: opracowanie własne")
+```
+
+```{r}
+oscar_data %>% 
+  group_by(Language) %>% 
+  summarize(sum = sum(Oscars)) %>% 
+  arrange(desc(sum)) %>% 
+  head(5) %>% 
+  ggplot() +
+  geom_col(aes(x = reorder(Language, -sum), y = sum, fill = Language))+
+  theme(plot.title = element_text(hjust = .5),
+        legend.position = "none",
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue")) +
+  scale_fill_manual(values = rainbow_hcl(10)) +
+  labs(title = "Pięć najczęściej nagradzanych języków",
+       x = "Język filmu",
+       y = "Ilość zdobytych Oscarów",
+       caption = "Źródło: opracowanie własne")
+```
+```{r}
+oscar_data %>% filter(Language == "Swedish", Oscars > 0)
+```
+
+```{r}
+oscar_data %>% 
+  group_by(Director) %>% 
+  summarize(sum = sum(Oscars)) %>% 
+  arrange(desc(sum)) %>% 
+  head(10) %>% 
+  ggplot() +
+  geom_col(aes(x = reorder(Director, -sum), y = sum, fill = Director))+
+  theme(plot.title = element_text(hjust = .5),
+        legend.position = "none",
+        axis.text.x = element_text(angle = 20, size = 11),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue")) +
+  scale_fill_manual(values = rainbow_hcl(10)) +
+  labs(title = "Dziesięciu najczęściej nagradzanych reżyserów",
+       x = "Reżyser",
+       y = "Ilość zdobytych Oscarów",
+       caption = "Źródło: opracowanie własne")
+```
+
+```{r}
+oscar_data %>% 
+  filter(Director == "William Wyler")
+```
+
+
+```{r}
+dataset %>% 
+  group_by(Year) %>% 
+  summarize(sum = sum(Oscars)) %>% 
+  filter(Year != 2014) %>% 
+  ggplot(aes(x = Year, y = sum)) +
+  geom_point(color = "goldenrod") +
+  labs(title = "Coroczna ilość przyznawanych Oscarów",
+       x = "Rok produkcji",
+       y = "Łączna ilość przyznanych Oscarów",
+       caption = "Źródło: opracowanie własne") +
+  theme(
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"),
+        plot.title = element_text(hjust = .5))
+```
+
+
+# Wykresy alluvial
+
+```{r}
+library(alluvial)
+```
+```{r}
+allu_data <- dataset %>% 
+  filter(Language %in% c("English", "French", "Spanish", "Japanese", "Italian"),
+         Country %in% c("USA", "UK", "France", "Canada", "Germany", "Italy", "Australia", "Japan")) %>% 
+  mutate(
+         Oscar_won = ifelse(Oscars >=1, "Yes", "No"),
+         Oscar_won = as.factor(Oscar_won),
+         Period = case_when(
+           Year < 1930 ~ "< 1930",
+           Year >= 1930 & Year < 1950 ~ "1930 - 1950",
+           Year >= 1950 & Year < 1970 ~ "1950 - 1970",
+           Year >= 1970 & Year < 1990 ~ "1970 - 1990",
+           TRUE ~ "1990 +"
+         ),
+         Period = as.factor(Period),
+         Time = case_when(
+           Runtime < 60 ~ "Short",
+           Runtime >= 60 & Runtime < 120 ~ "Normal",
+           TRUE ~ "Long"
+         ),
+         Time = as.factor(Time)) %>% 
+  select(Period, Audience, Genre, Time, Language, Country, Oscar_won)
+```
+```{r}
+allu_data %>% glimpse
+```
+```{r}
+library(ggalluvial)
+```
+
+```{r}
+allu_data_periodTime <- allu_data %>% 
+  count(Period, Time)  
+  
+allu_data_periodTime %>% 
+  ggplot(aes(y = n,
+         axis1 = Period, axis2 = Time)) +
+  geom_alluvium(aes(fill = Period),
+                width = 0, reverse = F) +
+  guides(fill = F) +
+  geom_stratum(width = 1/8, reverse = F) +
+  geom_text(stat = "stratum", label.strata = TRUE, reverse = FALSE) +
+  scale_x_continuous(breaks = 1:2, labels = c("Rok produkcji", "Długość filmu")) +
+  labs(title = "Długośc filmu w zależności od roku produkcji",
+       subtitle = "Short - poniżej 60 min, Normal - 60 - 120 min, Long - powyżej 120 min",
+       caption = "Źródło: opracowanie własne") +
+  theme(plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"))
+  
+```
+
+```{r}
+top_genres <- dataset %>% count(Genre) %>% arrange(desc(n)) %>% tail(10) %>% mutate(Genre = as.character(Genre)) %>% pull(Genre)
+allu_data_periodGenre <- allu_data %>% 
+  filter(Genre %in% top_genres) %>% 
+  count(Period, Genre)  
+  
+allu_data_periodGenre %>% 
+  ggplot(aes(y = n,
+         axis2 = Period, axis1 = Genre)) +
+  geom_alluvium(aes(fill = Genre),
+                width = 0, reverse = F) +
+  guides(fill = F) +
+  geom_stratum(width = 1/8, reverse = F) +
+  geom_text(stat = "stratum", label.strata = TRUE, reverse = FALSE) +
+  scale_x_continuous(breaks = 1:2, labels = c("Gatunek", "Rok produkcji")) +
+  labs(title = "Gatunek filmu w zależności od roku produkcji",
+       subtitle = "Dla najmniej popularnych gatunków",
+       caption = "Źródło: opracowanie własne") +
+  theme(plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue"))
+  
+```
+
+```{r, error= FALSE}
+allu_data_audience <- allu_data %>% 
+  count(Audience, Oscar_won)  
+  
+# alluvial(allu_data_audience[,1:2], freq = allu_data_audience$n,
+#          col = ifelse(allu_data_audience$Oscar_won == "Yes", "goldenrod", "gray55"),
+#          border = ifelse(allu_data_audience$Oscar_won == "Yes", "goldenrod", "gray55"),
+#          hide = allu_data_audience$n == 0,
+#          cex = .7) +
+#   scale_x_continuous(breaks = 1:2, labels = c("Kategoria Wiekowa", "Zdobycie nagrody")) +
+#   labs(title = "Zależność kategorii wiekowej od faktu zdobycia Oscara",
+#        caption = "Źródło: opracowanie własne") +
+#   theme(plot.title = element_text(hjust = .5),
+#         plot.subtitle = element_text(hjust = .5),
+#         axis.title.y = element_blank(),
+#         axis.text.y = element_blank(),
+#         axis.ticks.y = element_blank())
+```
 
 #Zmienne jakościowe
 
@@ -491,7 +833,7 @@ library(data.table)
 ```
 
 ```{r}
-dataset <- dataset %>% 
+dataset_model <- dataset %>% 
   select(-Title, -Director) %>% 
   dummy_cols(remove_most_frequent_dummy = T) %>%
   mutate(Oscar_won = ifelse(Oscars > 0, 1, 0),
@@ -499,6 +841,9 @@ dataset <- dataset %>%
   select(everything(), Oscar_won,-Oscars, -Language, -Country, -Genre, -Audience)
   
   
+```
+```{r}
+dataset_model %>% filter(Language_Zulu == 1)
 ```
 
 
@@ -511,41 +856,46 @@ library(caret)
 
 Wyrzucanie zmiennych ze względu na zerową wariancje
 
-```{r}
-dataset_to_model <- dataset %>% 
-  select(-Language_Cree, -Language_Albanian, -Language_Irish, -Language_Khmer, -Language_Tajik, -Language_Neapolitan,
-         -Language_Estonian, -Language_Lao, -Language_Slovak, -Language_Aramaic, -Language_Xhosa, -Language_Telugu,
-         -Language_Acholi, -Country_Bangladesh, -Country_Algeria, -Country_Cameroon, -Language_Malinka, -"Language_Min Nan",
-         -Language_Urdu, -Country_Bhutan, -Country_Malaysia, -Country_Iraq, -Language_Hokkien, -Language_Sicilian, -Country_Botswana, 
-         -Country_Luxembourg, -Country_Lebanon, -"Country_Dominican Republic", -Country_Egypt, -Language_Saami, -Language_Bambara,
-         -Language_Maya, -Language_Lingala, -Country_Slovakia, -Language_Inuktitut, -"Language_Serbo-Croatian", -"Language_North American Indian",
-         -Language_Fur, -Language_Burmese, -Language_Kirghiz, -Language_Tamil, -Country_Croatia, -Country_Jordan, -Country_Serbia,
-         -Country_Morocco, -"Country_Papua New Guinea", -Country_Paraguay, -Language_More, -Language_Panjabi, -Language_Haitian,
-         -"Country_Burkina Faso", -Country_Pakistan, -Language_Kinyarwanda, -Country_Rwanda, -Country_Nigeria, -Language_Guarani,
-         -Country_Tajikistan, -"Country_The Democratic Republic Of Congo", -Country_Cambodia, -Country_Estonia, -Country_Bahamas,
-         -"Country_Burkina Faso", -Language_Chechen, -"Language_Southern Sotho", -Country_Cuba, -Language_Belarusian, -Country_Aruba,
-         -Country_Tunisia, -Country_Mali, -Country_Croatia, -Country_Macedonia, -Country_Thailand, -`Country_Bosnia and Herzegovina` )
-```
-
-
 Podział na zbiory
 
 ```{r}
-split <- sample.split(dataset_to_model$Oscar_won, SplitRatio = .8)
-training_set <- dataset_to_model %>% 
+split <- sample.split(dataset_model$Oscar_won, SplitRatio = .8)
+training_set <- dataset_model %>% 
   subset(split == T)
-test_set <- dataset_to_model %>% 
+test_set <- dataset_model %>% 
   subset(split == F)
+```
+```{r}
+training_set %>% colnames() %>% length()
 ```
 
 Normalizacja
+```{r}
+remove_zero_variance <- preProcess(training_set, method = c("zv", "nzv"))
 
+training_set_nz <- predict(remove_zero_variance, training_set) %>% mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                                  starts_with("genre")), as.factor) 
+test_set_nz <- predict(remove_zero_variance, test_set) %>% mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.factor) 
+normalization <- preProcess(training_set_nz, method = c("center", "scale"))
+
+training_norm <- predict(normalization, training_set_nz) %>% mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.character) %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.numeric)
+test_norm <- predict(normalization, test_set_nz) %>% mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.character) %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.numeric)
+```
 
 ```{r}
-normalization <- preProcess(training_set)
-training_norm <- predict(normalization, training_set)
-test_norm <- predict(normalization, test_set)
+test_set_nz %>% colnames
 ```
+```{r}
+training_norm %>% select_if(is.numeric) %>% map_dfc(range)
+```
+
 Model ze wszystkimi zmiennymi
 ```{r}
 classifier_1 <- glm(data = training_norm,
@@ -555,20 +905,108 @@ summary(classifier_1)
 ```
 
 ```{r}
-prob_pred_1 <- predict(classifier_1, newdata = test_norm, type = "response")
-y_pred_1 <- ifelse(prob_pred_1 >= .5, 1, 0)
+exp(coef(classifier_1)) 
 ```
 
 ```{r}
-cm_1 <- table(test_norm %>% pull(Oscar_won), y_pred_1)
-cm_1
+srednia <- training_set$userRating %>% mean()
+odchylenie <- training_set$userRating %>% sd()
+
+
+odchylenie + srednia
 ```
+```{r}
+training_set$Meter[456]
+```
+
+```{r}
+training_norm$Meter[1]
+```
+
+```{r}
+training_norm$Meter[456]
+```
+```{r}
+(min(training_norm$Meter)*odchylenie)+srednia
+```
+```{r}
+min(training_set$userRating)
+```
+
+```{r}
+library(ROCit)
+```
+
+```{r}
+prob_train_1 <- predict(classifier_1, newdata = training_norm, type = "response")
+```
+
+```{r}
+roc_train_1 <- rocit(score = prob_train_1, class = training_norm$Oscar_won)
+plot(roc_train_1)
+```
+
+```{r}
+roc_train_1 %>% summary
+```
+```{r}
+sum(prob_train_1 > .269)
+```
+
+```{r}
+pred_train_1 <- ifelse(prob_train_1 > .269, 1 , 0)
+```
+
+```{r}
+cm_train_1 <- table(actual = training_norm %>% pull(Oscar_won), predicted = pred_train_1)
+cm_train_1
+```
+
+
+```{r}
+stats <- function(data) {
+  
+  accuracy <- round(sum(diag(data)) / sum(data),2)
+  precision <- round(data[2, 2] / sum(data[, 2]), 2)
+  recall <- round(data[2,2] / sum(data[2, ]), 2)
+  f1 <- round(2*(precision * recall)/(precision + recall), 2)
+  
+  tibble(statistic = c("Accuracy", "Precision", "Recall", "F1 score"), results = c(accuracy, precision, recall, f1))
+}
+```
+
+```{r}
+stats_train_1 <- stats(cm_train_1)
+stats_train_1
+```
+
+
+```{r}
+prob_test_1 <- predict(classifier_1, newdata = test_norm, type = "response")
+pred_test_1 <- ifelse(prob_test_1 >= .269, 1, 0)
+
+```
+
+```{r}
+cm_test_1 <- table(actual = test_norm %>% pull(Oscar_won), predicted = pred_test_1)
+cm_test_1
+```
+
+```{r}
+stats_test_1 <- stats(cm_test_1)
+stats_test_1
+```
+
+
+
+
+
 
 Selekcja zmiennych do modelu
 
 ```{r}
 columns <- c()
-for (i in 1:149 ) {
+for (i in 1:length(training_norm %>% colnames()) ) {
   ifelse(length(columns) > 0, zbior <- training_norm %>% 
     select(-columns), zbior <- training_norm)
   
@@ -578,7 +1016,8 @@ for (i in 1:149 ) {
   podsumowanie <- summary(model)[[12]] %>% 
     as.data.frame() %>% 
     setDT(keep.rownames = T) %>% 
-    arrange(desc(`Pr(>|z|)`)) %>% 
+    arrange(desc(`Pr(>|z|)`)) %>%
+    filter(rn != "(Intercept)") %>% 
     head(1)
   
   if (podsumowanie %>% pull(`Pr(>|z|)`) > 0.05) {
@@ -590,6 +1029,10 @@ for (i in 1:149 ) {
 }
 ```
 
+```{r}
+training_norm %>% select(-columns) %>% colnames()
+```
+
 Model
 ```{r}
 classifier_2 <- glm(data = training_norm %>% select(-columns),
@@ -599,119 +1042,301 @@ summary(classifier_2)
 ```
 
 ```{r}
-prob_pred_2 <- predict(classifier_2, newdata = test_norm, type = "response")
-y_pred_2 <- ifelse(prob_pred_2 >= .5, 1, 0)
+prob_train_2 <- predict(classifier_2, newdata = training_norm, type = "response")
+
 ```
 
 ```{r}
-cm_2 <- table(test_norm %>% pull(Oscar_won), y_pred_2)
-cm_2
-```
-
-# Classification report dla modelu ze wszystkimi zmiennymi
-
-```{r}
-n_1 = sum(cm_1) # number of instances
-nc_1 = nrow(cm_1) # number of classes
-diag_1 = diag(cm_1) # number of correctly classified instances per class 
-rowsums_1 = apply(cm_1, 1, sum) # number of instances per class
-colsums_1 = apply(cm_1, 2, sum) # number of predictions per class
-p = rowsums_1 / n_1 # distribution of instances over the actual classes
-q = colsums_1 / n_1 # distribution of instances over the predicted classes
+roc_train_2 <- rocit(score = prob_train_2, class = training_norm$Oscar_won)
+plot(roc_train_2)
 ```
 
 ```{r}
-accuracy_1 = sum(diag_1) / n_1
-accuracy_1
+roc_train_2 %>% summary()
+```
+```{r}
+sum(prob_train_2 > .269)
 ```
 
 ```{r}
- precision_1 = diag_1 / colsums_1 
- recall_1 = diag_1 / rowsums_1 
- f1_1 = 2 * precision_1 * recall_1 / (precision_1 + recall_1)
- 
- support_1 <- c()
- for (i in 1:nc_1) {
-   support_1 <- c(support_1, cm_1[i, i])
- }
- cr_1 <- data_frame(precision_1, recall_1, f1_1, support_1)
- 
-```
-```{r}
-cr_summary_1 <- cr_1 %>% 
-  summarize(precision_1 = weighted.mean(precision_1, support_1),
-            recall_1 = weighted.mean(recall_1, support_1),
-            f1_1 = weighted.mean(f1_1,support_1),
-            support_1 = sum(support_1))
-cr_1 %>% bind_rows(cr_summary_1) %>% 
-  mutate(desc = c(1, 0, "avg / total")) %>% 
-  select(desc, everything())
+pred_train_2 <- ifelse(prob_train_2 >= .269, 1, 0)
 ```
 
-# Classification report dla modelu drugiego
 
 ```{r}
-n_2 = sum(cm_2) # number of instances
-nc_2 = nrow(cm_2) # number of classes
-diag_2 = diag(cm_2) # number of correctly classified instances per class 
-rowsums_2 = apply(cm_1, 1, sum) # number of instances per class
-colsums_2 = apply(cm_1, 2, sum) # number of predictions per class
-p = rowsums_2 / n_2 # distribution of instances over the actual classes
-q = colsums_2 / n_2 # distribution of instances over the predicted classes
+cm_train_2 <- table(actual = training_norm %>% pull(Oscar_won), predicted = pred_train_2)
+cm_train_2
 ```
 
 ```{r}
-accuracy_2 = sum(diag_2) / n_2
-accuracy_2
+stats_train_2 <- stats(cm_train_2)
+stats_train_2
+```
+
+
+```{r}
+prob_test_2 <- predict(classifier_2, newdata = test_norm, type = "response")
+pred_test_2 <- ifelse(prob_test_2 >= .268, 1, 0)
 ```
 
 ```{r}
- precision_2 = diag_2 / colsums_2 
- recall_2 = diag_2 / rowsums_2 
- f1_2 = 2 * precision_2 * recall_2 / (precision_2 + recall_2)
- 
- support_2 <- c()
- for (i in 1:nc_2) {
-   support_2 <- c(support_2, cm_2[i, i])
- }
- cr_2 <- data_frame(precision_2, recall_2, f1_2, support_2)
- 
+cm_test_2 <- table(actual = test_norm %>% pull(Oscar_won), predicted = pred_test_2)
+cm_test_2
+```
+
+```{r}
+stats_test_2 <- stats(cm_test_2)
+stats_test_2
+```
+
+```{r}
+stats_train_1 %>% 
+  left_join(stats_train_2, by = "statistic", suffix = c(" model 1", " model 2"))
+```
+
+```{r}
+stats_test_1 %>% 
+  left_join(stats_test_2, by = "statistic", suffix = c(" model 1", " model 2"))
+```
+
+```{r}
+classifier_1$aic
+```
+
+```{r}
+classifier_2$aic
+```
+  
+#ROC
+
+```{r}
+library(DALEX)
+library(DALEX2)
+```
+
+```{r, warning=FALSE}
+model2_exp <- explain(classifier_2, data = training_norm %>% select(-columns), label = "Model 2", y = prob_train_2)
+variable_importance(model2_exp ) %>% plot()
+```
+
+```{r}
+classifier_2 %>% summary
+```
+
+```{r}
+training_norm %>% select(-columns) %>% colnames
+```
+
+```{r}
+green_book <- tibble(Title = "Green Book", Year = 2018, Runtime = 130, Metacritic = 69, 
+                     imdbRating = 8.3, RottenRating = 7.2, "Meter" = 92, 
+                     userMeter = 79, userRating = 4.2, BoxOffice = 85080171, 
+                     "Audience_Not Rated" = 0, "Audience_PG" = 0, "Audience_G" = 0, 
+                     "Genre_Action" = 0, "Genre_Crime" = 0, "Genre_Documentary" = 0, 
+                     "Country_France" = 0, Oscar_2019 = 1, Oscar_2019_amount = 3)
+bohemian_rhapsody <- tibble(Title = "Bohemian Rhapsody", Year = 2018, Runtime = 134, Metacritic = 49, 
+                            imdbRating = 8.1, RottenRating = 6.1, "Meter" = 86, 
+                            userMeter = 78, userRating = 4.3, BoxOffice = 216428042, 
+                            "Audience_Not Rated" = 0, "Audience_PG" = 0, "Audience_G" = 0, 
+                            "Genre_Action" = 0, "Genre_Crime" = 0, "Genre_Documentary" = 0, 
+                            "Country_France" = 0, Oscar_2019 = 1, Oscar_2019_amount = 4)
+
+black_panther <- tibble(Title = "Black Panther", Year = 2018, Runtime = 134, Metacritic = 88, 
+                        imdbRating = 7.3, RottenRating = 8.3, "Meter" = 79, 
+                        userMeter = 65, userRating = 4.1, BoxOffice = 700059566, 
+                        "Audience_Not Rated" = 0, "Audience_PG" = 0, "Audience_G" = 0, 
+                        "Genre_Action" = 1, "Genre_Crime" = 0, "Genre_Documentary" = 0, 
+                        "Country_France" = 0, Oscar_2019 = 1, Oscar_2019_amount = 3)
+
+BlacKkKlansman <- tibble(Title = "BlacKkKlansman", Year = 2018, Runtime = 128, Metacritic = 83, 
+                         imdbRating = 7.5, RottenRating = 8.3, "Meter" = 82, 
+                         userMeter = 74, userRating = 3.9, BoxOffice = 49275340, 
+                         "Audience_Not Rated" = 0, "Audience_PG" = 0, "Audience_G" = 0, 
+                         "Genre_Action" = 0, "Genre_Crime" = 0, "Genre_Documentary" = 0, 
+                         "Country_France" = 0, Oscar_2019 = 1, Oscar_2019_amount = 1)
+
+The_Favourite <- tibble(Title = "The Favourite", Year = 2018, Runtime = 119, Metacritic = 90, 
+                        imdbRating = 7.6, RottenRating = 8.5, "Meter" = 67,
+                        userMeter = 77, userRating = 3.5, BoxOffice = 34366783, 
+                        "Audience_Not Rated" = 0, "Audience_PG" = 0, "Audience_G" = 0, 
+                        "Genre_Action" = 0, "Genre_Crime" = 0, "Genre_Documentary" = 0, 
+                        "Country_France" = 0, Oscar_2019 = 1, Oscar_2019_amount = 1)
+
+star_is_born <- tibble(Title = "A Star is Born", Year = 2018, Runtime = 135, Metacritic = 88, 
+                       imdbRating = 7.8, RottenRating = 8, "Meter" = 80, 
+                       userMeter = 84, userRating = 4.1,BoxOffice = 215288866, 
+                       "Audience_Not Rated" = 0, "Audience_PG" = 0, "Audience_G" = 0, 
+                       "Genre_Action" = 0, "Genre_Crime" = 0, "Genre_Documentary" = 0, 
+                       "Country_France" = 0, Oscar_2019 = 1, Oscar_2019_amount = 1)
+
+roma <- tibble(Title = "Roma", Year = 2018, Runtime = 135, Metacritic = 96, 
+               imdbRating = 7.8, RottenRating = 9, "Meter" = 71, 
+               userMeter = 80, userRating = 3.7, BoxOffice = 4900000, 
+               "Audience_Not Rated" = 0, "Audience_PG" = 0, "Audience_G" = 0, 
+               "Genre_Action" = 0, "Genre_Crime" = 0, "Genre_Documentary" = 0, 
+               "Country_France" = 0, Oscar_2019 = 1, Oscar_2019_amount = 3)
+
+vice <- tibble(Title = "Vice", Year = 2018, Runtime = 132, Metacritic = 61, 
+               imdbRating = 7.2, RottenRating = 6.7, "Meter" = 58, 
+               userMeter = 80, userRating = 3.2, BoxOffice = 47836282, 
+               "Audience_Not Rated" = 0, "Audience_PG" = 0, "Audience_G" = 0, 
+               "Genre_Action" = 0, "Genre_Crime" = 0, "Genre_Documentary" = 0, 
+               "Country_France" = 0, Oscar_2019 = 1, Oscar_2019_amount =3)
+
+new_movies <- bind_rows(green_book, bohemian_rhapsody, black_panther, 
+          BlacKkKlansman, The_Favourite, 
+          star_is_born, roma, vice) %>% as_data_frame()
+
+new_movies
+
+```
+
+
+```{r}
+new_predictions <- function(data) {
+  
+  
+  a <- data %>% mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                 starts_with("genre")), as.factor)
+  
+  b <- predict(normalization, a)
+  
+  c <- b %>% mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),                                                                          starts_with("genre")), as.character)
+  
+  d <- c %>% mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),                                                                          starts_with("genre")), as.numeric)
+  
+  e <- predict(classifier_2, newdata = d, type = "response")
+  
+  e
+  
+}
+```
+
+
+```{r}
+new_movies %>% 
+  mutate(Probability = new_predictions(new_movies),
+         Oscar_prediction = ifelse(Probability >= .268, 1, 0)) %>% 
+  select(Title, Probability, Oscar_prediction, Oscar_2019, Oscar_2019_amount) %>% 
+  arrange(desc(Probability))
+```
+
+
+
+
+
+```{r}
+green_book_norm <- predict(normalization, green_book %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                 starts_with("genre")), as.factor)) %>% mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.character) %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.numeric)
+bohemian_norm <- predict(normalization, bohemian_rhapsody %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                 starts_with("genre")), as.factor)) %>% mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.character) %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.numeric)
+
+black_panther_norm <- predict(normalization, black_panther %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                 starts_with("genre")), as.factor)) %>% mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.character) %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.numeric)
+
+BlacKkKlansman_norm <- predict(normalization, BlacKkKlansman %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                 starts_with("genre")), as.factor)) %>% mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.character) %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.numeric)
+
+favourite_norm <- predict(normalization, The_Favourite %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                 starts_with("genre")), as.factor)) %>% mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.character) %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.numeric)
+
+star_is_born_norm <- predict(normalization, star_is_born %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                 starts_with("genre")), as.factor)) %>% mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.character) %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.numeric)
+roma_norm <- predict(normalization, roma %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                 starts_with("genre")), as.factor)) %>% mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.character) %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.numeric)
+
+vice_norm <- predict(normalization, vice %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                 starts_with("genre")), as.factor)) %>% mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.character) %>% 
+  mutate_at(vars(starts_with("country"), starts_with("audience"), starts_with("language"),
+                                                                          starts_with("genre")), as.numeric)
+  
+```
+
+```{r}
+library(DALEX)
+```
+
+```{r}
+explainer <- explain(classifier_2, data = training_norm, label = "Wpływ poszczególnych zmiennych na wynik predykcji.")
+```
+
+```{r}
+new_pred <- prediction_breakdown(explainer, observation = black_panther_norm)
+plot(new_pred)
 ```
 ```{r}
-cr_summary_2 <- cr_2 %>% 
-  summarize(precision_2 = weighted.mean(precision_2, support_2),
-            recall_2 = weighted.mean(recall_2, support_2),
-            f1_2 = weighted.mean(f1_2,support_2),
-            support_2 = sum(support_2))
-cr_2 %>% bind_rows(cr_summary_2) %>% 
-  mutate(desc = c(1, 0, "avg / total")) %>% 
-  select(desc, everything())
+classifier_2$coefficient %>% length()
 ```
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
+
+```{r}
+suma <- c(classifier_2$coefficients[1])
+for (i in 2:length(classifier_2$coefficients)) {
+  
+  beta <- classifier_2$coefficients[i]
+  x <- bohemian_norm[i] %>% pull()
+  odd <- beta*x
+  suma <- c(suma, odd)
+  
+}
+
+
+wyniki <- rownames_to_column(data.frame(suma), var = "var") %>% filter(suma != 0, var != "(Intercept)") %>% arrange(desc(suma))
+
+wyniki$var <- factor(wyniki$var, levels = wyniki$var)
+wyniki$id <- seq_along(wyniki$suma)
+wyniki$type <- ifelse(wyniki$suma > 0, "+", "-")
+
+wyniki$end <- cumsum(wyniki$suma) + classifier_2$coefficients[1]
+
+wyniki$start <- c(classifier_2$coefficients[1], head(wyniki$end, -1))
+
+wyniki %>% 
+  # filter(var != "(Intercept)",
+  #        suma != 0) %>%
+  ggplot(aes(var, fill = type)) + geom_rect(aes(x = var, xmin = id - .45, xmax= id + .45, ymin = end, ymax = start)) + 
+  geom_label(aes(label = round(suma,3), y = 5)) +
+  scale_fill_manual(values = c("firebrick", "forestgreen")) +
+  geom_text(aes(label = ifelse(var == wyniki$var[2], round(classifier_2$coefficients[1],3), ""), y = classifier_2$coefficients[1])) +
+  geom_text(aes(label = ifelse(var == wyniki$var[length(wyniki$var) -1], round(wyniki$end[length(wyniki$end)],3), ""), y = wyniki$end[length(wyniki$end)])) +
+  coord_flip() +
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5),
+        panel.background = element_rect(fill = "aliceblue"),
+        plot.background = element_rect(fill = "aliceblue")) +
+  labs(title = "Zmiana logitu w zależności od zmiennej",
+       subtitle = "Dla filmu Bohemian Rhapsody",
+       x = "Zmienna",
+       y = "Wartość logitu",
+       caption = "Źródło: opracowanie własne")
+```

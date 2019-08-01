@@ -1,0 +1,166 @@
+---
+title: "Untitled"
+author: "Igor Adamiec"
+date: "6/5/2019"
+output: pdf_document
+---
+
+```{r}
+library(igraph)
+library(readxl)
+```
+
+```{r}
+set.seed(123)
+```
+```{r}
+data %>% range()
+```
+
+```{r}
+data %>% head()
+```
+
+```{r}
+data <- read_excel("EdgeList2.xlsx")
+```
+
+Widzimy graf badanego zbioru danych. Jego srodek jest bardzo zageszczony. Do zdecydowanej wiekszosci punktow przylega po kilka sciezek
+
+```{r}
+graph_1=graph.data.frame(data, directed=FALSE)
+plot(graph_1)
+```
+
+```{r}
+layout_1 <- layout.fruchterman.reingold(graph_1)
+V(graph_1)$color <- "gold3"
+E(graph_1)$color <- "red"
+plot(graph_1)
+```
+
+
+Punkty pokolorowane w zaleznosci od ilosci grawedzi
+
+```{r}
+V(graph_1)[degree(graph_1, mode="in")>2]$color <- "gold2"
+plot(graph_1)
+V(graph_1)[degree(graph_1, mode="in")>5]$color <- "darkorange"
+plot(graph_1)
+V(graph_1)[degree(graph_1, mode="in")>7]$color <- "darkolivegreen2"
+plot(graph_1)
+V(graph_1)[degree(graph_1, mode="in")>10]$color <- "darkorchid1"
+plot(graph_1)
+
+```
+
+# Gestosc
+
+Gestosc grafu to iloraz ilosci krawedzi do ilosci mozliwych krawedzi.
+
+```{r}
+graph.density(graph_1)
+```
+
+# Gestosc z wlaczonymi petlami
+
+```{r}
+graph.density(graph_1, loops = T)
+```
+
+# Srednia dlugosc sciezki
+
+Srednia dlugosc sciezki wynosila ```r mean_distance(graph_1) ```
+
+```{r}
+mean_distance(graph_1)
+```
+
+# Stopnie rozkładu
+
+```{r}
+degree_distribution(graph_1)
+```
+
+# Histogram stopnia
+
+```{r}
+degree_dist <- degree.distribution(graph_1)
+hist(degree_dist)
+```
+
+# Klastry
+
+## Prawdopodobienstwo, ze sasiednie wierzcholki sa polaczone. 
+Nazywa sie to wspolczynnikiem grupowania
+
+```{r}
+transitivity(graph_1)
+```
+
+## Closeness
+Miara krokow wymaganych by uzyskac dostep do kazdego innego wierzcholka z danego wierzcholka
+
+```{r}
+closeness(graph_1, mode = "all")
+```
+
+# Wszystkie vertices
+
+```{r}
+V(graph_1)
+```
+
+# Wszystkie krawedzie
+
+```{r}
+E(graph_1)
+```
+
+# Histogram stopni
+
+Można zauważyć, że najczęściej wystepujaca ilosc sciezek plasuje sie pomiedzy 7 - 10.
+
+```{r}
+V(graph_1)$label <- V(graph_1)$name
+V(graph_1)$degree <- degree(graph_1)
+hist(V(graph_1)$degree)
+```
+
+# Graf w wersji drzewa
+
+```{r}
+plot(graph_1,
+     layout = layout.reingold.tilford(graph_1))
+```
+
+#Betwenness
+
+```{r}
+betweenness(graph_1)
+```
+
+Możemy zauwazyc, ze zdecydowana wiekszosc punktow charakteryzuje sie duzymi wartosciami miary betweenness. Oznacza to, ze wiekszosc punktow poziada duzo krawedzi. Tylko pojedyncze z nich (np. 10) charakteryzuja sie mala wartoscia miary.
+
+# Wykres z pokazanymi klastrami
+
+```{r}
+c_graph_1 <- cluster_edge_betweenness(graph_1)
+plot(c_graph_1, graph_1)
+```
+
+# Ilosc klastrow
+
+Z badenego zbioru da się wyodrebnic 21 roznych klastrow. Niektore licza sobie tylko po jednej obserwacji (klaster 9.) inne dużo więcej (klaster 1. - 13 punktow) 
+
+```{r}
+length(c_graph_1)
+```
+
+#Wykaz przynaleznosci punktow do danego klastra
+
+```{r}
+membership(c_graph_1)
+```
+
+

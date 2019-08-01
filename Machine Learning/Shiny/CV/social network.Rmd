@@ -1,0 +1,28 @@
+---
+title: "Project 2"
+author: "Igor Adamiec"
+date: "1/25/2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+sn <- read_csv("Social_Network_Ads.csv") %>% 
+  mutate(Gender = as.factor(Gender)) %>% 
+  select(-c(`User ID`, Purchased))
+```
+
+```{r}
+sn %>% glimpse
+```
+
+```{r}
+sn %>% 
+  ggplot() +
+  geom_point(aes(x = Age, y = EstimatedSalary)) +
+  facet_grid(Gender~.)
+```
+

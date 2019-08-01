@@ -1,0 +1,108 @@
+---
+title: "Załącznik A"
+author: "Igor Adamiec"
+date: "6/18/2019"
+output: html_document
+---
+
+Wypełnianie braków danych w zmiennych ilościowych:
+- oceny z serwisu Metacritic,
+- Oceny z serwisu IMDB,
+- Oceny użytkowników serwisu Rotten Tomatoes,
+- oceny użytnkowników serwisu metacritic,
+- ilosci pieniedzy, jakie zarobiłfilm w tzw. Box office
+
+Oceny z Metacritica na podstawie mediany ocen dla tych samych gatunków, 7 filmów usunąłem (6 noir i jeden adult)
+
+```{r}
+for (i in dataset %>% filter(is.na(Metacritic)) %>% 
+  count(Genre) %>% pull(Genre)) {
+  
+  dataset[is.na(dataset$Metacritic) & dataset$Genre == i, "Metacritic"] <- dataset %>% 
+  filter(!is.na(Metacritic),
+         Genre == i) %>% 
+  pull(Metacritic) %>% 
+  median
+  
+}
+
+dataset <- dataset[!is.na(dataset$Metacritic),]
+```
+
+Tak samo dla ocen z IMDB
+
+```{r}
+for (i in dataset %>% filter(is.na(imdbRating)) %>% 
+  count(Genre) %>% pull(Genre)) {
+  
+  dataset[is.na(dataset$imdbRating) & dataset$Genre == i, "imdbRating"] <- dataset %>% 
+  filter(!is.na(imdbRating),
+         Genre == i) %>% 
+  pull(imdbRating) %>% 
+  median
+  
+}
+```
+
+```{r}
+for (i in dataset %>% filter(is.na(userMeter)) %>% 
+  count(Genre) %>% pull(Genre)) {
+  
+  dataset[is.na(dataset$userMeter) & dataset$Genre == i, "userMeter"] <- dataset %>% 
+  filter(!is.na(userMeter),
+         Genre == i) %>% 
+  pull(userMeter) %>% 
+  median
+  
+}
+```
+
+```{r}
+for (i in dataset %>% filter(is.na(userRating)) %>% 
+  count(Genre) %>% pull(Genre)) {
+  
+  dataset[is.na(dataset$userRating) & dataset$Genre == i, "userRating"] <- dataset %>% 
+  filter(!is.na(userRating),
+         Genre == i) %>% 
+  pull(userRating) %>% 
+  median
+  
+}
+```
+
+
+Dla Box office najpierw kombinacja Gatunek - kraj, potem sam kraj, a potem sam gatunek
+```{r}
+for (i in dataset %>% filter(is.na(BoxOffice)) %>% 
+  count(Genre) %>% pull(Genre)) {
+  
+  for (j in dataset %>% filter(is.na(BoxOffice)) %>% 
+  count(Country) %>% pull(Country)) {
+    dataset[is.na(dataset$BoxOffice) & dataset$Genre == i & dataset$Country == j, "BoxOffice"] <- dataset %>% 
+  filter(!is.na(BoxOffice),
+         Genre == i,
+         Country == j) %>% 
+  pull(BoxOffice) %>% 
+  median
+  }
+  
+}
+
+for (j in dataset %>% filter(is.na(BoxOffice)) %>% 
+  count(Country) %>% pull(Country)) {
+    dataset[is.na(dataset$BoxOffice) & dataset$Country == j, "BoxOffice"] <- dataset %>% 
+  filter(!is.na(BoxOffice),
+         Country == j) %>% 
+  pull(BoxOffice) %>% 
+  median
+}
+
+for (k in dataset %>% filter(is.na(BoxOffice)) %>% 
+  count(Genre) %>% pull(Genre)) {
+    dataset[is.na(dataset$BoxOffice) & dataset$Genre == k, "BoxOffice"] <- dataset %>% 
+  filter(!is.na(BoxOffice),
+         Genre == k) %>% 
+  pull(BoxOffice) %>% 
+  median
+  }
+```

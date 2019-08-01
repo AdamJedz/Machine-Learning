@@ -1,0 +1,17 @@
+---
+title: "GoT network"
+author: "Igor Adamiec"
+date: "7/18/2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(igraph)
+library(ggraph)
+```
+
+```{r}
+ties <- read_csv("https://github.com/mathbeveridge/asoiaf/blob/master/data/asoiaf-all-edges.csv")
+```
+

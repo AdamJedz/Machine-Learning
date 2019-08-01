@@ -9,9 +9,6 @@
 
 library(shiny)
 library(tidyverse)
-library(caTools)
-library(caret)
-library(e1071)
 
 dataset <- read_csv("Social_Network_Ads.csv") %>% 
   select(-'User ID', - Gender) %>% 
@@ -45,8 +42,8 @@ shinyServer(function(input, output) {
   y_pred <- reactive({ifelse(prob_pred() > .5, 1, 0)})
   output$prob <- renderText(y_pred())
   
-  X1 <- reactive({seq(min(training_set()[, 1]) - 1, max(training_set()[, 1]) + 1, by = 0.01)})
-  X2 <- reactive({seq(min(training_set()[, 2]) - 1, max(training_set()[, 2]) + 1, by = 0.01)})
+  X1 <- reactive({seq(min(training_set()[, 1]) - 1, max(training_set()[, 1]) + 1, by = 0.1)})
+  X2 <- reactive({seq(min(training_set()[, 2]) - 1, max(training_set()[, 2]) + 1, by = 0.1)})
   grid_set <- reactive({expand.grid(X1(), X2()) %>% 
       rename('Age' = "Var1", 'EstimatedSalary' = "Var2")})
   prob_grid = reactive({predict(classifier(), newdata = grid_set(), type = "response")})

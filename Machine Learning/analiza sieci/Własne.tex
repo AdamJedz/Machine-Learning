@@ -1,0 +1,491 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Untitled},
+            pdfauthor={Igor Adamiec},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Untitled}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Igor Adamiec}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{6/5/2019}
+
+
+\begin{document}
+\maketitle
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(igraph)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'igraph'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:stats':
+## 
+##     decompose, spectrum
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:base':
+## 
+##     union
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(readxl)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data <-}\StringTok{ }\KeywordTok{read_excel}\NormalTok{(}\StringTok{"EdgeList2.xlsx"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Widzimy graf badanego zbioru danych. Jego srodek jest bardzo
+zageszczony. Do zdecydowanej wiekszosci punktow przylega po kilka
+sciezek
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{graph_}\DecValTok{1}\NormalTok{=}\KeywordTok{graph.data.frame}\NormalTok{(data, }\DataTypeTok{directed=}\OtherTok{FALSE}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Własne_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{layout_}\DecValTok{1}\NormalTok{ <-}\StringTok{ }\KeywordTok{layout.fruchterman.reingold}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\KeywordTok{V}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}\OperatorTok{$}\NormalTok{color <-}\StringTok{ "gold3"}
+\KeywordTok{E}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}\OperatorTok{$}\NormalTok{color <-}\StringTok{ "red"}
+\KeywordTok{plot}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Własne_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+Punkty pokolorowane w zaleznosci od ilosci grawedzi
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{V}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)[}\KeywordTok{degree}\NormalTok{(graph_}\DecValTok{1}\NormalTok{, }\DataTypeTok{mode=}\StringTok{"in"}\NormalTok{)}\OperatorTok{>}\DecValTok{2}\NormalTok{]}\OperatorTok{$}\NormalTok{color <-}\StringTok{ "gold2"}
+\KeywordTok{plot}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Własne_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{V}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)[}\KeywordTok{degree}\NormalTok{(graph_}\DecValTok{1}\NormalTok{, }\DataTypeTok{mode=}\StringTok{"in"}\NormalTok{)}\OperatorTok{>}\DecValTok{5}\NormalTok{]}\OperatorTok{$}\NormalTok{color <-}\StringTok{ "darkorange"}
+\KeywordTok{plot}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Własne_files/figure-latex/unnamed-chunk-6-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{V}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)[}\KeywordTok{degree}\NormalTok{(graph_}\DecValTok{1}\NormalTok{, }\DataTypeTok{mode=}\StringTok{"in"}\NormalTok{)}\OperatorTok{>}\DecValTok{7}\NormalTok{]}\OperatorTok{$}\NormalTok{color <-}\StringTok{ "darkolivegreen2"}
+\KeywordTok{plot}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Własne_files/figure-latex/unnamed-chunk-6-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{V}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)[}\KeywordTok{degree}\NormalTok{(graph_}\DecValTok{1}\NormalTok{, }\DataTypeTok{mode=}\StringTok{"in"}\NormalTok{)}\OperatorTok{>}\DecValTok{10}\NormalTok{]}\OperatorTok{$}\NormalTok{color <-}\StringTok{ "darkorchid1"}
+\KeywordTok{plot}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Własne_files/figure-latex/unnamed-chunk-6-4.pdf}
+
+\section{Gestosc}\label{gestosc}
+
+Gestosc grafu to iloraz ilosci krawedzi do ilosci mozliwych krawedzi.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{graph.density}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.1657143
+\end{verbatim}
+
+\section{Gestosc z wlaczonymi
+petlami}\label{gestosc-z-wlaczonymi-petlami}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{graph.density}\NormalTok{(graph_}\DecValTok{1}\NormalTok{, }\DataTypeTok{loops =}\NormalTok{ T)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.1592157
+\end{verbatim}
+
+\section{Srednia dlugosc sciezki}\label{srednia-dlugosc-sciezki}
+
+Srednia dlugosc sciezki wynosila \texttt{2.1306122}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{mean_distance}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2.130612
+\end{verbatim}
+
+\section{Rozklad stopni}\label{rozklad-stopni}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{degree_distribution}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] 0.00 0.02 0.02 0.00 0.10 0.08 0.08 0.18 0.06 0.12 0.12 0.10 0.04 0.02
+## [15] 0.02 0.00 0.04
+\end{verbatim}
+
+\section{Histogram stopni}\label{histogram-stopni}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{degree_dist <-}\StringTok{ }\KeywordTok{degree.distribution}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\KeywordTok{hist}\NormalTok{(degree_dist)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Własne_files/figure-latex/unnamed-chunk-11-1.pdf}
+
+\section{Klastry}\label{klastry}
+
+\subsection{Prawdopodobienstwo, ze sasiednie wierzcholki sa
+polaczone.}\label{prawdopodobienstwo-ze-sasiednie-wierzcholki-sa-polaczone.}
+
+Nazywa sie to wspolczynnikiem grupowania
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{transitivity}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.1596806
+\end{verbatim}
+
+\subsection{Closeness}\label{closeness}
+
+Miara krokow wymaganych by uzyskac dostep do kazdego innego wierzcholka
+z danego wierzcholka
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{closeness}\NormalTok{(graph_}\DecValTok{1}\NormalTok{, }\DataTypeTok{mode =} \StringTok{"all"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           2          16          48          34           3          17 
+## 0.011235955 0.010416667 0.010309278 0.010000000 0.008695652 0.009345794 
+##          41          19          39          44           9          50 
+## 0.010204082 0.010309278 0.010416667 0.011904762 0.009009009 0.009615385 
+##           1           4          21          43          47          35 
+## 0.010752688 0.011363636 0.010869565 0.009174312 0.010204082 0.010526316 
+##          20          28          23          18          31           5 
+## 0.009708738 0.009900990 0.010526316 0.009803922 0.009345794 0.009433962 
+##          11          13           8          33          30           7 
+## 0.009523810 0.007042254 0.009803922 0.009433962 0.009009009 0.008771930 
+##          46          32          40          49          15          36 
+## 0.010526316 0.009900990 0.008695652 0.009708738 0.010204082 0.008000000 
+##          29          38          42           6          27          12 
+## 0.010101010 0.010204082 0.010204082 0.010416667 0.010989011 0.009615385 
+##          37          10          25          14          26          45 
+## 0.008196721 0.006849315 0.009090909 0.010638298 0.009259259 0.009174312 
+##          24          22 
+## 0.007633588 0.008771930
+\end{verbatim}
+
+\section{Wszystkie vertices}\label{wszystkie-vertices}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{V}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## + 50/50 vertices, named, from 19e2d91:
+##  [1] 2  16 48 34 3  17 41 19 39 44 9  50 1  4  21 43 47 35 20 28 23 18 31
+## [24] 5  11 13 8  33 30 7  46 32 40 49 15 36 29 38 42 6  27 12 37 10 25 14
+## [47] 26 45 24 22
+\end{verbatim}
+
+\section{Wszystkie krawedzie}\label{wszystkie-krawedzie}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{E}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## + 203/203 edges from 19e2d91 (vertex names):
+##   [1] 2 --19 2 --16 48--31 34--3  3 --11 17--28 41--4  19--5  39--6  19--44
+##  [11] 2 --39 34--4  9 --47 50--38 44--1  41--49 1 --4  1 --31 16--21 2 --43
+##  [21] 19--47 35--31 21--20 20--46 44--50 47--12 2 --28 21--23 2 --9  44--23
+##  [31] 18--26 2 --31 16--5  34--3  44--11 44--32 13--7  34--8  44--33 28--30
+##  [41] 4 --7  2 --20 48--6  21--30 18--46 47--32 50--46 19--35 2 --40 35--28
+##  [51] 35--49 4 --46 43--8  15--27 31--36 1 --29 48--29 39--38 2 --23 20--14
+##  [61] 20--11 16--17 44--38 28--28 48--42 21--6  48--17 30--12 17--39 32--49
+##  [71] 11--27 41--44 31--25 34--11 16--14 21--5  50--12 44--49 41--27 6 --12
+##  [81] 48--42 41--26 1 --37 9 --1  39--35 2 --29 23--26 15--22 4 --47 11--42
+##  [91] 8 --42 13--32 49--42 1 --18 1 --5  48--27 49--45 27--25 34--38 23--7 
+## + ... omitted several edges
+\end{verbatim}
+
+\section{Histogram stopni}\label{histogram-stopni-1}
+
+Można zauważyć, że najczęściej wystepujaca ilosc sciezek plasuje sie
+pomiedzy 7 - 10.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{V}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}\OperatorTok{$}\NormalTok{label <-}\StringTok{ }\KeywordTok{V}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}\OperatorTok{$}\NormalTok{name}
+\KeywordTok{V}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}\OperatorTok{$}\NormalTok{degree <-}\StringTok{ }\KeywordTok{degree}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\KeywordTok{hist}\NormalTok{(}\KeywordTok{V}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}\OperatorTok{$}\NormalTok{degree)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Własne_files/figure-latex/unnamed-chunk-16-1.pdf}
+
+\section{Graf w wersji drzewa}\label{graf-w-wersji-drzewa}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(graph_}\DecValTok{1}\NormalTok{,}
+     \DataTypeTok{layout =} \KeywordTok{layout.reingold.tilford}\NormalTok{(graph_}\DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Własne_files/figure-latex/unnamed-chunk-17-1.pdf}
+
+\section{Betwenness}\label{betwenness}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{betweenness}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          2         16         48         34          3         17 
+## 80.8934473 34.6273679 40.5756779 25.1849901  3.1883681 18.4496401 
+##         41         19         39         44          9         50 
+## 37.8817096 14.8519746 39.6199165 90.5610684  5.2323480 16.2155332 
+##          1          4         21         43         47         35 
+## 75.6630761 89.3257903 53.4676020 13.2862445 83.1864868 45.4179822 
+##         20         28         23         18         31          5 
+## 19.1944121 29.6953220 33.8557761 17.6344260 25.3506316  6.6497068 
+##         11         13          8         33         30          7 
+## 11.5687168  0.5000000 21.8372006  8.0743817  6.1056370 18.1094470 
+##         46         32         40         49         15         36 
+## 43.4916702 41.8622524  5.8508219 16.5977142 33.8300910  3.9109272 
+##         29         38         42          6         27         12 
+## 44.7049094 28.1136962 34.2635627 40.7734639 55.6675457 19.5571363 
+##         37         10         25         14         26         45 
+##  1.7893218  0.0000000  6.3003615 24.8089811  8.6713414  4.3216631 
+##         24         22 
+##  0.6640867  3.6155723
+\end{verbatim}
+
+Możemy zauwazyc, ze zdecydowana wiekszosc punktow charakteryzuje sie
+duzymi wartosciami miary betweenness. Oznacza to, ze wiekszosc punktow
+poziada duzo krawedzi. Tylko pojedyncze z nich (np. 10) charakteryzuja
+sie mala wartoscia miary.
+
+\section{Wykres z pokazanymi
+klastrami}\label{wykres-z-pokazanymi-klastrami}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{c_graph_}\DecValTok{1}\NormalTok{ <-}\StringTok{ }\KeywordTok{cluster_edge_betweenness}\NormalTok{(graph_}\DecValTok{1}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(c_graph_}\DecValTok{1}\NormalTok{, graph_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Własne_files/figure-latex/unnamed-chunk-19-1.pdf}
+
+\section{Ilosc klastrow}\label{ilosc-klastrow}
+
+Z badenego zbioru da się wyodrebnic 21 roznych klastrow. Niektore licza
+sobie tylko po jednej obserwacji (klaster 9.) inne dużo więcej (klaster
+1. - 13 punktow)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{length}\NormalTok{(c_graph_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 21
+\end{verbatim}
+
+\section{Wykaz przynaleznosci punktow do danego
+klastra}\label{wykaz-przynaleznosci-punktow-do-danego-klastra}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{membership}\NormalTok{(c_graph_}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  2 16 48 34  3 17 41 19 39 44  9 50  1  4 21 43 47 35 20 28 23 18 31  5 11 
+##  1  2  3  4  4  2  1  1  2  1  5  2  6  6  2  4  7  1  1  5  1  6  1  8  4 
+## 13  8 33 30  7 46 32 40 49 15 36 29 38 42  6 27 12 37 10 25 14 26 45 24 22 
+##  9  4 10 11 12 13  1 14  1 15 16  3  2  4  2  1  2 17 18 19  1  1  6 20 21
+\end{verbatim}
+
+
+\end{document}

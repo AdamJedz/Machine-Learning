@@ -11,7 +11,7 @@ library(shiny)
 library(shinythemes)
 
 # Define UI for application that draws a histogram
-shinyUI(navbarPage("Adamiec",
+ig <- shinyUI(navbarPage("Adamiec",
   
   # Application title
   
@@ -29,27 +29,12 @@ shinyUI(navbarPage("Adamiec",
       
       # Show a plot of the generated distribution
       mainPanel(
-        tabsetPanel(
+        
         tabPanel("Training Set",plotOutput("train_plot")),
         tabPanel("Test Set", verbatimTextOutput("cm"),
         plotOutput("test_plot"))
       
         )
       )
-    )
-  ),
-  tabPanel("SVM",
-           sidebarLayout(
-             sidebarPanel(
-               selectInput(inputId = "method",
-                           label = "Kernel:",
-                           choices = c("linear", "polynomial", "radial"),
-                           selected = "linear")
-             ),
-             mainPanel(
-               plotOutput("svm_train_plot")
-             )
-           )
-    
-  )
-))
+    )))
+  

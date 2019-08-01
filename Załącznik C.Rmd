@@ -1,0 +1,33 @@
+---
+title: "Załącznik C"
+author: "Igor Adamiec"
+date: "6/18/2019"
+output: html_document
+---
+
+Selekcja zmiennych do modelu
+
+```{r}
+columns <- c()
+for (i in 1:length(training_norm %>% colnames()) ) {
+  ifelse(length(columns) > 0, zbior <- training_norm %>% 
+    select(-columns), zbior <- training_norm)
+  
+  model <- glm(data = zbior,
+               formula = Oscar_won ~.,
+               family = binomial)
+  podsumowanie <- summary(model)[[12]] %>% 
+    as.data.frame() %>% 
+    setDT(keep.rownames = T) %>% 
+    arrange(desc(`Pr(>|z|)`)) %>%
+    filter(rn != "(Intercept)") %>% 
+    head(1)
+  
+  if (podsumowanie %>% pull(`Pr(>|z|)`) > 0.05) {
+    zmienna <- podsumowanie %>% pull(rn) 
+    zmienna <- gsub("`", "", zmienna)
+    columns <- c(columns, zmienna)
+  }
+  
+}
+```
