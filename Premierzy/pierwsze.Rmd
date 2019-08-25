@@ -1,0 +1,64 @@
+---
+title: "Premierzy"
+author: "Igor Adamiec"
+date: "24 08 2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(pdftools)
+```
+
+```{r}
+complete <- c()
+files <- c("https://www.premier.gov.pl/files/files/pdt_-_loty.pdf", 
+           "https://www.premier.gov.pl/files/files/loty_premier_ewy_kopacz.pdf",
+           "https://www.premier.gov.pl/files/files/loty_premier_beaty_szydlo.pdf",
+           "https://www.premier.gov.pl/files/files/pmm_-_loty.pdf")
+```
+
+```{r}
+complete <- c()
+for (file in files) {
+  pdf <- pdf_text(file)
+  
+  full <- c()
+  
+  for (i in 1:length(pdf)) {
+    temp <- str_split(pdf[i], "\n")[[1]]
+    full <- c(full, temp)
+  }
+  
+  full <- full[nchar(full) != 0]
+  
+  full <- gsub(pattern = "  +", ";", full)
+  full <- gsub(pattern = "\r", "", full)
+  
+  
+  
+  first_line <- (gsub("\r|;", "",full[1]) %>% strsplit(" "))[[1]][]
+  inicjaly <- first_line[(length(first_line)- 1): length(first_line)] %>% str_sub(1,1) 
+  inicjaly <- str_c(inicjaly[1], inicjaly[2])
+  
+  full <- full[-1]
+  full <- paste0(full, ";", inicjaly)
+  full[1] <- gsub(pattern = inicjaly, replace = "Kto",full[1])
+  
+  complete <- c(complete, full)
+  
+}
+
+write_lines(complete, "./zapis.csv")
+```
+
+```{r}
+df <- read_csv("./zapis.csv")
+```
+
+
+```{r}
+full
+```
+
+

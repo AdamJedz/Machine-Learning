@@ -1,0 +1,106 @@
+---
+title: "trzecie"
+author: "Igor Adamiec"
+date: "24 08 2019"
+output: html_document
+---
+
+```{r}
+library(rebus)
+```
+
+```{r}
+pat <- one_or_more(DIGIT) %R% DOT
+```
+
+
+```{r}
+df_final <- df_v2 %>% 
+  mutate(pojazd = str_remove(pojazd, pat),
+         pojazd = str_trim(pojazd, side = "both"),
+         pojazd = case_when(pojazd %in% c("B-737 czarter", "policja", "czarter") ~ "Inny",
+                            is.na(pojazd) ~ "Inny",
+                            pojazd %in% c("EMB", "EMB-175") ~ "EMB",
+                            pojazd %in% c("G-550", "Gulfstream G-550") ~ "Gulfstream",
+                            pojazd %in% c("Śmigłowiec W-3", "W-3", "W-3 Sokół", "W-3Sokół/CASA",
+                                          "W3") ~ "Śmigłowiec W-3",
+                            pojazd %in% c("YK", "YK / EMB", "YK/Bell", "YK/W3") ~ "YK",
+                            TRUE ~ pojazd),
+         trasa = case_when(trasa == "Doha" ~ "OTBD",
+                           trasa %in% c("EPWa", "WPWA", "EPAW", "EWWA") ~ "EPWA",
+                           trasa == "Baby" ~ "EPGD",
+                           trasa == "Ryga" ~ "EVRA",
+                           trasa == "Łask" ~ "EPLK",
+                           TRUE ~ trasa),
+         lotnisko_z = trasa)  %>% 
+  select(termin = Termin, pojazd, kto = Kto, lotnisko_z) %>% 
+  group_by(kto, termin) %>% 
+  mutate(lotnisko_do = lead(lotnisko_z)) %>% 
+  filter(!is.na(lotnisko_do),
+         lotnisko_z != lotnisko_do) %>% 
+  ungroup() %>% 
+  mutate(termin = str_extract(termin, pattern = DIGIT %R% DIGIT %R% DOT %R% DIGIT %R% DIGIT %R% DIGIT %R% DIGIT))
+  
+```
+
+```{r}
+write_csv(df_final, "./final.csv")
+```
+
+```{r}
+airports <- read_csv("./airports.csv") %>% 
+  select(ident, latitude_deg, longitude_deg, iso_country, city = municipality)
+```
+
+```{r}
+df_joined <- df_final %>% 
+  left_join(airports, by = c("lotnisko_z" = "ident")) %>% 
+  left_join(airports, by = c("lotnisko_do" = "ident"), suffix = c("_z", "_do")) %>% 
+  filter(!is.na(iso_country_z), !is.na(iso_country_do))
+```
+
+```{r}
+write_csv(df_joined, "./joined.csv")
+```
+
+```{r}
+library(leaflet)
+```
+
+```{r}
+pl_mm <- df_joined %>% 
+  filter(kto == "MM", iso_country_z == "PL", iso_country_do == "PL") %>% 
+  count(latitude_deg_z, longitude_deg_z, city_z, latitude_deg_do, longitude_deg_do, city_do)
+  
+
+```
+
+```{r}
+library(maps)
+```
+
+
+```{r}
+pl_mm %>% 
+ggplot() +
+  # kontury Polski
+  geom_polygon(data = map_data("world") %>%
+                 filter(region == "Poland"),
+               aes(long, lat, group=group),
+               color = "gray30", fill = "gray90") +
+  geom_segment(aes(x = longitude_deg_z, xend = longitude_deg_do,
+                   y = latitude_deg_z, yend = latitude_deg_do, alpha = n),  color = "red", show.legend = F) + 
+  geom_point(data =airports %>% filter(city %in% pl_mm$city_z | city %in% pl_mm$city_do, iso_country == "PL"),
+             aes(longitude_deg, latitude_deg)) +
+  geom_text( data = airports %>% filter(city %in% pl_mm$city_z | city %in% pl_mm$city_do, iso_country == "PL") %>% 
+  group_by(city) %>% top_n(1, ident),
+             aes(longitude_deg, latitude_deg, label = city), size = 2, vjust = -.5) +
+  theme(axis.text = element_blank(), panel.grid = element_blank()) +
+  theme_minimal()
+```
+
+```{r}
+airports %>% filter(city %in% pl_ek$city_z | city %in% pl_ek$city_do, iso_country == "PL") %>% 
+  group_by(city) %>% top_n(1, ident)
+```
+

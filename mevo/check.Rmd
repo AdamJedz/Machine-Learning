@@ -1,0 +1,108 @@
+---
+title: "Untitled"
+output: html_document
+---
+```{r}
+library(tidyverse)
+library(leaflet)
+library(rjson)
+library(lubridate)
+library(geosphere)
+library(sp)
+```
+```{r}
+dzielnice <- read_rds("dzielnice.rds")
+```
+
+```{r}
+wskaz_dzielnice <- function(x, y) {
+for (i in 1:length(dzielnice)) {
+  
+  a <- point.in.polygon(point.x = x, point.y = y,
+                        pol.x = dzielnice[[i]]$geo[,2], pol.y = dzielnice[[i]]$geo[,1])
+  
+  if (a == 1) {
+    dzielnia <- dzielnice[[i]]$nazwa
+    break
+  }
+  
+}
+
+if (a == 0) {
+  dzielnia <- "Inna dzielnica"
+}
+ return(dzielnia)
+}
+```
+
+```{r}
+file.copy("full_routes.json", "TEST.json", overwrite = T)
+
+check <- fromJSON(file = "TEST.json")
+
+check <- check %>% as.data.frame()
+check<- check %>% 
+  mutate(time.x = as_datetime(time.x),
+         time.y = as_datetime(time.y),
+         time = round(difftime(time.y, time.x, units = c("hours")), 2),
+         start_district = map2_chr(check$lat.x, check$lng.x,wskaz_dzielnice),
+         end_district = map2_chr(check$lat.y, check$lng.y,wskaz_dzielnice),
+         pora_dnia = time.x %>% as_datetime() %>% hour(),
+         pora_dnia  = case_when(pora_dnia > 6 & pora_dnia <= 10 ~ "Ranek",
+                                pora_dnia > 10 & pora_dnia  <= 14 ~ "Po?udnie",
+                                pora_dnia > 14 & pora_dnia <= 18 ~ "Popo?udnie",
+                                pora_dnia > 18 & pora_dnia <= 22 ~ "Wiecz?r",
+                                TRUE ~ "Noc"),
+         dzien_tygodnia = time.x %>% as_datetime() %>% wday(),
+         dzien_tygodnia = ifelse(dzien_tygodnia %in% c(1, 7), "Weekend", "Working day"))
+
+distances <- c()
+for (i in 1:nrow(check)) {
+  
+  dist <- distCosine(c(check$lng.x[i], check$lat.x[i]), c(check$lng.y[i], check$lat.y[i]))
+  distances <- c(distances, dist)
+}
+
+check$distances <- distances
+ 
+```
+```{r}
+check %>% nrow()
+```
+
+```{r}
+check %>% 
+  filter(start_district == "Dąbrowa") %>% 
+  count(start_district, end_district) %>% 
+  arrange(desc(n))
+```
+
+```{r}
+check %>% 
+  select(distances) %>% 
+  arrange(desc(distances))
+```
+
+```{r}
+check %>% 
+  filter(start_district == "Dąbrowa", end_district == "Zaspa Rozstaje")
+```
+
+```{r}
+longest <- check %>% 
+  filter(distances == max(distances))
+longest$time %>% round(2)
+
+```
+```{r}
+leaflet() %>% 
+  addTiles() %>% 
+  addCircleMarkers(lng = weird_dest$lng.x, lat = weird_dest$lat.x, color = "green", radius = 1) %>% 
+  addCircleMarkers(lng = weird_dest$lng.y, lat = weird_dest$lat.y, color = "red", radius = 1)
+```
+
+```{r}
+weird_dest <- check %>% 
+  filter(start_district == "Inna dzielnica" | end_district == "Inna dzielnica")
+```
+
