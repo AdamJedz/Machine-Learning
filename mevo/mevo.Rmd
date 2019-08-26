@@ -1,0 +1,56 @@
+---
+title: "mevo"
+author: "Igor Adamiec"
+date: "8/26/2019"
+output: html_document
+---
+
+```{r}
+mevo <- read_csv("./mevo.csv")
+```
+
+```{r}
+mevo <- mevo %>% 
+  mutate(start_district = str_replace_all(start_district, "<b3>", "l"),
+         start_district = str_replace_all(start_district, "<f1>", "n"),
+         start_district = str_replace_all(start_district, "<8c>", "S"),
+         start_district = str_replace_all(start_district, "<f3>", "o"),
+         start_district = str_replace_all(start_district, "<9c>", "s"),
+         start_district = str_replace_all(start_district, "<b9>", "a"),
+         start_district = str_replace_all(start_district, "<af>", "Z"),
+         start_district = str_replace_all(start_district, "<ea>", "e"),
+         start_district = str_replace_all(start_district, "<9f>", "z"),
+         start_district = str_replace_all(start_district, "<bf>", "z"),
+         end_district = str_replace_all(end_district, "<b3>", "l"),
+         end_district = str_replace_all(end_district, "<f1>", "n"),
+         end_district = str_replace_all(end_district, "<8c>", "S"),
+         end_district = str_replace_all(end_district, "<f3>", "o"),
+         end_district = str_replace_all(end_district, "<9c>", "s"),
+         end_district = str_replace_all(end_district, "<b9>", "a"),
+         end_district = str_replace_all(end_district, "<af>", "Z"),
+         end_district = str_replace_all(end_district, "<ea>", "e"),
+         end_district = str_replace_all(end_district, "<9f>", "z"),
+         end_district = str_replace_all(end_district, "<bf>", "z")) 
+```
+
+```{r}
+same <- F
+mevo %>% 
+  filter(start_district == "Oliwa", if (same) {
+    start_district == end_district
+  }else{start_district != end_district}, pora_dnia == "Ranek") %>% 
+  leaflet() %>% 
+  addTiles() %>% 
+  addCircleMarkers(lng = ~lng.y, lat = ~lat.y, color = "green", radius = 1) 
+
+```
+
+
+```{r}
+mevo %>% 
+  filter(start_district == "Oliwa", if (same) {
+    start_district == end_district
+  }else{start_district != end_district})
+```
+
+

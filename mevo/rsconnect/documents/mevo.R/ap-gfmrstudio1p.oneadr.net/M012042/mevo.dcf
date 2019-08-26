@@ -1,0 +1,13 @@
+name: mevo
+title: mevo
+username: M012042
+account: M012042
+server: ap-gfmrstudio1p.oneadr.net
+hostUrl: https://ap-gfmrstudio1p.oneadr.net:3939/__api__
+appId: 136
+bundleId: 476
+url: https://ap-gfmrstudio1p.oneadr.net:3939/content/136/
+when: 1566820417.78559
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: check.Rmd|dzielnice.rds|full_routes.json|mevo.Rmd|TEST.json

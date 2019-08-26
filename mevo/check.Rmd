@@ -49,9 +49,9 @@ check<- check %>%
          end_district = map2_chr(check$lat.y, check$lng.y,wskaz_dzielnice),
          pora_dnia = time.x %>% as_datetime() %>% hour(),
          pora_dnia  = case_when(pora_dnia > 6 & pora_dnia <= 10 ~ "Ranek",
-                                pora_dnia > 10 & pora_dnia  <= 14 ~ "Po?udnie",
-                                pora_dnia > 14 & pora_dnia <= 18 ~ "Popo?udnie",
-                                pora_dnia > 18 & pora_dnia <= 22 ~ "Wiecz?r",
+                                pora_dnia > 10 & pora_dnia  <= 14 ~ "Poludnie",
+                                pora_dnia > 14 & pora_dnia <= 18 ~ "Popoludnie",
+                                pora_dnia > 18 & pora_dnia <= 22 ~ "Wieczor",
                                 TRUE ~ "Noc"),
          dzien_tygodnia = time.x %>% as_datetime() %>% wday(),
          dzien_tygodnia = ifelse(dzien_tygodnia %in% c(1, 7), "Weekend", "Working day"))
@@ -67,7 +67,7 @@ check$distances <- distances
  
 ```
 ```{r}
-check %>% nrow()
+write_csv(check, "./mevo.csv")
 ```
 
 ```{r}

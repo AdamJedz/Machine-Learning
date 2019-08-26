@@ -1,0 +1,13 @@
+name: premierzy
+title: Premierzy
+username: M012042
+account: M012042
+server: ap-gfmrstudio1p.oneadr.net
+hostUrl: https://ap-gfmrstudio1p.oneadr.net:3939/__api__
+appId: 135
+bundleId: 475
+url: https://ap-gfmrstudio1p.oneadr.net:3939/content/135/
+when: 1566814835.38959
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: drugie.Rmd|final.csv|pierwsze.Rmd|trzecie.Rmd|zapis_full.csv|zapis.csv

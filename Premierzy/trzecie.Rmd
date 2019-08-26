@@ -77,6 +77,8 @@ pl_mm <- df_joined %>%
 
 ```{r}
 library(maps)
+library(tidyverse)
+df_joined <- read_csv("./joined.csv")
 ```
 
 
@@ -102,5 +104,31 @@ ggplot() +
 ```{r}
 airports %>% filter(city %in% pl_ek$city_z | city %in% pl_ek$city_do, iso_country == "PL") %>% 
   group_by(city) %>% top_n(1, ident)
+```
+
+```{r}
+ggplot() +
+  # kontury Polski
+  geom_polygon(data = map_data("world") %>%
+                 filter(region %in% c("Poland", df_joined %>% 
+  filter(kto == "DT", iso_country_do != "PL") %>% 
+  left_join(codelist %>% select(country = country.name.en, iso2c), by = c("iso_country_do" = "iso2c")) %>% pull(country) %>% unique())),
+               aes(long, lat, group=group),
+               color = "gray30", fill = "gray90")
+```
+
+```{r}
+library(countrycode)
+```
+
+```{r}
+df_joined %>% 
+  filter(kto == "DT", iso_country_do != "PL") %>% 
+  left_join(codelist %>% select(country = country.name.en, iso2c), by = c("iso_country_do" = "iso2c")) %>% pull(country) %>% unique()
+```
+
+```{r}
+ggplot() +
+  borders("world", xlim = c(-10, 25), ylim = c(39, 70), fill = "gray90")
 ```
 
