@@ -166,11 +166,12 @@ server <- function(input, output) {
       filter(kto == input$premier_3) %>%
       count(pojazd) %>%
       ggplot(aes(x = reorder(pojazd, -n), y = n)) +
-      geom_col(aes(fill = pojazd), show.legend = F) +
+      geom_col(aes(fill = pojazd), show.legend = F) + scale_fill_manual(values = c("EMB" = "deepskyblue4", "Bell" = "firebrick4", "CASA" = "cadetblue3", "DT" = "cornflowerblue", "Gulfstream" = "darkcyan", "Inny" = "blueviolet", "MI8" = "darkslateblue", "Śmigłowiec W-3" = "deepskyblue2", "TU" = "goldenrod3", "YK" = "darkorange3"))+
       labs(title = "Ilość lotów poszczególną maszyną",
            x = "Nazwa pojazdu",
            y = "Ilość lotów") +
-      theme(plot.title = element_text(hjust = .5))
+      theme(plot.title = element_text(hjust = .5),
+            axis.text.x = element_text(size = 20))
   })
   
   output$ilosc <- renderInfoBox({

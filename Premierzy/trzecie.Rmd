@@ -132,3 +132,19 @@ ggplot() +
   borders("world", xlim = c(-10, 25), ylim = c(39, 70), fill = "gray90")
 ```
 
+```{r}
+df_joined %>% 
+  count(pojazd) %>% 
+  ggplot(aes(x = fct_reorder(as.factor(pojazd),-n), y = n)) +
+  geom_col(aes(fill = pojazd), show.legend = F) +
+  theme(axis.text.x = element_text(size = 5)) + scale_fill_manual(values = c("EMB" = "deepskyblue4", "Bell" = "firebrick4", "CASA" = "cadetblue3", "DT" = "cornflowerblue", "Gulfstream" = "darkcyan", "Inny" = "blueviolet", "MI8" = "darkslateblue", "Śmigłowiec W-3" = "deepskyblue2", "TU" = "goldenrod3", "YK" = "darkorange3"))
+```
+
+```{r}
+df_joined %>% 
+  filter(kto == "DT") %>% 
+  count(pojazd) %>% 
+  ggplot(aes(x = fct_reorder(as.factor(pojazd),-n), y = n)) +
+  geom_col(aes(fill = pojazd), show.legend = F) +
+  theme(axis.text.x = element_text(size = 5)) + scale_fill_manual(values = c("chartreuse4", "cyan4", "cadetblue3", "cornflowerblue", "darkcyan", "blueviolet", "dodgerblue3", "deepskyblue2", "darkslategray3", "EMB" = "black"))
+```
