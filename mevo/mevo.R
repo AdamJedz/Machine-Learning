@@ -31,9 +31,8 @@ ui <- dashboardPage(
     title = "Wypożyczenia MEVO"),
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Mapa wypożyczeń", tabName = "map"),
-      menuItem("Statystyki", tabName = "stats")
-    )
+      menuItem("Mapa wypożyczeń", tabName = "map")
+    ), collapsed = T
   ),
   dashboardBody(
     tabItems(
@@ -58,7 +57,7 @@ ui <- dashboardPage(
                                choices = mevo$dzien_tygodnia %>% unique()))),
         column(width = 8,
                box(width = NULL,
-                   leafletOutput("my_map", height = 800)))
+                   leafletOutput("my_map", height = 600)))
       )
     )
   )

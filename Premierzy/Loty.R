@@ -32,7 +32,7 @@ ui <- dashboardPage(
                                               "Beata Szydło" = "BS",
                                               "Mateusz Morawiecki" = "MM")))),
           column(width = 8,
-                 box(width = NULL, plotOutput("polaczenia_pl", height = 800))
+                 box(width = NULL, plotOutput("polaczenia_pl", height = 600))
           )
         ),
         tabItem(
@@ -45,7 +45,7 @@ ui <- dashboardPage(
                                               "Beata Szydło" = "BS",
                                               "Mateusz Morawiecki" = "MM")))),
           column(width = 8,
-                 box(width = NULL, plotOutput("polaczenia_eu", height = 800))
+                 box(width = NULL, plotOutput("polaczenia_eu", height = 600))
           )
         ),
         tabItem(
@@ -59,7 +59,7 @@ ui <- dashboardPage(
                                               "Mateusz Morawiecki" = "MM")))),
           column(width = 8,
                  box(width = NULL, 
-                     plotOutput("samoloty", height = 800)))
+                     plotOutput("samoloty", height = 600)))
         ),
         tabItem(
           tabName = "statystyki",
@@ -171,7 +171,7 @@ server <- function(input, output) {
            x = "Nazwa pojazdu",
            y = "Ilość lotów") +
       theme(plot.title = element_text(hjust = .5),
-            axis.text.x = element_text(size = 20))
+            axis.text.x = element_text(size = 15))
   })
   
   output$ilosc <- renderInfoBox({
