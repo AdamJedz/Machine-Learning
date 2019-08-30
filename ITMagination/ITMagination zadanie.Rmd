@@ -4,17 +4,25 @@ author: "Igor Adamiec"
 date: "8/29/2019"
 output: html_document
 ---
+# Wczytanie danch i wstępna analiza danych
 
-# Biblioteki
+## Biblioteki
 
-```{r}
+Ponizsze biblioteki orpowiadaja manipulacje danymi i tworzenie modeli.
+
+```{r message = FALSE}
 library(tidyverse)
 library(rsample)
 library(broom)
 library(lubridate)
 library(car)
+library(leaps)
+library(rlang)
+library(rpart)
 ```
-# Wczytanie danych
+## Wczytanie danych
+
+Dane z pliku train.csv zostaly przypisane do zmiennej sales. 
 
 ```{r warning = FALSE}
 sales <- read_csv("./train.csv")
@@ -25,6 +33,7 @@ sales %>%
   head()
 ```
 
+Dane z pliku store.csv zostaly przypisane do zmiennej store
 
 ```{r}
 store <- read_csv("./store.csv")
@@ -34,12 +43,20 @@ store <- read_csv("./store.csv")
 store %>% 
   head()
 ```
-#Zlaczenie danych
+## Zlaczenie danych
+
+Dwie tabele zostaly polaczone. Kluczem do laczenia byla kolumna Store.
 
 ```{r}
 data <- sales %>% 
   left_join(store, by = "Store")
 ```
+
+## Pierwszy rzut oka na dane
+
+Dwie ponizsze fukncje pozwalaja na przyjrzenie sie powstalemu zbiorowi danych. Widzimy, ze czesc z kolumn powinna zostac zamieniona ze zmiennej liczbowej lub tekstowej na zmienna kategoryczna.
+
+W niektorych kolumnach widac tez pewne ilosci brakow danych. Nimi zajmowac sie bede przygladajac sie kazdej kolumnie po kolei.
 
 ```{r}
 data %>% 
@@ -51,7 +68,9 @@ data %>%
   summary()
 ```
 
-# Zamiana niektorych zmiennych na kategoryczne
+## Zamiana niektorych zmiennych na kategoryczne
+
+Zmienne Open, Promo, SchoolHoliday, Assortment oraz Promo2 zostaly zamienione na zmienne kategoryczne w celu latwiejszego zbudowania modelu. Efekty widac w outpucie funkcji summary(), gdzie wartosci wspomnianych kolumn zostaly zliczone.
 
 ```{r}
 data <- data %>% 
@@ -67,17 +86,23 @@ data %>%
   summary()
 ```
 
-# Pora roku/dnia
+## Pora roku/dnia
+
+Kolejnym krokiem bylo rozszerzenie zmiennej Date na trzy zmienne osobno opisujace rok, miesiac i dzien oraz znalezienie potencjalnych trendow w kazdej z nowych zmiennych. 
+
+Poniższy wykres przedstawia nam wyniki sredniej sprzedazy z kazdego dnia, w ktorym sklepy byly otwarte. Widac na nim dwa wzrosty w okolicach koncowki roku 2013 i 2014. 
 
 ```{r}
 data %>% 
+  filter(Open == 1) %>% 
   group_by(Date) %>% 
-  summarise(Sales = sum(Sales)) %>% 
+  summarise(Sales = mean(Sales)) %>% 
   ggplot(aes(x = Date, y = Sales)) +
-  geom_line()
+  geom_line(color = "blue") +
+  labs(title = "Średnia sprzedaży ze wszystkich sklepów w dni, w które był one otwarte")
 ```
 
-
+Do zbioru danych dodalem trzy nowe zmienne opisujace dzien, miesiac i rok. Ponizsze wykresy przedstawiaja trendy w sprzedazy dla tych zmiennych.
 
 ```{r}
 data <- data %>% 
@@ -86,110 +111,127 @@ data <- data %>%
          Year = year(Date))
 ```
 
+### Zmienna Year
+
+Patrzac na srednia sprzedaz rok do roku nie mozna zauwazyc zadnego widocznego trendu. Jezeli chodzi oroczna sume sprzedazy, to nie mozna wysnuc zadnych wnioskow, poniewaz z roku 2015 dane dostepne sa tylko do konca 2015.
+
 ```{r}
 data %>% 
   ggplot(aes(x = as.factor(Year), y = Sales)) + 
-  geom_boxplot()
+  geom_boxplot(aes(fill = as.factor(Year)), show.legend = F) +
+  labs(title = "Wykresy pudelkowe sprzedazy dla poszczegolnych lat", x = "Year")
 ```
-
 
 ```{r}
 data %>% 
   group_by(Year) %>% 
   summarise(Sales = sum(as.numeric(Sales))) %>% 
   ggplot(aes(x = Year, y = Sales)) + 
-  geom_col()
+  geom_col(aes(fill = as.factor(Year)), show.legend = F) +
+  labs(title = "Suma sprzedaży względem roku")
 ```
+
+### Zmienna Month
+
+Analizujac srednia sprzedaz z poszczegolnych miesiecy, mozna zauwazycdwa okresy zwiekszenia sprzedazy. Pierwszy z nich jest w okolicach maja, a drugi w Grudniu.
 
 ```{r}
 data %>% 
   ggplot(aes(x = as.factor(Month), y = Sales)) + 
-  geom_boxplot()
+  geom_boxplot(aes(fill = as.factor(Month)), show.legend = F) +
+  labs(title = "Wykresy pudelkowe sprzedazy dla poszczegolnych miesiecy", x = "Month")
 ```
 
-```{r}
-data %>% 
-  filter(Year != 2015) %>% 
-  group_by(Month) %>% 
-  summarise(Sales = sum(as.numeric(Sales))) %>% 
-  ggplot(aes(x = as.factor(Month), y = Sales)) + 
-  geom_col()
-```
+### Zmienna Day
+
+Analizujac srednia sprzedaz z poszczegolnych dni w miesiacu, mozemy zauwazyc, ze wystepuja trzy okresy zwiekszenia sprzedazy - poczatek, srodek i koniec miesiaca.
 
 ```{r}
 data %>% 
   ggplot(aes(x = as.factor(Day), y = Sales)) + 
-  geom_boxplot()
+  geom_boxplot(aes(fill = as.factor(Day)), show.legend = F) +
+  labs(title = "Wykresy pudelkowe sprzedazy dla poszczegolnych dni", x = "Day")
 ```
 
-```{r}
-data %>% 
-  filter(Year != 2015) %>% 
-  group_by(Day) %>% 
-  summarise(Sales = sum(as.numeric(Sales))) %>% 
-  ggplot(aes(x = as.factor(Day), y = Sales)) + 
-  geom_col()
-```
+## Pozostale zmienne
 
-# Klienci
+### Zmienna Customers
+
+Ponizszy wykres przedstawia zaleznosc pomiedzy Salesami, a zmienna Customers. Widzimy, ze zaleznosc ta jest praktycznie idealnie liniowa
 
 ```{r}
 data %>% 
   ggplot(aes(x = Customers, y = Sales)) +
-  geom_point() +
-  geom_smooth(se = F)
+  geom_point(alpha = .25) +
+  geom_smooth(se = F, method = "lm") +
+  labs(title = "Wykres zależności pomiędzy wartością Sales a ilością klientów w danym dniu dla danego sklepu")
+  
 ```
 
-# Otwarte
+### Zmienna Open
 
-Z calego datasetu mozna wywalic wszystkie dni, kiedy sklepy byly zamkniete i usunac zmienna open
+Mozna zauwazyc, ze we wszystkie dni, w ktore sklepy byly zamkniete sprzedaz zawse wynosila 0. Z tego powodu usune ze zbioru wszystkie obserwacje, dla ktorych wartosc tej zmiennej byla rowna 0 i proponuje zastosowanie ruli eksperckiej - do modelu uzywac tylko danych z dni, w ktorych sklep byl otwarty, a wszystkim obserwacjom z dni zamkniecia przypisac wartosc Sales rowna 0.
+
 ```{r}
 data %>% 
   ggplot(aes(x = Open, y = Sales)) +
-  geom_boxplot()
+  geom_boxplot(aes(fill = Open), show.legend = F) +
+  labs(title = "Średnia sprzedaż w dni otwarcia i zamkniecia sklepów")
 ```
 
 ```{r}
 data %>% filter(Open == 0) %>% count(Sales)
 ```
-# Promo
+### Zmienna Promo
+
+Wykres sredniej sprzedazy ze wzgledu na istnienie promocji pokazuje nam, ze w dni, podczas ktorych promocja byla aktywna, srednia sprzedaz byla troche wieksza.
 
 ```{r}
 data %>% 
   filter(Open == 1) %>% 
   ggplot(aes(x = Promo, y = Sales)) +
-  geom_boxplot()
+  geom_boxplot(aes(fill = Promo), show.legend = F) + 
+  labs(title = "Średnia sprzedaż w dni normalne i dni promocji")
 ```
 
-# StateHoliday
+### Zmienna StateHoliday
 
-Zmienna StateHoliday rowniez zostanie wyrzucona, bo przyjmuje wartosci albo 0, albo NA
+Zmienna StateHoloiday powinna zostac usunieta, poniewaz przyjmuje wartosci albo 0 albo NA wiec jest bezwartosciowa.
 
-# SchoolHoliday
+### Zmienna SchoolHoliday
+
+Fakt wystepowania dni wolnych od szkoly nie wydaje sie wplywac istotnie na sprzedaz.
 
 ```{r}
 data %>% 
   filter(Open == 1) %>% 
   ggplot(aes(x = SchoolHoliday, y = Sales)) +
-  geom_boxplot()
+  geom_boxplot(aes(fill = SchoolHoliday), show.legend = F) +
+  labs(title = "Średnia sprzedaż ze względu na zmienna ScgoolHoliday")
 ```
 
-# Storetype
+### Zmienna Storetype
+
+Analizujac zmienna StoreType wydaje sie, ze dla sklepow z rodzaju "b" sprzedaz byla wieksza od innych.
 
 ```{r}
 data %>% 
   filter(Open == 1) %>% 
   ggplot(aes(x = StoreType, y = Sales)) +
-  geom_boxplot()
+  geom_boxplot(aes(fill = StoreType), show.legend = F) +
+  labs(title = "Średnia sprzedaż dla poszczególnych rodzajów sklepów")
 ```
 
-# Assortment
+### Zmienna Assortment
+
+Z ponizszego wykresu wynika, ze najlepsza srednia sprzedaza cieszyly sie sklepy, ktore w swojej ofercie mialy asortyment typu "b" = "extra". Mozna tez zauwazyc, ze jedynymi sklepami, ktore oferowaly taki asortyment byly sklepy typu "b".
 
 ```{r}
 data %>% 
   filter(Open == 1) %>% 
   ggplot(aes(x = Assortment, y = Sales)) +
-  geom_boxplot()
+  geom_boxplot(aes(fill = Assortment), show.legend = F) +
+  labs(title = "Średnia sprzedaż ze względu na rodzaj asortymentu")
 ```
 
 ```{r}
@@ -197,18 +239,17 @@ data %>%
   count(StoreType, Assortment)
 ```
 
-#Competitiondistance
+### Zmienna CompetitionDistance
 
-```{r}
+Analizujac ponizszy wykres mozna dojsc do wniosku, ze im dalej od najblizszego sklepu konkurencji, tym mniejsza sprzedaz. Wniosek wydaje sie byc sprzeczny z logika, ktora nakazuje myslec, ze brak konkurencji spowoduje, ze klienci beda korzystac tylko z jedynego dostepnego w okolicy sklepu.
+
+Dodatkowo brakuje 2642 wartosci. Z tego powodu postanowilem je zaimputowac stosujac metode imputacji mediany. Nie zastosuje jednak mediany dla calego zbioru, ale zgrupuje mediane ze wzgledu na asortyment.
+
+```{r warning = FALSE}
 data %>% 
   ggplot(aes(x = CompetitionDistance, y = Sales)) +
-  geom_point()
-```
-
-```{r}
-data %>% 
-  group_by(StoreType) %>% 
-  summarize(median(CompetitionDistance, na.rm = T))
+  geom_point(alpha = .25) +
+  labs(title = "Zależność sprzedazy od odleglosci od konkurencji")
 ```
 
 ```{r}
@@ -219,35 +260,50 @@ data %>%
 
 Braki uzupelnie mediana dla kategorii asortymentu
 
-# Competition since month i year usuwam, bo brakuje 1/3 danych
+### Zmienne CompetitionOpenSinceMonth i CompetitionOpenSinceYear
 
-# Promo2
+Dwie zmienne opisujace od kiedy konkurencja istnieje usuwam, poniewaz dla okolo 1/3 zbioru brakuej dla nich wartosci.
+
+### Zmienna Promo2
+
+Wykres pokazujacy rozniece w sredniej sprzedazy pomiedzy sklepami, ktore biora udzial w regularnych promocjach i tymi, ktre nie biora wskazuje, ze te, ktore nie biora w nich udzialu srednio notuja troche wieksza sprzedaz.
 
 ```{r}
 data %>% 
   ggplot(aes(x = Promo2, y = Sales)) +
-  geom_boxplot()
+  geom_boxplot(aes(fill = Promo2), show.legend = F) +
+  labs(title = "Zależność sprzedaży od faktu czy sklep bierze udział w regularnych promocjach")
 ```
 
-# Promo2SinceWeek
+### Zmienna Promo2SinceWeek
+
+Na ponizszym wykresie można zauwazyc pewne wahania w sredniej sprzedazy, ale trend nie jest widoczny na pierwszy rzut oka.
 
 ```{r}
 data %>% 
   filter(Promo2 == 1) %>% 
   ggplot(aes(x = as.factor(Promo2SinceWeek), y = Sales)) +
-  geom_boxplot()
+  geom_boxplot(aes(fill = as.factor(Promo2SinceWeek)), show.legend = F) +
+  labs(title = "Zależność sprzedaży od czasu, od kiedy sklep bierze udział w Promo2", x = "Promo2SinceWeek")
 ```
 
-# Promo2SinceYear
+### Zmienna Promo2SinceYear
+
+Analizujac ponizszy wykres, podobnie jak przy poprzednim, nie mozna zauwazyc zadnych widocznych trendow.
 
 ```{r}
 data %>% 
   filter(Promo2 == 1) %>% 
   ggplot(aes(x = as.factor(Promo2SinceYear), y = Sales)) +
-  geom_boxplot()
+  geom_boxplot(aes(fill = as.factor(Promo2SinceYear)), show.legend = F) +
+  labs(title = "Zależność sprzedarz od roku, w któym sklep bierze udział w Promo2", x = "Promo2SinceYear")
 ```
 
-# PromoInterval
+### Zmienna PromoInterval
+
+Mozemy zauwazyc 4 rozne czasy roznoszenia ulotek z Promo2
+
+Postanowilem stworzyc zmienna actual_promo, ktora sprawdza czy czas danej obserwacji zgadza sie z czasem rozsylania ulotek. Na wykresie porownujacym nie widac jednak zadnych roznic w sredniej sprzedazy.
 
 ```{r}
 data %>% count(PromoInterval)
@@ -258,10 +314,16 @@ data %>%
   filter(Promo2 == 1) %>% 
   mutate(actual_promo = str_detect(PromoInterval, pattern = month.abb[Month])) %>% 
   ggplot(aes(x = actual_promo, y = Sales)) +
-  geom_boxplot()
+  geom_boxplot(aes(fill =actual_promo), show.legend = F)
 ```
 
-# Ostateczne modyfikowanie zmiennych
+## Ostateczne modyfikowanie zmiennych
+
+Ostatnie poprawki polegaja na:
+* odfiltrowaniu obserwacji, dla ktorych zmienna Open == 0,
+* wyrzuceniu ze zbioru zmiennych Open, StateHoliday, CompetitionOpenSinceMonth i CompetitionOpenSinceYear,
+* uzupelnieniu brakow danych w zmiennej CompetitionDistance wartosciami mediany ze wzgledu na rodzaj asortymentu sklepu,
+* dodanie zmiennej active_promo, ktora sprawdza czy okres obserwacji zgadza sie z okresem rozsylania ulotek informujacych o Promo2
 
 ```{r}
 data %>% 
@@ -290,21 +352,32 @@ data %>%
 ```
 
 
-# podzial na promo 2 i no promo 2
+## Podzial na dwa datasety
+
+Jako kolejna rule ekspercka zdecydowalem sie wprowadzic fakt wystepowania Promo2. Obserwacje, dla ktorych zmienna Promo2 wynosi 1, posiadaja 3 dodatkowe zmienne, ktore rowniez moga wplywac na zdolnosc predykcyjna. Z tego powodu zamierzam stworzyc dwa modele. Jeden dla sklepow bez Promo2, a drugie dla sklepow z Promo2.
 
 ```{r}
 data_no_promo <- data %>% filter(Promo2==0) %>% select(-c(Promo2, Promo2SinceWeek, Promo2SinceYear,PromoInterval, actual_promo))
 data_promo <- data %>% filter(Promo == 1)
 ```
 
-# Data no promo
+# Tworzenie modelu dla sklepow bez obowiazujacego Promo2
 
-## Prosty model by znalezc outlierow, wspoliniowosci itp
+Pierwszym krokiem bedzie znalezienie wartosci nietypowych, zarowno dla zmiennych niezaleznych jak i zmiennej zaleznej jak i wykrycie potencjalnych wspoliniowosci miedzy zmiennymi. 
 
-```{r}
-data_no_promo %>% colnames()
-```
+Nastepnie zostatnie stworzonych kilka modeli:
+- model liniowy ze wszystkimi zmiennymi,
+- model liniowy ze zmniejszona iloscia zmiennych,
+- kilka modeli GAM,
+- kilka modeli stworzonych z pomoca drzew decyzyjnych.
 
+Modele zostana porownane ze soba przy uzyciu statystyki MAE (mean absolute error) i poddane 10-krotnej corss walidacji. 
+
+## Znalezienie outlierow i wspoliniowosci
+
+Stworzylem prosty model liniowy ze wszystkimi zmiennymi po to by na podstawie zestandaryzowanych reszt znalezc outlierow.
+
+Ponizsze podsumowanie modelu pokazuje nam, ze wszystkie zmienne zawarte w modelu sa statystycznie istotne.
 
 ```{r}
 model_simple <- lm(Sales~.-Store-Date, data = data_no_promo)
@@ -319,6 +392,8 @@ data_no_promo_no_outliers <- model_simple %>% augment() %>%
   select(colnames(data_no_promo))
 ```
 
+Wartości odstajacych bylo okolo 5 tysiecy, wiec stanowily tylko 1 procent calego zbioru i mozna bylo je usunac.
+
 ```{r}
 model_simple <- lm(Sales~.-Store-Date, data = data_no_promo_no_outliers)
 ```
@@ -330,42 +405,117 @@ model_simple %>%
   geom_point()
 ```
 
+Analizujac statystyke Leverage mozna zauwazyc, ze zbior nie zawiera zadnych odstajacych wartosci dla zmiennej zaleznej.
+
 ```{r}
 model_simple %>% 
   augment() %>% 
   ggplot(aes(x = .hat, y = .std.resid)) + geom_point()
 ```
 
-```{r}
-model_simple %>% summary()
-```
+Statystyka VIF (variance inflation factor) informuje nas o potencjalnych wspoliniowosciach pomiedzy zmiennymi. W tym zbiorze dancych takowe nie wystepuja.
 
 ```{r}
 vif(model_simple)
 ```
 
 
+## Podzial na zbiory treningowe i testowe
 
+```{r}
+set.seed(1)
+split <- initial_split(data_no_promo_no_outliers, prop = .8)
+train_no_promo <- training(split)
+test_no_promo <- testing(split)
+```
 
+## 10 krotna cross walidacja
 
+```{r}
+set.seed(1)
+(no_promo_cv <- vfold_cv(train_no_promo) %>% 
+  mutate(train = map(splits, ~training(.x)),
+         validate = map(splits, ~testing(.x)),
+         truths = map(validate, "Sales")))
+```
 
+### Wybieram kilka modeli i z kazdego z nich wezme taki z najlepszy MAE
 
+#### Best Subset Selection dla danych no promo
 
+Jako pierwszy stworzylem model liniowy ze wszystkimi zmiennymi i poddalem go algorytmowi best subset selection, ktory testuje modele usuwajac ich zmienne i sprawdzajac czy moc predykcyjna sie nie zmniejszyla.
 
+Patrzac na wyniki cross walidacji, widzimy, ze modele z dziewiecioma zmiennymi wzwyz osiagnely najlepsze wyniki statystyki MAE na danych cross-validation.
 
+```{r}
+predict.regsubsets <- function(object, newdata, id, ...) {
+  mat <- model.matrix(Sales~.-Store-Date, newdata)
+  coefi <- coef(object, id = id)
+  xvars <- names(coefi)
+  fin <- mat[, xvars] %*% coefi 
+  fin[,1]
+}
+  
+```
 
+```{r}
+params <- 1:13
 
+names <- paste0(rep("variables", each = length(params)), "_", 1:13)
+model_fun <- glue::glue('map2(model, validate, ~predict(.x, .y, id = {1:13}))') %>% paste(., collapse = ";")
 
+names_mae <- paste0(rep("mae", each = length(params)), "_", 1:13)
+mae_fun <- glue::glue('map2_dbl(truths, variables_{1:13}, ~mean(abs(.x-.y)))') %>% paste(., collapse = ";")
+```
 
+```{r}
+best_subset_cv <- no_promo_cv %>% 
+  mutate(model = map(train, ~regsubsets(Sales~.-Store-Date, data = .x, nvmax = 13))) %>% 
+  mutate(!!! parse_exprs(model_fun)) %>% 
+  rename_at(vars(starts_with("map2")), ~names) %>% 
+  mutate(!!! parse_exprs(mae_fun)) %>% 
+  rename_at(vars(starts_with("map2")), ~names_mae) %>% 
+  summarize_at(vars(starts_with("mae")), ~mean(.)) %>% 
+  gather(key = "n_variables", value = "mae")
 
+best_subset_cv %>% 
+  arrange(mae)
 
+(best_subset_cv %>% 
+  ggplot(aes(x = 1:13, y = mae)) +
+  geom_line() + geom_point(color = "blue") +
+  labs(x = "number of variables", title = "Best subset selection", subtitle = "for no_promo data") -> best_plot)
+```
 
+Widzimy, ze model z 9 zmiennymi pozbyl sie zmiennych DayOfWeek, SchoolHoliday, StoreTypec i  Day.
 
+```{r}
+coef(regsubsets(Sales~.-Store-Date, data = train_no_promo, nvmax = 11), 9)
+```
 
+#### Decision Tree
 
+Modele drzew decyzyjnych byly poddawane cross walidacji dla roznych wariantow parametrow minsplit i maxdepth. Niestety wyniki statystyki MAE dla kazdego z tych wariantow byly dokladnie takie same.
 
+```{r}
+set.seed(1)
+no_promo_cv %>% 
+  mutate(tree_max25 = map(train, ~ rpart(formula = Sales~.-Store-Date, data = .x, control = rpart.control(maxdepth = 25))),
+         tree_max20 = map(train, ~ rpart(formula = Sales~.-Store-Date, data = .x, control = rpart.control(maxdepth = 20))),
+         tree_max10 = map(train, ~ rpart(formula = Sales~.-Store-Date, data = .x, control = rpart.control(maxdepth = 10))),
+         tree_max30 = map(train, ~ rpart(formula = Sales~.-Store-Date, data = .x)),
+         predict_max25 = map2(tree_max25, validate, ~predict(.x, newdata = .y)),
+         predict_max20 = map2(tree_max20, validate, ~predict(.x, newdata = .y)),
+         predict_max10 = map2(tree_max10, validate, ~predict(.x, newdata = .y)),
+         predict_max30 = map2(tree_max30, validate, ~predict(.x, newdata = .y)),
+         mae_max25 = map2_dbl(truths, predict_max25, ~mean(abs(.x-.y))),
+         mae_max20 = map2_dbl(truths, predict_max20, ~mean(abs(.x-.y))),
+         mae_max10 = map2_dbl(truths, predict_max10, ~mean(abs(.x-.y))),
+         mae_max30 = map2_dbl(truths, predict_max30, ~mean(abs(.x-.y))))%>% 
+  summarize_at(vars(starts_with("mae")), ~mean(.)) %>% 
+  gather(key = "max_split", value = "mae")
 
-
+```
 
 
 
