@@ -19,6 +19,7 @@ library(car)
 library(leaps)
 library(rlang)
 library(rpart)
+library(gam)
 ```
 ## Wczytanie danych
 
@@ -517,8 +518,98 @@ no_promo_cv %>%
 
 ```
 
+#### GAMs
 
+Stworzylem piec roznych modeli GAM (generalized additive models). Pierwsze dwie z nich skladaja sie tylko z elementow liniowych i funkcji wielomianowych. Trzy kolejne sa kombinacjami funkcji liniowych, wielomianowych oraz zwyklych i naturalnych spline'ow.
 
+```{r}
+formula_1 <- Sales ~ Customers + Promo + SchoolHoliday + StoreType + Assortment + poly(CompetitionDistance,2) + poly(Day, 3) + poly(Month, 3) + Year + poly(DayOfWeek, 3)
+
+formula_1_coinst <- Sales~ Customers + Promo + SchoolHoliday + StoreType + Assortment + poly(CompetitionDistance,2) + poly(Day, 2) + poly(Month, 2) + Year + poly(DayOfWeek, 2)
+
+formula_2 <- Sales~ Customers + Promo + SchoolHoliday + StoreType + Assortment + ns(CompetitionDistance,4) + poly(Day, 4) + poly(Month, 3) + Year + poly(DayOfWeek, 4)
+
+formula_3 <- Sales~ Customers + Promo + SchoolHoliday + StoreType + Assortment + ns(CompetitionDistance,4) + bs(Day, 5) + bs(Month, 4) + Year + bs(DayOfWeek, 5)
+
+formula_4 <- Sales~ Customers + Promo + SchoolHoliday + StoreType + Assortment + ns(CompetitionDistance,4) + ns(Day, 4) + ns(Month, 3) + Year + ns(DayOfWeek, 4)
+```
+
+```{r}
+set.seed(1)
+no_promo_cv %>% 
+  mutate(model_1 = map(train, ~lm(formula_1, data = .x)),
+         predict_1 = map2(model_1, validate, ~predict(.x, newdata = .y)),
+         mae_1 = map2_dbl(truths, predict_1, ~mean(abs(.x-.y))),
+         model_1_coinst = map(train, ~lm(formula_1_coinst, data = .x)),
+         predict_1_coinst = map2(model_1_coinst, validate, ~predict(.x, newdata = .y)),
+         mae_1_coinst = map2_dbl(truths, predict_1_coinst, ~mean(abs(.x-.y))),
+         model_2 = map(train, ~lm(formula_2, data = .x)),
+         predict_2 = map2(model_2, validate, ~predict(.x, newdata = .y)),
+         mae_2 = map2_dbl(truths, predict_2, ~mean(abs(.x-.y))),
+         model_3 = map(train, ~gam(formula_3, data = .x)),
+         predict_3 = map2(model_3, validate, ~predict(.x, newdata = .y)),
+         mae_3 = map2_dbl(truths, predict_3, ~mean(abs(.x-.y))),
+         model_4 = map(train, ~gam(formula_4, data = .x)),
+         predict_4 = map2(model_4, validate, ~predict(.x, newdata = .y)),
+         mae_4 = map2_dbl(truths, predict_4, ~mean(abs(.x-.y)))
+         ) %>% 
+  summarize_at(vars(starts_with("mae")), ~mean(.)) %>% 
+  gather(key = "model", value = "mae") %>% 
+  arrange(mae)
+```
+
+## Porownanie najlepszych modeli dla modelu testowego
+
+```{r}
+set.seed(1)
+tibble(train = list(train_no_promo), test = list(test_no_promo)) %>% 
+  mutate(truths = map(test, "Sales"),
+         model_lm = map(train, ~lm(formula = Sales~.-Date-Store, data = .x)),
+         pred_lm = map2(model_lm, test, ~predict(.x, newdata = .y)),
+         mae_lm = map2_dbl(truths, pred_lm, ~mean(abs(.x-.y))),
+         model_bs = map(train, ~regsubsets(Sales~.-Date-Store, data = .x, nvmax = 13)),
+         pred_lm_12 = map2(model_bs, test, ~predict(.x, newdata = .y, id = 12)),
+         mae_lm_12 = map2_dbl(truths, pred_lm_12, ~mean(abs(.x-.y))),
+         pred_lm_11 = map2(model_bs, test, ~predict(.x, newdata = .y, id = 11)),
+         mae_lm_11 = map2_dbl(truths, pred_lm_11, ~mean(abs(.x-.y))),
+         pred_lm_10 = map2(model_bs, test, ~predict(.x, newdata = .y, id = 10)),
+         mae_lm_10 = map2_dbl(truths, pred_lm_10, ~mean(abs(.x-.y))),
+         pred_lm_9 = map2(model_bs, test, ~predict(.x, newdata = .y, id = 9)),
+         mae_lm_9 = map2_dbl(truths, pred_lm_9, ~mean(abs(.x-.y))),
+         model_tree = map(train, ~rpart(formula = Sales~.-Date-Store, data = .x)),
+         pred_tree = map2(model_tree, test, ~predict(.x, newdata = .y)),
+         mae_tree = map2_dbl(truths, pred_tree, ~mean(abs(.x-.y))),
+         model_gam_3 = map(train, ~gam(formula_3, data = .x)),
+         pred_gam_3 = map2(model_gam_3, test, ~predict(.x, newdata = .y)),
+         mae_gam_3 = map2_dbl(truths, pred_gam_3, ~mean(abs(.x-.y))),
+         model_gam_4 = map(train, ~gam(formula_4, data = .x)),
+         pred_gam_4 = map2(model_gam_4, test, ~predict(.x, newdata = .y)),
+         mae_gam_4 = map2_dbl(truths, pred_gam_4, ~mean(abs(.x-.y)))
+         ) %>% 
+  select(starts_with("mae")) %>% 
+  gather(key = "model", value = "MAE") %>% 
+  arrange(MAE)
+```
+
+## Wnioski dla danych no_promo
+
+Najlepszym modelem okazal sie model GAM nr 3, ktory wygladal nastepujaco:
+
+* zmienne Customer i Year byly zwyklymi funkcjami liniowymi,
+* zmienne Promo, SchoolHoliday, StoreType i Assortment  byly zmiennymi kategorycznymi,
+* Zmienna CompetitionDistance zostala zamodelowana jako natural spline z czterema stopniami swobody (podzial na cztery czesci),
+* Zmienne Day i DayOfWeek zostaly zamodelowane jako spline'y z piecomia stopniami swobody (podzial na trzy czesci),
+* Zmienna mMonth zostala zamodelowana jako spline z czterema stopniami swobody (podzial na dwie czesci).
+
+Model ten przewiduje dzienna sprzedaz ze srednim bledem wynoszacym ok 835 jednostek.
+
+## potencjalne dalsze kroki
+
+Aby polepszyc wlasciwosci modelu mozna pojsc w dwie strony: 
+
+* Wkorzystujac modele addytywne i szukajac jeszcze lepszego zamodelowania poszczegolnych zmiennych,
+
+* Wykorzystujac bardziej zaawansowane metody nieparametryczne niz zwykle drzeaa decyzyjne. Mozna uzyc modeli typu random forest lub inne modele boostujace i znalezc dla nich najlepsze hyperparametry.
 
 
 
