@@ -1,0 +1,2271 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={ITMagination},
+            pdfauthor={Igor Adamiec},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{ITMagination}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Igor Adamiec}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{8/29/2019}
+
+
+\begin{document}
+\maketitle
+
+\hypertarget{wczytanie-danch-i-wstepna-analiza-danych}{%
+\section{Wczytanie danch i wstępna analiza
+danych}\label{wczytanie-danch-i-wstepna-analiza-danych}}
+
+\hypertarget{biblioteki}{%
+\subsection{Biblioteki}\label{biblioteki}}
+
+Ponizsze biblioteki orpowiadaja manipulacje danymi i tworzenie modeli.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\KeywordTok{library}\NormalTok{(rsample)}
+\KeywordTok{library}\NormalTok{(broom)}
+\KeywordTok{library}\NormalTok{(lubridate)}
+\KeywordTok{library}\NormalTok{(car)}
+\KeywordTok{library}\NormalTok{(leaps)}
+\KeywordTok{library}\NormalTok{(rlang)}
+\KeywordTok{library}\NormalTok{(rpart)}
+\KeywordTok{library}\NormalTok{(gam)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{wczytanie-danych}{%
+\subsection{Wczytanie danych}\label{wczytanie-danych}}
+
+Dane z pliku train.csv zostaly przypisane do zmiennej sales.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sales <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"./train.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Parsed with column specification:
+## cols(
+##   Store = col_double(),
+##   DayOfWeek = col_double(),
+##   Date = col_date(format = ""),
+##   Sales = col_double(),
+##   Customers = col_double(),
+##   Open = col_double(),
+##   Promo = col_double(),
+##   StateHoliday = col_double(),
+##   SchoolHoliday = col_double()
+## )
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sales }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{head}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 9
+##   Store DayOfWeek Date       Sales Customers  Open Promo StateHoliday
+##   <dbl>     <dbl> <date>     <dbl>     <dbl> <dbl> <dbl>        <dbl>
+## 1     1         5 2015-07-31  5263       555     1     1            0
+## 2     2         5 2015-07-31  6064       625     1     1            0
+## 3     3         5 2015-07-31  8314       821     1     1            0
+## 4     4         5 2015-07-31 13995      1498     1     1            0
+## 5     5         5 2015-07-31  4822       559     1     1            0
+## 6     6         5 2015-07-31  5651       589     1     1            0
+## # ... with 1 more variable: SchoolHoliday <dbl>
+\end{verbatim}
+
+Dane z pliku store.csv zostaly przypisane do zmiennej store
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{store <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"./store.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Parsed with column specification:
+## cols(
+##   Store = col_double(),
+##   StoreType = col_character(),
+##   Assortment = col_character(),
+##   CompetitionDistance = col_double(),
+##   CompetitionOpenSinceMonth = col_double(),
+##   CompetitionOpenSinceYear = col_double(),
+##   Promo2 = col_double(),
+##   Promo2SinceWeek = col_double(),
+##   Promo2SinceYear = col_double(),
+##   PromoInterval = col_character()
+## )
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{store }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{head}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 10
+##   Store StoreType Assortment CompetitionDist~ CompetitionOpen~
+##   <dbl> <chr>     <chr>                 <dbl>            <dbl>
+## 1     1 c         a                      1270                9
+## 2     2 a         a                       570               11
+## 3     3 a         a                     14130               12
+## 4     4 c         c                       620                9
+## 5     5 a         a                     29910                4
+## 6     6 a         a                       310               12
+## # ... with 5 more variables: CompetitionOpenSinceYear <dbl>, Promo2 <dbl>,
+## #   Promo2SinceWeek <dbl>, Promo2SinceYear <dbl>, PromoInterval <chr>
+\end{verbatim}
+
+\hypertarget{zlaczenie-danych}{%
+\subsection{Zlaczenie danych}\label{zlaczenie-danych}}
+
+Dwie tabele zostaly polaczone. Kluczem do laczenia byla kolumna Store.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data <-}\StringTok{ }\NormalTok{sales }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{left_join}\NormalTok{(store, }\DataTypeTok{by =} \StringTok{"Store"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{pierwszy-rzut-oka-na-dane}{%
+\subsection{Pierwszy rzut oka na dane}\label{pierwszy-rzut-oka-na-dane}}
+
+Dwie ponizsze fukncje pozwalaja na przyjrzenie sie powstalemu zbiorowi
+danych. Widzimy, ze czesc z kolumn powinna zostac zamieniona ze zmiennej
+liczbowej lub tekstowej na zmienna kategoryczna.
+
+W niektorych kolumnach widac tez pewne ilosci brakow danych. Nimi
+zajmowac sie bede przygladajac sie kazdej kolumnie po kolei.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{glimpse}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Observations: 1,017,209
+## Variables: 18
+## $ Store                     <dbl> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 1...
+## $ DayOfWeek                 <dbl> 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, ...
+## $ Date                      <date> 2015-07-31, 2015-07-31, 2015-07-31,...
+## $ Sales                     <dbl> 5263, 6064, 8314, 13995, 4822, 5651,...
+## $ Customers                 <dbl> 555, 625, 821, 1498, 559, 589, 1414,...
+## $ Open                      <dbl> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+## $ Promo                     <dbl> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+## $ StateHoliday              <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+## $ SchoolHoliday             <dbl> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+## $ StoreType                 <chr> "c", "a", "a", "c", "a", "a", "a", "...
+## $ Assortment                <chr> "a", "a", "a", "c", "a", "a", "c", "...
+## $ CompetitionDistance       <dbl> 1270, 570, 14130, 620, 29910, 310, 2...
+## $ CompetitionOpenSinceMonth <dbl> 9, 11, 12, 9, 4, 12, 4, 10, 8, 9, 11...
+## $ CompetitionOpenSinceYear  <dbl> 2008, 2007, 2006, 2009, 2015, 2013, ...
+## $ Promo2                    <dbl> 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, ...
+## $ Promo2SinceWeek           <dbl> NA, 13, 14, NA, NA, NA, NA, NA, NA, ...
+## $ Promo2SinceYear           <dbl> NA, 2010, 2011, NA, NA, NA, NA, NA, ...
+## $ PromoInterval             <chr> NA, "Jan,Apr,Jul,Oct", "Jan,Apr,Jul,...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summary}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      Store          DayOfWeek          Date                Sales      
+##  Min.   :   1.0   Min.   :1.000   Min.   :2013-01-01   Min.   :    0  
+##  1st Qu.: 280.0   1st Qu.:2.000   1st Qu.:2013-08-17   1st Qu.: 3727  
+##  Median : 558.0   Median :4.000   Median :2014-04-02   Median : 5744  
+##  Mean   : 558.4   Mean   :3.998   Mean   :2014-04-11   Mean   : 5774  
+##  3rd Qu.: 838.0   3rd Qu.:6.000   3rd Qu.:2014-12-12   3rd Qu.: 7856  
+##  Max.   :1115.0   Max.   :7.000   Max.   :2015-07-31   Max.   :41551  
+##                                                                       
+##    Customers           Open            Promo         StateHoliday  
+##  Min.   :   0.0   Min.   :0.0000   Min.   :0.0000   Min.   :0      
+##  1st Qu.: 405.0   1st Qu.:1.0000   1st Qu.:0.0000   1st Qu.:0      
+##  Median : 609.0   Median :1.0000   Median :0.0000   Median :0      
+##  Mean   : 633.1   Mean   :0.8301   Mean   :0.3815   Mean   :0      
+##  3rd Qu.: 837.0   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:0      
+##  Max.   :7388.0   Max.   :1.0000   Max.   :1.0000   Max.   :0      
+##                                                     NA's   :31050  
+##  SchoolHoliday     StoreType          Assortment       
+##  Min.   :0.0000   Length:1017209     Length:1017209    
+##  1st Qu.:0.0000   Class :character   Class :character  
+##  Median :0.0000   Mode  :character   Mode  :character  
+##  Mean   :0.1786                                        
+##  3rd Qu.:0.0000                                        
+##  Max.   :1.0000                                        
+##                                                        
+##  CompetitionDistance CompetitionOpenSinceMonth CompetitionOpenSinceYear
+##  Min.   :   20       Min.   : 1.0              Min.   :1900            
+##  1st Qu.:  710       1st Qu.: 4.0              1st Qu.:2006            
+##  Median : 2330       Median : 8.0              Median :2010            
+##  Mean   : 5430       Mean   : 7.2              Mean   :2009            
+##  3rd Qu.: 6890       3rd Qu.:10.0              3rd Qu.:2013            
+##  Max.   :75860       Max.   :12.0              Max.   :2015            
+##  NA's   :2642        NA's   :323348            NA's   :323348          
+##      Promo2       Promo2SinceWeek  Promo2SinceYear  PromoInterval     
+##  Min.   :0.0000   Min.   : 1.0     Min.   :2009     Length:1017209    
+##  1st Qu.:0.0000   1st Qu.:13.0     1st Qu.:2011     Class :character  
+##  Median :1.0000   Median :22.0     Median :2012     Mode  :character  
+##  Mean   :0.5006   Mean   :23.3     Mean   :2012                       
+##  3rd Qu.:1.0000   3rd Qu.:37.0     3rd Qu.:2013                       
+##  Max.   :1.0000   Max.   :50.0     Max.   :2015                       
+##                   NA's   :508031   NA's   :508031
+\end{verbatim}
+
+\hypertarget{zamiana-niektorych-zmiennych-na-kategoryczne}{%
+\subsection{Zamiana niektorych zmiennych na
+kategoryczne}\label{zamiana-niektorych-zmiennych-na-kategoryczne}}
+
+Zmienne Open, Promo, SchoolHoliday, Assortment oraz Promo2 zostaly
+zamienione na zmienne kategoryczne w celu latwiejszego zbudowania
+modelu. Efekty widac w outpucie funkcji summary(), gdzie wartosci
+wspomnianych kolumn zostaly zliczone.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data <-}\StringTok{ }\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Open =} \KeywordTok{as.factor}\NormalTok{(Open),}
+         \DataTypeTok{Promo =} \KeywordTok{as.factor}\NormalTok{(Promo),}
+         \DataTypeTok{SchoolHoliday =} \KeywordTok{as.factor}\NormalTok{(SchoolHoliday),}
+         \DataTypeTok{StoreType =} \KeywordTok{as.factor}\NormalTok{(StoreType),}
+         \DataTypeTok{Assortment =} \KeywordTok{as.factor}\NormalTok{(Assortment),}
+         \DataTypeTok{Promo2 =} \KeywordTok{as.factor}\NormalTok{(Promo2))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summary}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      Store          DayOfWeek          Date                Sales      
+##  Min.   :   1.0   Min.   :1.000   Min.   :2013-01-01   Min.   :    0  
+##  1st Qu.: 280.0   1st Qu.:2.000   1st Qu.:2013-08-17   1st Qu.: 3727  
+##  Median : 558.0   Median :4.000   Median :2014-04-02   Median : 5744  
+##  Mean   : 558.4   Mean   :3.998   Mean   :2014-04-11   Mean   : 5774  
+##  3rd Qu.: 838.0   3rd Qu.:6.000   3rd Qu.:2014-12-12   3rd Qu.: 7856  
+##  Max.   :1115.0   Max.   :7.000   Max.   :2015-07-31   Max.   :41551  
+##                                                                       
+##    Customers      Open       Promo       StateHoliday   SchoolHoliday
+##  Min.   :   0.0   0:172817   0:629129   Min.   :0       0:835488     
+##  1st Qu.: 405.0   1:844392   1:388080   1st Qu.:0       1:181721     
+##  Median : 609.0                         Median :0                    
+##  Mean   : 633.1                         Mean   :0                    
+##  3rd Qu.: 837.0                         3rd Qu.:0                    
+##  Max.   :7388.0                         Max.   :0                    
+##                                         NA's   :31050                
+##  StoreType  Assortment CompetitionDistance CompetitionOpenSinceMonth
+##  a:551627   a:537445   Min.   :   20       Min.   : 1.0             
+##  b: 15830   b:  8294   1st Qu.:  710       1st Qu.: 4.0             
+##  c:136840   c:471470   Median : 2330       Median : 8.0             
+##  d:312912              Mean   : 5430       Mean   : 7.2             
+##                        3rd Qu.: 6890       3rd Qu.:10.0             
+##                        Max.   :75860       Max.   :12.0             
+##                        NA's   :2642        NA's   :323348           
+##  CompetitionOpenSinceYear Promo2     Promo2SinceWeek  Promo2SinceYear 
+##  Min.   :1900             0:508031   Min.   : 1.0     Min.   :2009    
+##  1st Qu.:2006             1:509178   1st Qu.:13.0     1st Qu.:2011    
+##  Median :2010                        Median :22.0     Median :2012    
+##  Mean   :2009                        Mean   :23.3     Mean   :2012    
+##  3rd Qu.:2013                        3rd Qu.:37.0     3rd Qu.:2013    
+##  Max.   :2015                        Max.   :50.0     Max.   :2015    
+##  NA's   :323348                      NA's   :508031   NA's   :508031  
+##  PromoInterval     
+##  Length:1017209    
+##  Class :character  
+##  Mode  :character  
+##                    
+##                    
+##                    
+## 
+\end{verbatim}
+
+\hypertarget{pora-rokudnia}{%
+\subsection{Pora roku/dnia}\label{pora-rokudnia}}
+
+Kolejnym krokiem bylo rozszerzenie zmiennej Date na trzy zmienne osobno
+opisujace rok, miesiac i dzien oraz znalezienie potencjalnych trendow w
+kazdej z nowych zmiennych.
+
+Poniższy wykres przedstawia nam wyniki sredniej sprzedazy z kazdego
+dnia, w ktorym sklepy byly otwarte. Widac na nim dwa wzrosty w okolicach
+koncowki roku 2013 i 2014.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Open }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(Date) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{Sales =} \KeywordTok{mean}\NormalTok{(Sales)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Date, }\DataTypeTok{y =}\NormalTok{ Sales)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\DataTypeTok{color =} \StringTok{"blue"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Średnia sprzedaży ze wszystkich sklepów w dni, w które był one otwarte"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-11-1.pdf}
+
+Do zbioru danych dodalem trzy nowe zmienne opisujace dzien, miesiac i
+rok. Ponizsze wykresy przedstawiaja trendy w sprzedazy dla tych
+zmiennych.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data <-}\StringTok{ }\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{Month =} \KeywordTok{month}\NormalTok{(Date),}
+         \DataTypeTok{Day =} \KeywordTok{day}\NormalTok{(Date),}
+         \DataTypeTok{Year =} \KeywordTok{year}\NormalTok{(Date))}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{zmienna-year}{%
+\subsubsection{Zmienna Year}\label{zmienna-year}}
+
+Patrzac na srednia sprzedaz rok do roku nie mozna zauwazyc zadnego
+widocznego trendu. Jezeli chodzi oroczna sume sprzedazy, to nie mozna
+wysnuc zadnych wnioskow, poniewaz z roku 2015 dane dostepne sa tylko do
+konca 2015.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =} \KeywordTok{as.factor}\NormalTok{(Year), }\DataTypeTok{y =}\NormalTok{ Sales)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =} \KeywordTok{as.factor}\NormalTok{(Year)), }\DataTypeTok{show.legend =}\NormalTok{ F) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Wykresy pudelkowe sprzedazy dla poszczegolnych lat"}\NormalTok{, }\DataTypeTok{x =} \StringTok{"Year"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-13-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(Year) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{Sales =} \KeywordTok{sum}\NormalTok{(}\KeywordTok{as.numeric}\NormalTok{(Sales))) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Year, }\DataTypeTok{y =}\NormalTok{ Sales)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_col}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =} \KeywordTok{as.factor}\NormalTok{(Year)), }\DataTypeTok{show.legend =}\NormalTok{ F) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Suma sprzedaży względem roku"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-14-1.pdf}
+
+\hypertarget{zmienna-month}{%
+\subsubsection{Zmienna Month}\label{zmienna-month}}
+
+Analizujac srednia sprzedaz z poszczegolnych miesiecy, mozna zauwazycdwa
+okresy zwiekszenia sprzedazy. Pierwszy z nich jest w okolicach maja, a
+drugi w Grudniu.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =} \KeywordTok{as.factor}\NormalTok{(Month), }\DataTypeTok{y =}\NormalTok{ Sales)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =} \KeywordTok{as.factor}\NormalTok{(Month)), }\DataTypeTok{show.legend =}\NormalTok{ F) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Wykresy pudelkowe sprzedazy dla poszczegolnych miesiecy"}\NormalTok{, }\DataTypeTok{x =} \StringTok{"Month"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-15-1.pdf}
+
+\hypertarget{zmienna-day}{%
+\subsubsection{Zmienna Day}\label{zmienna-day}}
+
+Analizujac srednia sprzedaz z poszczegolnych dni w miesiacu, mozemy
+zauwazyc, ze wystepuja trzy okresy zwiekszenia sprzedazy - poczatek,
+srodek i koniec miesiaca.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =} \KeywordTok{as.factor}\NormalTok{(Day), }\DataTypeTok{y =}\NormalTok{ Sales)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =} \KeywordTok{as.factor}\NormalTok{(Day)), }\DataTypeTok{show.legend =}\NormalTok{ F) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Wykresy pudelkowe sprzedazy dla poszczegolnych dni"}\NormalTok{, }\DataTypeTok{x =} \StringTok{"Day"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-16-1.pdf}
+
+\hypertarget{pozostale-zmienne}{%
+\subsection{Pozostale zmienne}\label{pozostale-zmienne}}
+
+\hypertarget{zmienna-customers}{%
+\subsubsection{Zmienna Customers}\label{zmienna-customers}}
+
+Ponizszy wykres przedstawia zaleznosc pomiedzy Salesami, a zmienna
+Customers. Widzimy, ze zaleznosc ta jest praktycznie idealnie liniowa
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Customers, }\DataTypeTok{y =}\NormalTok{ Sales)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{alpha =} \FloatTok{.25}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{se =}\NormalTok{ F, }\DataTypeTok{method =} \StringTok{"lm"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Wykres zależności pomiędzy wartością Sales a ilością klientów w danym dniu dla danego sklepu"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-17-1.pdf}
+
+\hypertarget{zmienna-open}{%
+\subsubsection{Zmienna Open}\label{zmienna-open}}
+
+Mozna zauwazyc, ze we wszystkie dni, w ktore sklepy byly zamkniete
+sprzedaz zawse wynosila 0. Z tego powodu usune ze zbioru wszystkie
+obserwacje, dla ktorych wartosc tej zmiennej byla rowna 0 i proponuje
+zastosowanie ruli eksperckiej - do modelu uzywac tylko danych z dni, w
+ktorych sklep byl otwarty, a wszystkim obserwacjom z dni zamkniecia
+przypisac wartosc Sales rowna 0.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Open, }\DataTypeTok{y =}\NormalTok{ Sales)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =}\NormalTok{ Open), }\DataTypeTok{show.legend =}\NormalTok{ F) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Średnia sprzedaż w dni otwarcia i zamkniecia sklepów")}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-18-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Open }\OperatorTok{==}\StringTok{ }\DecValTok{0}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{count}\NormalTok{(Sales)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 2
+##   Sales      n
+##   <dbl>  <int>
+## 1     0 172817
+\end{verbatim}
+
+\hypertarget{zmienna-promo}{%
+\subsubsection{Zmienna Promo}\label{zmienna-promo}}
+
+Wykres sredniej sprzedazy ze wzgledu na istnienie promocji pokazuje nam,
+ze w dni, podczas ktorych promocja byla aktywna, srednia sprzedaz byla
+troche wieksza.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Open }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Promo, }\DataTypeTok{y =}\NormalTok{ Sales)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =}\NormalTok{ Promo), }\DataTypeTok{show.legend =}\NormalTok{ F) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Średnia sprzedaż w dni normalne i dni promocji"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-20-1.pdf}
+
+\hypertarget{zmienna-stateholiday}{%
+\subsubsection{Zmienna StateHoliday}\label{zmienna-stateholiday}}
+
+Zmienna StateHoloiday powinna zostac usunieta, poniewaz przyjmuje
+wartosci albo 0 albo NA wiec jest bezwartosciowa.
+
+\hypertarget{zmienna-schoolholiday}{%
+\subsubsection{Zmienna SchoolHoliday}\label{zmienna-schoolholiday}}
+
+Fakt wystepowania dni wolnych od szkoly nie wydaje sie wplywac istotnie
+na sprzedaz.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Open }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ SchoolHoliday, }\DataTypeTok{y =}\NormalTok{ Sales)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =}\NormalTok{ SchoolHoliday), }\DataTypeTok{show.legend =}\NormalTok{ F) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Średnia sprzedaż ze względu na zmienna ScgoolHoliday"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-21-1.pdf}
+
+\hypertarget{zmienna-storetype}{%
+\subsubsection{Zmienna Storetype}\label{zmienna-storetype}}
+
+Analizujac zmienna StoreType wydaje sie, ze dla sklepow z rodzaju ``b''
+sprzedaz byla wieksza od innych.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Open }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ StoreType, }\DataTypeTok{y =}\NormalTok{ Sales)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =}\NormalTok{ StoreType), }\DataTypeTok{show.legend =}\NormalTok{ F) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Średnia sprzedaż dla poszczególnych rodzajów sklepów")}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-22-1.pdf}
+
+\hypertarget{zmienna-assortment}{%
+\subsubsection{Zmienna Assortment}\label{zmienna-assortment}}
+
+Z ponizszego wykresu wynika, ze najlepsza srednia sprzedaza cieszyly sie
+sklepy, ktore w swojej ofercie mialy asortyment typu ``b'' = ``extra''.
+Mozna tez zauwazyc, ze jedynymi sklepami, ktore oferowaly taki
+asortyment byly sklepy typu ``b''.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Open }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Assortment, }\DataTypeTok{y =}\NormalTok{ Sales)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =}\NormalTok{ Assortment), }\DataTypeTok{show.legend =}\NormalTok{ F) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Średnia sprzedaż ze względu na rodzaj asortymentu"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-23-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{count}\NormalTok{(StoreType, Assortment)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 9 x 3
+##   StoreType Assortment      n
+##   <fct>     <fct>       <int>
+## 1 a         a          346389
+## 2 a         c          205238
+## 3 b         a            6594
+## 4 b         b            8294
+## 5 b         c             942
+## 6 c         a           70878
+## 7 c         c           65962
+## 8 d         a          113584
+## 9 d         c          199328
+\end{verbatim}
+
+\hypertarget{zmienna-competitiondistance}{%
+\subsubsection{Zmienna
+CompetitionDistance}\label{zmienna-competitiondistance}}
+
+Analizujac ponizszy wykres mozna dojsc do wniosku, ze im dalej od
+najblizszego sklepu konkurencji, tym mniejsza sprzedaz. Wniosek wydaje
+sie byc sprzeczny z logika, ktora nakazuje myslec, ze brak konkurencji
+spowoduje, ze klienci beda korzystac tylko z jedynego dostepnego w
+okolicy sklepu.
+
+Dodatkowo brakuje 2642 wartosci. Z tego powodu postanowilem je
+zaimputowac stosujac metode imputacji mediany. Nie zastosuje jednak
+mediany dla calego zbioru, ale zgrupuje mediane ze wzgledu na
+asortyment.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ CompetitionDistance, }\DataTypeTok{y =}\NormalTok{ Sales)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{alpha =} \FloatTok{.25}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Zależność sprzedazy od odleglosci od konkurencji"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-25-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(Assortment) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarize}\NormalTok{(}\KeywordTok{median}\NormalTok{(CompetitionDistance, }\DataTypeTok{na.rm =}\NormalTok{ T))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 2
+##   Assortment `median(CompetitionDistance, na.rm = T)`
+##   <fct>                                         <dbl>
+## 1 a                                              1840
+## 2 b                                               860
+## 3 c                                              3430
+\end{verbatim}
+
+Braki uzupelnie mediana dla kategorii asortymentu
+
+\hypertarget{zmienne-competitionopensincemonth-i-competitionopensinceyear}{%
+\subsubsection{Zmienne CompetitionOpenSinceMonth i
+CompetitionOpenSinceYear}\label{zmienne-competitionopensincemonth-i-competitionopensinceyear}}
+
+Dwie zmienne opisujace od kiedy konkurencja istnieje usuwam, poniewaz
+dla okolo 1/3 zbioru brakuej dla nich wartosci.
+
+\hypertarget{zmienna-promo2}{%
+\subsubsection{Zmienna Promo2}\label{zmienna-promo2}}
+
+Wykres pokazujacy rozniece w sredniej sprzedazy pomiedzy sklepami, ktore
+biora udzial w regularnych promocjach i tymi, ktre nie biora wskazuje,
+ze te, ktore nie biora w nich udzialu srednio notuja troche wieksza
+sprzedaz.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Promo2, }\DataTypeTok{y =}\NormalTok{ Sales)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =}\NormalTok{ Promo2), }\DataTypeTok{show.legend =}\NormalTok{ F) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Zależność sprzedaży od faktu czy sklep bierze udział w regularnych promocjach"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-27-1.pdf}
+
+\hypertarget{zmienna-promo2sinceweek}{%
+\subsubsection{Zmienna Promo2SinceWeek}\label{zmienna-promo2sinceweek}}
+
+Na ponizszym wykresie można zauwazyc pewne wahania w sredniej sprzedazy,
+ale trend nie jest widoczny na pierwszy rzut oka.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Promo2 }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =} \KeywordTok{as.factor}\NormalTok{(Promo2SinceWeek), }\DataTypeTok{y =}\NormalTok{ Sales)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =} \KeywordTok{as.factor}\NormalTok{(Promo2SinceWeek)), }\DataTypeTok{show.legend =}\NormalTok{ F) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Zależność sprzedaży od czasu, od kiedy sklep bierze udział w Promo2"}\NormalTok{, }\DataTypeTok{x =} \StringTok{"Promo2SinceWeek"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-28-1.pdf}
+
+\hypertarget{zmienna-promo2sinceyear}{%
+\subsubsection{Zmienna Promo2SinceYear}\label{zmienna-promo2sinceyear}}
+
+Analizujac ponizszy wykres, podobnie jak przy poprzednim, nie mozna
+zauwazyc zadnych widocznych trendow.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Promo2 }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =} \KeywordTok{as.factor}\NormalTok{(Promo2SinceYear), }\DataTypeTok{y =}\NormalTok{ Sales)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =} \KeywordTok{as.factor}\NormalTok{(Promo2SinceYear)), }\DataTypeTok{show.legend =}\NormalTok{ F) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Zależność sprzedarz od roku, w któym sklep bierze udział w Promo2"}\NormalTok{, }\DataTypeTok{x =} \StringTok{"Promo2SinceYear"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-29-1.pdf}
+
+\hypertarget{zmienna-promointerval}{%
+\subsubsection{Zmienna PromoInterval}\label{zmienna-promointerval}}
+
+Mozemy zauwazyc 4 rozne czasy roznoszenia ulotek z Promo2
+
+Postanowilem stworzyc zmienna actual\_promo, ktora sprawdza czy czas
+danej obserwacji zgadza sie z czasem rozsylania ulotek. Na wykresie
+porownujacym nie widac jednak zadnych roznic w sredniej sprzedazy.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{count}\NormalTok{(PromoInterval)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 4 x 2
+##   PromoInterval         n
+##   <chr>             <int>
+## 1 <NA>             508031
+## 2 Feb,May,Aug,Nov  118596
+## 3 Jan,Apr,Jul,Oct  293122
+## 4 Mar,Jun,Sept,Dec  97460
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Promo2 }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{actual_promo =} \KeywordTok{str_detect}\NormalTok{(PromoInterval, }\DataTypeTok{pattern =}\NormalTok{ month.abb[Month])) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ actual_promo, }\DataTypeTok{y =}\NormalTok{ Sales)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill =}\NormalTok{actual_promo), }\DataTypeTok{show.legend =}\NormalTok{ F)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-31-1.pdf}
+
+\hypertarget{ostateczne-modyfikowanie-zmiennych}{%
+\subsection{Ostateczne modyfikowanie
+zmiennych}\label{ostateczne-modyfikowanie-zmiennych}}
+
+Ostatnie poprawki polegaja na: * odfiltrowaniu obserwacji, dla ktorych
+zmienna Open == 0, * wyrzuceniu ze zbioru zmiennych Open, StateHoliday,
+CompetitionOpenSinceMonth i CompetitionOpenSinceYear, * uzupelnieniu
+brakow danych w zmiennej CompetitionDistance wartosciami mediany ze
+wzgledu na rodzaj asortymentu sklepu, * dodanie zmiennej active\_promo,
+ktora sprawdza czy okres obserwacji zgadza sie z okresem rozsylania
+ulotek informujacych o Promo2
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Open }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\KeywordTok{c}\NormalTok{(StateHoliday, CompetitionOpenSinceMonth, CompetitionOpenSinceYear, Open)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(Assortment) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarize}\NormalTok{(}\KeywordTok{median}\NormalTok{(CompetitionDistance, }\DataTypeTok{na.rm =}\NormalTok{ T))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 2
+##   Assortment `median(CompetitionDistance, na.rm = T)`
+##   <fct>                                         <dbl>
+## 1 a                                              1840
+## 2 b                                               860
+## 3 c                                              3450
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data <-}\StringTok{ }\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(Open }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\KeywordTok{c}\NormalTok{(StateHoliday, CompetitionOpenSinceMonth, CompetitionOpenSinceYear, Open)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{CompetitionDistance =} \KeywordTok{case_when}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(CompetitionDistance) }\OperatorTok{&}\StringTok{ }\NormalTok{Assortment }\OperatorTok{==}\StringTok{ "a"} \OperatorTok{~}\StringTok{ }\DecValTok{1840}\NormalTok{,}
+                                         \KeywordTok{is.na}\NormalTok{(CompetitionDistance) }\OperatorTok{&}\StringTok{ }\NormalTok{Assortment }\OperatorTok{==}\StringTok{ "b"} \OperatorTok{~}\StringTok{ }\DecValTok{860}\NormalTok{,}
+                                         \KeywordTok{is.na}\NormalTok{(CompetitionDistance) }\OperatorTok{&}\StringTok{ }\NormalTok{Assortment }\OperatorTok{==}\StringTok{ "c"} \OperatorTok{~}\StringTok{ }\DecValTok{3450}\NormalTok{,}
+                                         \OtherTok{TRUE} \OperatorTok{~}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{(CompetitionDistance)),}
+         \DataTypeTok{actual_promo =} \KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{str_detect}\NormalTok{(PromoInterval, }\DataTypeTok{pattern =}\NormalTok{ month.abb[Month]))}
+\NormalTok{         )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summary}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      Store          DayOfWeek         Date                Sales      
+##  Min.   :   1.0   Min.   :1.00   Min.   :2013-01-01   Min.   :    0  
+##  1st Qu.: 280.0   1st Qu.:2.00   1st Qu.:2013-08-16   1st Qu.: 4859  
+##  Median : 558.0   Median :3.00   Median :2014-03-31   Median : 6369  
+##  Mean   : 558.4   Mean   :3.52   Mean   :2014-04-11   Mean   : 6956  
+##  3rd Qu.: 837.0   3rd Qu.:5.00   3rd Qu.:2014-12-10   3rd Qu.: 8360  
+##  Max.   :1115.0   Max.   :7.00   Max.   :2015-07-31   Max.   :41551  
+##                                                                      
+##    Customers      Promo      SchoolHoliday StoreType  Assortment
+##  Min.   :   0.0   0:467496   0:680935      a:457077   a:444909  
+##  1st Qu.: 519.0   1:376896   1:163457      b: 15563   b:  8212  
+##  Median : 676.0                            c:112978   c:391271  
+##  Mean   : 762.7                            d:258774             
+##  3rd Qu.: 893.0                                                 
+##  Max.   :7388.0                                                 
+##                                                                 
+##  CompetitionDistance Promo2     Promo2SinceWeek  Promo2SinceYear 
+##  Min.   :   20       0:423307   Min.   : 1.0     Min.   :2009    
+##  1st Qu.:  710       1:421085   1st Qu.:13.0     1st Qu.:2011    
+##  Median : 2320                  Median :22.0     Median :2012    
+##  Mean   : 5450                  Mean   :23.3     Mean   :2012    
+##  3rd Qu.: 6880                  3rd Qu.:37.0     3rd Qu.:2013    
+##  Max.   :75860                  Max.   :50.0     Max.   :2015    
+##                                 NA's   :423307   NA's   :423307  
+##  PromoInterval          Month             Day             Year     
+##  Length:844392      Min.   : 1.000   Min.   : 1.00   Min.   :2013  
+##  Class :character   1st Qu.: 3.000   1st Qu.: 8.00   1st Qu.:2013  
+##  Mode  :character   Median : 6.000   Median :16.00   Median :2014  
+##                     Mean   : 5.846   Mean   :15.84   Mean   :2014  
+##                     3rd Qu.: 8.000   3rd Qu.:23.00   3rd Qu.:2014  
+##                     Max.   :12.000   Max.   :31.00   Max.   :2015  
+##                                                                    
+##   actual_promo   
+##  Min.   :0.0     
+##  1st Qu.:0.0     
+##  Median :0.0     
+##  Mean   :0.3     
+##  3rd Qu.:1.0     
+##  Max.   :1.0     
+##  NA's   :423307
+\end{verbatim}
+
+\hypertarget{podzial-na-dwa-datasety}{%
+\subsection{Podzial na dwa datasety}\label{podzial-na-dwa-datasety}}
+
+Jako kolejna rule ekspercka zdecydowalem sie wprowadzic fakt
+wystepowania Promo2. Obserwacje, dla ktorych zmienna Promo2 wynosi 1,
+posiadaja 3 dodatkowe zmienne, ktore rowniez moga wplywac na zdolnosc
+predykcyjna. Z tego powodu zamierzam stworzyc dwa modele. Jeden dla
+sklepow bez Promo2, a drugie dla sklepow z Promo2.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data_no_promo <-}\StringTok{ }\NormalTok{data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Promo2}\OperatorTok{==}\DecValTok{0}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\KeywordTok{c}\NormalTok{(Promo2, Promo2SinceWeek, Promo2SinceYear,PromoInterval, actual_promo))}
+\NormalTok{data_promo <-}\StringTok{ }\NormalTok{data }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(Promo2 }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{tworzenie-modelu-dla-sklepow-bez-obowiazujacego-promo2}{%
+\section{Tworzenie modelu dla sklepow bez obowiazujacego
+Promo2}\label{tworzenie-modelu-dla-sklepow-bez-obowiazujacego-promo2}}
+
+Pierwszym krokiem bedzie znalezienie wartosci nietypowych, zarowno dla
+zmiennych niezaleznych jak i zmiennej zaleznej jak i wykrycie
+potencjalnych wspoliniowosci miedzy zmiennymi.
+
+Nastepnie zostatnie stworzonych kilka modeli: - model liniowy ze
+wszystkimi zmiennymi, - model liniowy ze zmniejszona iloscia zmiennych,
+- kilka modeli GAM, - kilka modeli stworzonych z pomoca drzew
+decyzyjnych.
+
+Modele zostana porownane ze soba przy uzyciu statystyki MAE (mean
+absolute error) i poddane 10-krotnej corss walidacji.
+
+\hypertarget{znalezienie-outlierow-i-wspoliniowosci}{%
+\subsection{Znalezienie outlierow i
+wspoliniowosci}\label{znalezienie-outlierow-i-wspoliniowosci}}
+
+Stworzylem prosty model liniowy ze wszystkimi zmiennymi po to by na
+podstawie zestandaryzowanych reszt znalezc outlierow.
+
+Ponizsze podsumowanie modelu pokazuje nam, ze wszystkie zmienne zawarte
+w modelu sa statystycznie istotne.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(Sales}\OperatorTok{~}\NormalTok{.}\OperatorTok{-}\NormalTok{Store}\OperatorTok{-}\NormalTok{Date, }\DataTypeTok{data =}\NormalTok{ data_no_promo)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple }\OperatorTok{%>%}\StringTok{ }\KeywordTok{summary}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = Sales ~ . - Store - Date, data = data_no_promo)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -27830.6   -801.0   -115.9    661.8  20637.5 
+## 
+## Coefficients:
+##                       Estimate Std. Error  t value Pr(>|t|)    
+## (Intercept)         -3.264e+05  5.539e+03  -58.923  < 2e-16 ***
+## DayOfWeek           -4.698e+01  1.251e+00  -37.571  < 2e-16 ***
+## Customers            7.293e+00  5.436e-03 1341.656  < 2e-16 ***
+## Promo1               1.084e+03  4.397e+00  246.611  < 2e-16 ***
+## SchoolHoliday1       1.947e+01  5.221e+00    3.729 0.000192 ***
+## StoreTypeb          -2.886e+03  1.784e+01 -161.738  < 2e-16 ***
+## StoreTypec          -8.746e+01  6.235e+00  -14.029  < 2e-16 ***
+## StoreTyped           1.161e+03  5.053e+00  229.724  < 2e-16 ***
+## Assortmentb         -4.571e+03  2.567e+01 -178.069  < 2e-16 ***
+## Assortmentc          3.311e+02  4.364e+00   75.884  < 2e-16 ***
+## CompetitionDistance  1.329e-02  2.250e-04   59.078  < 2e-16 ***
+## Month                3.688e+01  6.373e-01   57.859  < 2e-16 ***
+## Day                 -4.789e-01  2.371e-01   -2.020 0.043434 *  
+## Year                 1.622e+02  2.750e+00   58.979  < 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1328 on 423293 degrees of freedom
+## Multiple R-squared:  0.847,  Adjusted R-squared:  0.847 
+## F-statistic: 1.803e+05 on 13 and 423293 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data_no_promo_no_outliers <-}\StringTok{ }\NormalTok{model_simple }\OperatorTok{%>%}\StringTok{ }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.std.resid) }\OperatorTok{<}\StringTok{ }\DecValTok{3}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\KeywordTok{colnames}\NormalTok{(data_no_promo))}
+\end{Highlighting}
+\end{Shaded}
+
+Wartości odstajacych bylo okolo 5 tysiecy, wiec stanowily tylko 1
+procent calego zbioru i mozna bylo je usunac.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(Sales}\OperatorTok{~}\NormalTok{.}\OperatorTok{-}\NormalTok{Store}\OperatorTok{-}\NormalTok{Date, }\DataTypeTok{data =}\NormalTok{ data_no_promo_no_outliers)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ .fitted, }\DataTypeTok{y =}\NormalTok{ .std.resid)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-40-1.pdf}
+
+Analizujac statystyke Leverage mozna zauwazyc, ze zbior nie zawiera
+zadnych odstajacych wartosci dla zmiennej zaleznej.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ .hat, }\DataTypeTok{y =}\NormalTok{ .std.resid)) }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-41-1.pdf}
+
+Statystyka VIF (variance inflation factor) informuje nas o potencjalnych
+wspoliniowosciach pomiedzy zmiennymi. W tym zbiorze dancych takowe nie
+wystepuja.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{vif}\NormalTok{(model_simple)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                         GVIF Df GVIF^(1/(2*Df))
+## DayOfWeek           1.118359  1        1.057525
+## Customers           1.440284  1        1.200118
+## Promo               1.146184  1        1.070600
+## SchoolHoliday       1.035245  1        1.017470
+## StoreType           2.121810  3        1.133577
+## Assortment          1.870970  2        1.169544
+## CompetitionDistance 1.097569  1        1.047650
+## Month               1.087298  1        1.042736
+## Day                 1.020288  1        1.010093
+## Year                1.072543  1        1.035637
+\end{verbatim}
+
+\hypertarget{podzial-na-zbiory-treningowe-i-testowe}{%
+\subsection{Podzial na zbiory treningowe i
+testowe}\label{podzial-na-zbiory-treningowe-i-testowe}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\NormalTok{split <-}\StringTok{ }\KeywordTok{initial_split}\NormalTok{(data_no_promo_no_outliers, }\DataTypeTok{prop =} \FloatTok{.8}\NormalTok{)}
+\NormalTok{train_no_promo <-}\StringTok{ }\KeywordTok{training}\NormalTok{(split)}
+\NormalTok{test_no_promo <-}\StringTok{ }\KeywordTok{testing}\NormalTok{(split)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{krotna-cross-walidacja}{%
+\subsection{10 krotna cross walidacja}\label{krotna-cross-walidacja}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\NormalTok{(no_promo_cv <-}\StringTok{ }\KeywordTok{vfold_cv}\NormalTok{(train_no_promo) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{train =} \KeywordTok{map}\NormalTok{(splits, }\OperatorTok{~}\KeywordTok{training}\NormalTok{(.x)),}
+         \DataTypeTok{validate =} \KeywordTok{map}\NormalTok{(splits, }\OperatorTok{~}\KeywordTok{testing}\NormalTok{(.x)),}
+         \DataTypeTok{truths =} \KeywordTok{map}\NormalTok{(validate, }\StringTok{"Sales"}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## #  10-fold cross-validation 
+## # A tibble: 10 x 5
+##    splits            id     train             validate          truths     
+##  * <list>            <chr>  <list>            <list>            <list>     
+##  1 <split [300.9K/3~ Fold01 <tibble [300,906~ <tibble [33,434 ~ <dbl [33,4~
+##  2 <split [300.9K/3~ Fold02 <tibble [300,906~ <tibble [33,434 ~ <dbl [33,4~
+##  3 <split [300.9K/3~ Fold03 <tibble [300,906~ <tibble [33,434 ~ <dbl [33,4~
+##  4 <split [300.9K/3~ Fold04 <tibble [300,906~ <tibble [33,434 ~ <dbl [33,4~
+##  5 <split [300.9K/3~ Fold05 <tibble [300,906~ <tibble [33,434 ~ <dbl [33,4~
+##  6 <split [300.9K/3~ Fold06 <tibble [300,906~ <tibble [33,434 ~ <dbl [33,4~
+##  7 <split [300.9K/3~ Fold07 <tibble [300,906~ <tibble [33,434 ~ <dbl [33,4~
+##  8 <split [300.9K/3~ Fold08 <tibble [300,906~ <tibble [33,434 ~ <dbl [33,4~
+##  9 <split [300.9K/3~ Fold09 <tibble [300,906~ <tibble [33,434 ~ <dbl [33,4~
+## 10 <split [300.9K/3~ Fold10 <tibble [300,906~ <tibble [33,434 ~ <dbl [33,4~
+\end{verbatim}
+
+\hypertarget{wybieram-kilka-modeli-i-z-kazdego-z-nich-wezme-taki-z-najlepszy-mae}{%
+\subsubsection{Wybieram kilka modeli i z kazdego z nich wezme taki z
+najlepszy
+MAE}\label{wybieram-kilka-modeli-i-z-kazdego-z-nich-wezme-taki-z-najlepszy-mae}}
+
+\hypertarget{best-subset-selection-dla-danych-no-promo}{%
+\paragraph{Best Subset Selection dla danych no
+promo}\label{best-subset-selection-dla-danych-no-promo}}
+
+Jako pierwszy stworzylem model liniowy ze wszystkimi zmiennymi i
+poddalem go algorytmowi best subset selection, ktory testuje modele
+usuwajac ich zmienne i sprawdzajac czy moc predykcyjna sie nie
+zmniejszyla.
+
+Patrzac na wyniki cross walidacji, widzimy, ze modele z dziewiecioma
+zmiennymi wzwyz osiagnely najlepsze wyniki statystyki MAE na danych
+cross-validation.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{predict.regsubsets <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(object, newdata, id, ...) \{}
+\NormalTok{  mat <-}\StringTok{ }\KeywordTok{model.matrix}\NormalTok{(Sales}\OperatorTok{~}\NormalTok{.}\OperatorTok{-}\NormalTok{Store}\OperatorTok{-}\NormalTok{Date, newdata)}
+\NormalTok{  coefi <-}\StringTok{ }\KeywordTok{coef}\NormalTok{(object, }\DataTypeTok{id =}\NormalTok{ id)}
+\NormalTok{  xvars <-}\StringTok{ }\KeywordTok{names}\NormalTok{(coefi)}
+\NormalTok{  fin <-}\StringTok{ }\NormalTok{mat[, xvars] }\OperatorTok{%*%}\StringTok{ }\NormalTok{coefi }
+\NormalTok{  fin[,}\DecValTok{1}\NormalTok{]}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{params <-}\StringTok{ }\DecValTok{1}\OperatorTok{:}\DecValTok{13}
+
+\NormalTok{names <-}\StringTok{ }\KeywordTok{paste0}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\StringTok{"variables"}\NormalTok{, }\DataTypeTok{each =} \KeywordTok{length}\NormalTok{(params)), }\StringTok{"_"}\NormalTok{, }\DecValTok{1}\OperatorTok{:}\DecValTok{13}\NormalTok{)}
+\NormalTok{model_fun <-}\StringTok{ }\NormalTok{glue}\OperatorTok{::}\KeywordTok{glue}\NormalTok{(}\StringTok{'map2(model, validate, ~predict(.x, .y, id = \{1:13\}))'}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{paste}\NormalTok{(., }\DataTypeTok{collapse =} \StringTok{";"}\NormalTok{)}
+
+\NormalTok{names_mae <-}\StringTok{ }\KeywordTok{paste0}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\StringTok{"mae"}\NormalTok{, }\DataTypeTok{each =} \KeywordTok{length}\NormalTok{(params)), }\StringTok{"_"}\NormalTok{, }\DecValTok{1}\OperatorTok{:}\DecValTok{13}\NormalTok{)}
+\NormalTok{mae_fun <-}\StringTok{ }\NormalTok{glue}\OperatorTok{::}\KeywordTok{glue}\NormalTok{(}\StringTok{'map2_dbl(truths, variables_\{1:13\}, ~mean(abs(.x-.y)))'}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{paste}\NormalTok{(., }\DataTypeTok{collapse =} \StringTok{";"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{best_subset_cv <-}\StringTok{ }\NormalTok{no_promo_cv }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{model =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{regsubsets}\NormalTok{(Sales}\OperatorTok{~}\NormalTok{.}\OperatorTok{-}\NormalTok{Store}\OperatorTok{-}\NormalTok{Date, }\DataTypeTok{data =}\NormalTok{ .x, }\DataTypeTok{nvmax =} \DecValTok{13}\NormalTok{))) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\OperatorTok{!!!}\StringTok{ }\KeywordTok{parse_exprs}\NormalTok{(model_fun)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{rename_at}\NormalTok{(}\KeywordTok{vars}\NormalTok{(}\KeywordTok{starts_with}\NormalTok{(}\StringTok{"map2"}\NormalTok{)), }\OperatorTok{~}\NormalTok{names) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\OperatorTok{!!!}\StringTok{ }\KeywordTok{parse_exprs}\NormalTok{(mae_fun)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{rename_at}\NormalTok{(}\KeywordTok{vars}\NormalTok{(}\KeywordTok{starts_with}\NormalTok{(}\StringTok{"map2"}\NormalTok{)), }\OperatorTok{~}\NormalTok{names_mae) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarize_at}\NormalTok{(}\KeywordTok{vars}\NormalTok{(}\KeywordTok{starts_with}\NormalTok{(}\StringTok{"mae"}\NormalTok{)), }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(.)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\DataTypeTok{key =} \StringTok{"n_variables"}\NormalTok{, }\DataTypeTok{value =} \StringTok{"mae"}\NormalTok{)}
+
+\NormalTok{best_subset_cv }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{arrange}\NormalTok{(mae)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 13 x 2
+##    n_variables   mae
+##    <chr>       <dbl>
+##  1 mae_13       903.
+##  2 mae_12       903.
+##  3 mae_11       903.
+##  4 mae_9        903.
+##  5 mae_10       904.
+##  6 mae_8        907.
+##  7 mae_7        909.
+##  8 mae_6        914.
+##  9 mae_5        923.
+## 10 mae_4        944.
+## 11 mae_3       1046.
+## 12 mae_2       1139.
+## 13 mae_1       1212.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{(best_subset_cv }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =} \DecValTok{1}\OperatorTok{:}\DecValTok{13}\NormalTok{, }\DataTypeTok{y =}\NormalTok{ mae)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{() }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{color =} \StringTok{"blue"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"number of variables"}\NormalTok{, }\DataTypeTok{title =} \StringTok{"Best subset selection"}\NormalTok{, }\DataTypeTok{subtitle =} \StringTok{"for no_promo data"}\NormalTok{) ->}\StringTok{ }\NormalTok{best_plot)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-47-1.pdf}
+
+Widzimy, ze model z 9 zmiennymi pozbyl sie zmiennych DayOfWeek,
+SchoolHoliday, StoreTypec i Day.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{coef}\NormalTok{(}\KeywordTok{regsubsets}\NormalTok{(Sales}\OperatorTok{~}\NormalTok{.}\OperatorTok{-}\NormalTok{Store}\OperatorTok{-}\NormalTok{Date, }\DataTypeTok{data =}\NormalTok{ train_no_promo, }\DataTypeTok{nvmax =} \DecValTok{11}\NormalTok{), }\DecValTok{9}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         (Intercept)           Customers              Promo1 
+##       -3.121611e+05        7.299504e+00        1.077973e+03 
+##          StoreTypeb          StoreTyped         Assortmentb 
+##       -2.704118e+03        1.126656e+03       -4.625936e+03 
+##         Assortmentc CompetitionDistance               Month 
+##        2.879259e+02        1.404189e-02        3.435828e+01 
+##                Year 
+##        1.550421e+02
+\end{verbatim}
+
+\hypertarget{decision-tree}{%
+\paragraph{Decision Tree}\label{decision-tree}}
+
+Modele drzew decyzyjnych byly poddawane cross walidacji dla roznych
+wariantow parametrow minsplit i maxdepth. Niestety wyniki statystyki MAE
+dla kazdego z tych wariantow byly dokladnie takie same.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\NormalTok{no_promo_cv }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{tree_max25 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\StringTok{ }\KeywordTok{rpart}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ Sales}\OperatorTok{~}\NormalTok{.}\OperatorTok{-}\NormalTok{Store}\OperatorTok{-}\NormalTok{Date, }\DataTypeTok{data =}\NormalTok{ .x, }\DataTypeTok{control =} \KeywordTok{rpart.control}\NormalTok{(}\DataTypeTok{maxdepth =} \DecValTok{25}\NormalTok{))),}
+         \DataTypeTok{tree_max20 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\StringTok{ }\KeywordTok{rpart}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ Sales}\OperatorTok{~}\NormalTok{.}\OperatorTok{-}\NormalTok{Store}\OperatorTok{-}\NormalTok{Date, }\DataTypeTok{data =}\NormalTok{ .x, }\DataTypeTok{control =} \KeywordTok{rpart.control}\NormalTok{(}\DataTypeTok{maxdepth =} \DecValTok{20}\NormalTok{))),}
+         \DataTypeTok{tree_max10 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\StringTok{ }\KeywordTok{rpart}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ Sales}\OperatorTok{~}\NormalTok{.}\OperatorTok{-}\NormalTok{Store}\OperatorTok{-}\NormalTok{Date, }\DataTypeTok{data =}\NormalTok{ .x, }\DataTypeTok{control =} \KeywordTok{rpart.control}\NormalTok{(}\DataTypeTok{maxdepth =} \DecValTok{10}\NormalTok{))),}
+         \DataTypeTok{tree_max30 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\StringTok{ }\KeywordTok{rpart}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ Sales}\OperatorTok{~}\NormalTok{.}\OperatorTok{-}\NormalTok{Store}\OperatorTok{-}\NormalTok{Date, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{predict_max25 =} \KeywordTok{map2}\NormalTok{(tree_max25, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{predict_max20 =} \KeywordTok{map2}\NormalTok{(tree_max20, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{predict_max10 =} \KeywordTok{map2}\NormalTok{(tree_max10, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{predict_max30 =} \KeywordTok{map2}\NormalTok{(tree_max30, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_max25 =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_max25, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{mae_max20 =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_max20, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{mae_max10 =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_max10, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{mae_max30 =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_max30, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))))}\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarize_at}\NormalTok{(}\KeywordTok{vars}\NormalTok{(}\KeywordTok{starts_with}\NormalTok{(}\StringTok{"mae"}\NormalTok{)), }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(.)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\DataTypeTok{key =} \StringTok{"max_split"}\NormalTok{, }\DataTypeTok{value =} \StringTok{"mae"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 4 x 2
+##   max_split   mae
+##   <chr>     <dbl>
+## 1 mae_max25 1201.
+## 2 mae_max20 1201.
+## 3 mae_max10 1201.
+## 4 mae_max30 1201.
+\end{verbatim}
+
+\hypertarget{gams}{%
+\paragraph{GAMs}\label{gams}}
+
+Stworzylem piec roznych modeli GAM (generalized additive models).
+Pierwsze dwie z nich skladaja sie tylko z elementow liniowych i funkcji
+wielomianowych. Trzy kolejne sa kombinacjami funkcji liniowych,
+wielomianowych oraz zwyklych i naturalnych spline'ow.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{formula_}\DecValTok{1}\NormalTok{ <-}\StringTok{ }\NormalTok{Sales }\OperatorTok{~}\StringTok{ }\NormalTok{Customers }\OperatorTok{+}\StringTok{ }\NormalTok{Promo }\OperatorTok{+}\StringTok{ }\NormalTok{SchoolHoliday }\OperatorTok{+}\StringTok{ }\NormalTok{StoreType }\OperatorTok{+}\StringTok{ }\NormalTok{Assortment }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(CompetitionDistance,}\DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Day, }\DecValTok{3}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Month, }\DecValTok{3}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{Year }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(DayOfWeek, }\DecValTok{3}\NormalTok{)}
+
+\NormalTok{formula_}\DecValTok{1}\NormalTok{_coinst <-}\StringTok{ }\NormalTok{Sales}\OperatorTok{~}\StringTok{ }\NormalTok{Customers }\OperatorTok{+}\StringTok{ }\NormalTok{Promo }\OperatorTok{+}\StringTok{ }\NormalTok{SchoolHoliday }\OperatorTok{+}\StringTok{ }\NormalTok{StoreType }\OperatorTok{+}\StringTok{ }\NormalTok{Assortment }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(CompetitionDistance,}\DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Day, }\DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Month, }\DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{Year }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(DayOfWeek, }\DecValTok{2}\NormalTok{)}
+
+\NormalTok{formula_}\DecValTok{2}\NormalTok{ <-}\StringTok{ }\NormalTok{Sales}\OperatorTok{~}\StringTok{ }\NormalTok{Customers }\OperatorTok{+}\StringTok{ }\NormalTok{Promo }\OperatorTok{+}\StringTok{ }\NormalTok{SchoolHoliday }\OperatorTok{+}\StringTok{ }\NormalTok{StoreType }\OperatorTok{+}\StringTok{ }\NormalTok{Assortment }\OperatorTok{+}\StringTok{ }\KeywordTok{ns}\NormalTok{(CompetitionDistance,}\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Day, }\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Month, }\DecValTok{3}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{Year }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(DayOfWeek, }\DecValTok{4}\NormalTok{)}
+
+\NormalTok{formula_}\DecValTok{3}\NormalTok{ <-}\StringTok{ }\NormalTok{Sales}\OperatorTok{~}\StringTok{ }\NormalTok{Customers }\OperatorTok{+}\StringTok{ }\NormalTok{Promo }\OperatorTok{+}\StringTok{ }\NormalTok{SchoolHoliday }\OperatorTok{+}\StringTok{ }\NormalTok{StoreType }\OperatorTok{+}\StringTok{ }\NormalTok{Assortment }\OperatorTok{+}\StringTok{ }\KeywordTok{ns}\NormalTok{(CompetitionDistance,}\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{bs}\NormalTok{(Day, }\DecValTok{5}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{bs}\NormalTok{(Month, }\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{Year }\OperatorTok{+}\StringTok{ }\KeywordTok{bs}\NormalTok{(DayOfWeek, }\DecValTok{5}\NormalTok{)}
+
+\NormalTok{formula_}\DecValTok{4}\NormalTok{ <-}\StringTok{ }\NormalTok{Sales}\OperatorTok{~}\StringTok{ }\NormalTok{Customers }\OperatorTok{+}\StringTok{ }\NormalTok{Promo }\OperatorTok{+}\StringTok{ }\NormalTok{SchoolHoliday }\OperatorTok{+}\StringTok{ }\NormalTok{StoreType }\OperatorTok{+}\StringTok{ }\NormalTok{Assortment }\OperatorTok{+}\StringTok{ }\KeywordTok{ns}\NormalTok{(CompetitionDistance,}\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{ns}\NormalTok{(Day, }\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{ns}\NormalTok{(Month, }\DecValTok{3}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{Year }\OperatorTok{+}\StringTok{ }\KeywordTok{ns}\NormalTok{(DayOfWeek, }\DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\NormalTok{no_promo_cv }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{model_1 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{lm}\NormalTok{(formula_}\DecValTok{1}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{predict_1 =} \KeywordTok{map2}\NormalTok{(model_}\DecValTok{1}\NormalTok{, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_1 =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_}\DecValTok{1}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{model_1_coinst =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{lm}\NormalTok{(formula_}\DecValTok{1}\NormalTok{_coinst, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{predict_1_coinst =} \KeywordTok{map2}\NormalTok{(model_}\DecValTok{1}\NormalTok{_coinst, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_1_coinst =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_}\DecValTok{1}\NormalTok{_coinst, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{model_2 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{lm}\NormalTok{(formula_}\DecValTok{2}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{predict_2 =} \KeywordTok{map2}\NormalTok{(model_}\DecValTok{2}\NormalTok{, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_2 =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_}\DecValTok{2}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{model_3 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{gam}\NormalTok{(formula_}\DecValTok{3}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{predict_3 =} \KeywordTok{map2}\NormalTok{(model_}\DecValTok{3}\NormalTok{, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_3 =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_}\DecValTok{3}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{model_4 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{gam}\NormalTok{(formula_}\DecValTok{4}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{predict_4 =} \KeywordTok{map2}\NormalTok{(model_}\DecValTok{4}\NormalTok{, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_4 =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_}\DecValTok{4}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y)))}
+\NormalTok{         ) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarize_at}\NormalTok{(}\KeywordTok{vars}\NormalTok{(}\KeywordTok{starts_with}\NormalTok{(}\StringTok{"mae"}\NormalTok{)), }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(.)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\DataTypeTok{key =} \StringTok{"model"}\NormalTok{, }\DataTypeTok{value =} \StringTok{"mae"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{arrange}\NormalTok{(mae)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 5 x 2
+##   model          mae
+##   <chr>        <dbl>
+## 1 mae_3         837.
+## 2 mae_2         841.
+## 3 mae_4         842.
+## 4 mae_1         873.
+## 5 mae_1_coinst  878.
+\end{verbatim}
+
+\hypertarget{porownanie-najlepszych-modeli-dla-modelu-testowego}{%
+\subsection{Porownanie najlepszych modeli dla modelu
+testowego}\label{porownanie-najlepszych-modeli-dla-modelu-testowego}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\KeywordTok{tibble}\NormalTok{(}\DataTypeTok{train =} \KeywordTok{list}\NormalTok{(train_no_promo), }\DataTypeTok{test =} \KeywordTok{list}\NormalTok{(test_no_promo)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{truths =} \KeywordTok{map}\NormalTok{(test, }\StringTok{"Sales"}\NormalTok{),}
+         \DataTypeTok{model_lm =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{lm}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ Sales}\OperatorTok{~}\NormalTok{.}\OperatorTok{-}\NormalTok{Date}\OperatorTok{-}\NormalTok{Store, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{pred_lm =} \KeywordTok{map2}\NormalTok{(model_lm, test, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_lm =} \KeywordTok{map2_dbl}\NormalTok{(truths, pred_lm, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{model_bs =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{regsubsets}\NormalTok{(Sales}\OperatorTok{~}\NormalTok{.}\OperatorTok{-}\NormalTok{Date}\OperatorTok{-}\NormalTok{Store, }\DataTypeTok{data =}\NormalTok{ .x, }\DataTypeTok{nvmax =} \DecValTok{13}\NormalTok{)),}
+         \DataTypeTok{pred_lm_12 =} \KeywordTok{map2}\NormalTok{(model_bs, test, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y, }\DataTypeTok{id =} \DecValTok{12}\NormalTok{)),}
+         \DataTypeTok{mae_lm_12 =} \KeywordTok{map2_dbl}\NormalTok{(truths, pred_lm_}\DecValTok{12}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{pred_lm_11 =} \KeywordTok{map2}\NormalTok{(model_bs, test, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y, }\DataTypeTok{id =} \DecValTok{11}\NormalTok{)),}
+         \DataTypeTok{mae_lm_11 =} \KeywordTok{map2_dbl}\NormalTok{(truths, pred_lm_}\DecValTok{11}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{pred_lm_10 =} \KeywordTok{map2}\NormalTok{(model_bs, test, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y, }\DataTypeTok{id =} \DecValTok{10}\NormalTok{)),}
+         \DataTypeTok{mae_lm_10 =} \KeywordTok{map2_dbl}\NormalTok{(truths, pred_lm_}\DecValTok{10}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{pred_lm_9 =} \KeywordTok{map2}\NormalTok{(model_bs, test, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y, }\DataTypeTok{id =} \DecValTok{9}\NormalTok{)),}
+         \DataTypeTok{mae_lm_9 =} \KeywordTok{map2_dbl}\NormalTok{(truths, pred_lm_}\DecValTok{9}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{model_tree =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{rpart}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ Sales}\OperatorTok{~}\NormalTok{.}\OperatorTok{-}\NormalTok{Date}\OperatorTok{-}\NormalTok{Store, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{pred_tree =} \KeywordTok{map2}\NormalTok{(model_tree, test, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_tree =} \KeywordTok{map2_dbl}\NormalTok{(truths, pred_tree, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{model_gam_3 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{gam}\NormalTok{(formula_}\DecValTok{3}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{pred_gam_3 =} \KeywordTok{map2}\NormalTok{(model_gam_}\DecValTok{3}\NormalTok{, test, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_gam_3 =} \KeywordTok{map2_dbl}\NormalTok{(truths, pred_gam_}\DecValTok{3}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{model_gam_4 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{gam}\NormalTok{(formula_}\DecValTok{4}\NormalTok{, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{pred_gam_4 =} \KeywordTok{map2}\NormalTok{(model_gam_}\DecValTok{4}\NormalTok{, test, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_gam_4 =} \KeywordTok{map2_dbl}\NormalTok{(truths, pred_gam_}\DecValTok{4}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y)))}
+\NormalTok{         ) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\KeywordTok{starts_with}\NormalTok{(}\StringTok{"mae"}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\DataTypeTok{key =} \StringTok{"model"}\NormalTok{, }\DataTypeTok{value =} \StringTok{"MAE"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{arrange}\NormalTok{(MAE)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 8 x 2
+##   model       MAE
+##   <chr>     <dbl>
+## 1 mae_gam_3  835.
+## 2 mae_gam_4  841.
+## 3 mae_lm     901.
+## 4 mae_lm_12  901.
+## 5 mae_lm_11  901.
+## 6 mae_lm_9   902.
+## 7 mae_lm_10  902.
+## 8 mae_tree  1209.
+\end{verbatim}
+
+\hypertarget{wnioski-dla-danych-no_promo}{%
+\subsection{Wnioski dla danych
+no\_promo}\label{wnioski-dla-danych-no_promo}}
+
+Najlepszym modelem okazal sie model GAM nr 3, ktory wygladal
+nastepujaco:
+
+\begin{itemize}
+\tightlist
+\item
+  zmienne Customer i Year byly zwyklymi funkcjami liniowymi,
+\item
+  zmienne Promo, SchoolHoliday, StoreType i Assortment byly zmiennymi
+  kategorycznymi,
+\item
+  Zmienna CompetitionDistance zostala zamodelowana jako natural spline z
+  czterema stopniami swobody (podzial na cztery czesci),
+\item
+  Zmienne Day i DayOfWeek zostaly zamodelowane jako spline'y z piecomia
+  stopniami swobody (podzial na trzy czesci),
+\item
+  Zmienna mMonth zostala zamodelowana jako spline z czterema stopniami
+  swobody (podzial na dwie czesci).
+\end{itemize}
+
+Model ten przewiduje dzienna sprzedaz ze srednim bledem wynoszacym ok
+835 jednostek.
+
+\hypertarget{potencjalne-dalsze-kroki}{%
+\subsection{potencjalne dalsze kroki}\label{potencjalne-dalsze-kroki}}
+
+Aby polepszyc wlasciwosci modelu mozna pojsc w dwie strony:
+
+\begin{itemize}
+\item
+  Wkorzystujac modele addytywne i szukajac jeszcze lepszego
+  zamodelowania poszczegolnych zmiennych,
+\item
+  Wykorzystujac bardziej zaawansowane metody nieparametryczne niz zwykle
+  drzeaa decyzyjne. Mozna uzyc modeli typu random forest lub inne modele
+  boostujace i znalezc dla nich najlepsze hyperparametry.
+\end{itemize}
+
+\hypertarget{tworzenie-modelu-dla-sklepow-z-obowiazujacym-promo2}{%
+\section{Tworzenie modelu dla sklepow z obowiazujacym
+Promo2}\label{tworzenie-modelu-dla-sklepow-z-obowiazujacym-promo2}}
+
+Dla danych zawierajacych sklepy uczestniczace w regularnych promocjach
+kroki usuwania outlierow i tworzenia modeli beda takie same jak w
+przypadku danych bez Promo2. Jedyne roznice moga wystepowac przy
+parametrach modeli badz modelowaniu poszczegolnych zmiennych.
+
+\hypertarget{znalezienie-outlierow-i-wspolliniowosci}{%
+\subsection{Znalezienie outlierow i
+wspolliniowosci}\label{znalezienie-outlierow-i-wspolliniowosci}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(Sales}\OperatorTok{~}\NormalTok{., }\DataTypeTok{data =}\NormalTok{ data_promo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\KeywordTok{c}\NormalTok{(Store, Date, Promo2, PromoInterval)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple }\OperatorTok{%>%}\StringTok{ }\KeywordTok{summary}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = Sales ~ ., data = data_promo %>% select(-c(Store, 
+##     Date, Promo2, PromoInterval)))
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -14609.3   -751.2    -95.1    614.0  27310.5 
+## 
+## Coefficients:
+##                       Estimate Std. Error  t value Pr(>|t|)    
+## (Intercept)         -2.952e+05  5.626e+03  -52.475   <2e-16 ***
+## DayOfWeek           -3.297e+01  1.167e+00  -28.246   <2e-16 ***
+## Customers            7.536e+00  6.991e-03 1077.937   <2e-16 ***
+## Promo1               1.188e+03  4.127e+00  287.872   <2e-16 ***
+## SchoolHoliday1       4.587e+01  4.925e+00    9.314   <2e-16 ***
+## StoreTypeb          -5.311e+03  4.190e+01 -126.767   <2e-16 ***
+## StoreTypec          -1.906e+02  5.903e+00  -32.284   <2e-16 ***
+## StoreTyped           1.048e+03  4.527e+00  231.617   <2e-16 ***
+## Assortmentb         -1.797e+03  4.537e+01  -39.617   <2e-16 ***
+## Assortmentc          3.412e+02  3.967e+00   86.006   <2e-16 ***
+## CompetitionDistance  6.292e-02  3.680e-04  170.987   <2e-16 ***
+## Promo2SinceWeek      8.024e+00  1.404e-01   57.142   <2e-16 ***
+## Promo2SinceYear     -4.273e+01  1.197e+00  -35.686   <2e-16 ***
+## Month                3.314e+01  6.048e-01   54.795   <2e-16 ***
+## Day                  3.577e+00  2.207e-01   16.210   <2e-16 ***
+## Year                 1.892e+02  2.516e+00   75.218   <2e-16 ***
+## actual_promo        -4.532e+01  4.005e+00  -11.315   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1231 on 421068 degrees of freedom
+## Multiple R-squared:  0.7959, Adjusted R-squared:  0.7959 
+## F-statistic: 1.026e+05 on 16 and 421068 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple }\OperatorTok{%>%}\StringTok{ }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ .fitted, }\DataTypeTok{y =}\NormalTok{ .std.resid)) }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-55-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data_promo_no_outliers <-}\StringTok{ }\NormalTok{model_simple }\OperatorTok{%>%}\StringTok{ }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.std.resid) }\OperatorTok{<}\StringTok{ }\DecValTok{3}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\KeywordTok{colnames}\NormalTok{(data_promo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\KeywordTok{c}\NormalTok{(Store, Date, Promo2, PromoInterval))))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(Sales}\OperatorTok{~}\NormalTok{., }\DataTypeTok{data =}\NormalTok{ data_promo_no_outliers)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple }\OperatorTok{%>%}\StringTok{ }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ .fitted, }\DataTypeTok{y =}\NormalTok{ .std.resid)) }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-58-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data_promo_no_outliers <-}\StringTok{ }\NormalTok{model_simple }\OperatorTok{%>%}\StringTok{ }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.std.resid) }\OperatorTok{<}\StringTok{ }\DecValTok{3}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\KeywordTok{colnames}\NormalTok{(data_promo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\KeywordTok{c}\NormalTok{(Store, Date, Promo2, PromoInterval))))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(Sales}\OperatorTok{~}\NormalTok{., }\DataTypeTok{data =}\NormalTok{ data_promo_no_outliers)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple }\OperatorTok{%>%}\StringTok{ }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ .fitted, }\DataTypeTok{y =}\NormalTok{ .std.resid)) }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-61-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data_promo_no_outliers <-}\StringTok{ }\NormalTok{model_simple }\OperatorTok{%>%}\StringTok{ }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.std.resid) }\OperatorTok{<}\StringTok{ }\DecValTok{3}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\KeywordTok{colnames}\NormalTok{(data_promo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\KeywordTok{c}\NormalTok{(Store, Date, Promo2, PromoInterval))))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data_promo_no_outliers }\OperatorTok{%>%}\StringTok{ }\KeywordTok{count}\NormalTok{(StoreType)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 4 x 2
+##   StoreType      n
+##   <fct>      <int>
+## 1 a         208636
+## 2 b           3101
+## 3 c          55537
+## 4 d         144157
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(Sales}\OperatorTok{~}\NormalTok{., }\DataTypeTok{data =}\NormalTok{ data_promo_no_outliers)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ .fitted, }\DataTypeTok{y =}\NormalTok{ .std.resid)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-65-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ .hat, }\DataTypeTok{y =}\NormalTok{ .std.resid)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-66-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data_promo_no_outliers <-}\StringTok{ }\NormalTok{model_simple }\OperatorTok{%>%}\StringTok{ }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(.hat }\OperatorTok{<}\StringTok{ }\FloatTok{.001}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\KeywordTok{colnames}\NormalTok{(data_promo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\KeywordTok{c}\NormalTok{(Store, Date, Promo2, PromoInterval))))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(Sales}\OperatorTok{~}\NormalTok{., }\DataTypeTok{data =}\NormalTok{ data_promo_no_outliers)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model_simple }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{augment}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ .hat, }\DataTypeTok{y =}\NormalTok{ .std.resid)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-69-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#vif(model_simple)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{podzial-na-zbiory-treningowe-i-testowe-1}{%
+\subsection{Podzial na zbiory treningowe i
+testowe}\label{podzial-na-zbiory-treningowe-i-testowe-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\NormalTok{split <-}\StringTok{ }\KeywordTok{initial_split}\NormalTok{(data_promo_no_outliers, }\DataTypeTok{prop =} \FloatTok{.8}\NormalTok{)}
+\NormalTok{train_promo <-}\StringTok{ }\KeywordTok{training}\NormalTok{(split)}
+\NormalTok{test_promo <-}\StringTok{ }\KeywordTok{testing}\NormalTok{(split)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{krotna-cross-walidacja-1}{%
+\subsection{10 krotna cross walidacja}\label{krotna-cross-walidacja-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\NormalTok{(promo_cv <-}\StringTok{ }\KeywordTok{vfold_cv}\NormalTok{(train_promo) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{train =} \KeywordTok{map}\NormalTok{(splits, }\OperatorTok{~}\KeywordTok{training}\NormalTok{(.x)),}
+         \DataTypeTok{validate =} \KeywordTok{map}\NormalTok{(splits, }\OperatorTok{~}\KeywordTok{testing}\NormalTok{(.x)),}
+         \DataTypeTok{truths =} \KeywordTok{map}\NormalTok{(validate, }\StringTok{"Sales"}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## #  10-fold cross-validation 
+## # A tibble: 10 x 5
+##    splits            id     train             validate          truths     
+##  * <list>            <chr>  <list>            <list>            <list>     
+##  1 <split [295.6K/3~ Fold01 <tibble [295,589~ <tibble [32,844 ~ <dbl [32,8~
+##  2 <split [295.6K/3~ Fold02 <tibble [295,589~ <tibble [32,844 ~ <dbl [32,8~
+##  3 <split [295.6K/3~ Fold03 <tibble [295,589~ <tibble [32,844 ~ <dbl [32,8~
+##  4 <split [295.6K/3~ Fold04 <tibble [295,590~ <tibble [32,843 ~ <dbl [32,8~
+##  5 <split [295.6K/3~ Fold05 <tibble [295,590~ <tibble [32,843 ~ <dbl [32,8~
+##  6 <split [295.6K/3~ Fold06 <tibble [295,590~ <tibble [32,843 ~ <dbl [32,8~
+##  7 <split [295.6K/3~ Fold07 <tibble [295,590~ <tibble [32,843 ~ <dbl [32,8~
+##  8 <split [295.6K/3~ Fold08 <tibble [295,590~ <tibble [32,843 ~ <dbl [32,8~
+##  9 <split [295.6K/3~ Fold09 <tibble [295,590~ <tibble [32,843 ~ <dbl [32,8~
+## 10 <split [295.6K/3~ Fold10 <tibble [295,590~ <tibble [32,843 ~ <dbl [32,8~
+\end{verbatim}
+
+\hypertarget{wybieram-kilka-modeli-i-z-kazdego-z-nich-wezme-taki-z-najlepszy-mae-1}{%
+\subsubsection{Wybieram kilka modeli i z kazdego z nich wezme taki z
+najlepszy
+MAE}\label{wybieram-kilka-modeli-i-z-kazdego-z-nich-wezme-taki-z-najlepszy-mae-1}}
+
+\hypertarget{best-subset-selection-dla-danych-promo}{%
+\paragraph{Best Subset Selection dla danych
+promo}\label{best-subset-selection-dla-danych-promo}}
+
+Najlepsza statystyka charakteryzowaly sie modele, ktore posiadaly 10
+zmiennych wzwyz
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{predict.regsubsets <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(object, newdata, id, ...) \{}
+\NormalTok{  mat <-}\StringTok{ }\KeywordTok{model.matrix}\NormalTok{(Sales}\OperatorTok{~}\NormalTok{., newdata)}
+\NormalTok{  coefi <-}\StringTok{ }\KeywordTok{coef}\NormalTok{(object, }\DataTypeTok{id =}\NormalTok{ id)}
+\NormalTok{  xvars <-}\StringTok{ }\KeywordTok{names}\NormalTok{(coefi)}
+\NormalTok{  fin <-}\StringTok{ }\NormalTok{mat[, xvars] }\OperatorTok{%*%}\StringTok{ }\NormalTok{coefi }
+\NormalTok{  fin[,}\DecValTok{1}\NormalTok{]}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{params <-}\StringTok{ }\DecValTok{1}\OperatorTok{:}\DecValTok{14}
+
+\NormalTok{names <-}\StringTok{ }\KeywordTok{paste0}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\StringTok{"variables"}\NormalTok{, }\DataTypeTok{each =} \KeywordTok{length}\NormalTok{(params)), }\StringTok{"_"}\NormalTok{, }\DecValTok{1}\OperatorTok{:}\DecValTok{14}\NormalTok{)}
+\NormalTok{model_fun <-}\StringTok{ }\NormalTok{glue}\OperatorTok{::}\KeywordTok{glue}\NormalTok{(}\StringTok{'map2(model, validate, ~predict(.x, .y, id = \{1:14\}))'}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{paste}\NormalTok{(., }\DataTypeTok{collapse =} \StringTok{";"}\NormalTok{)}
+
+\NormalTok{names_mae <-}\StringTok{ }\KeywordTok{paste0}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\StringTok{"mae"}\NormalTok{, }\DataTypeTok{each =} \KeywordTok{length}\NormalTok{(params)), }\StringTok{"_"}\NormalTok{, }\DecValTok{1}\OperatorTok{:}\DecValTok{14}\NormalTok{)}
+\NormalTok{mae_fun <-}\StringTok{ }\NormalTok{glue}\OperatorTok{::}\KeywordTok{glue}\NormalTok{(}\StringTok{'map2_dbl(truths, variables_\{1:14\}, ~mean(abs(.x-.y)))'}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{paste}\NormalTok{(., }\DataTypeTok{collapse =} \StringTok{";"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{best_subset_cv <-}\StringTok{ }\NormalTok{promo_cv }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{model =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{regsubsets}\NormalTok{(Sales}\OperatorTok{~}\NormalTok{., }\DataTypeTok{data =}\NormalTok{ .x, }\DataTypeTok{nvmax =} \DecValTok{14}\NormalTok{))) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\OperatorTok{!!!}\StringTok{ }\KeywordTok{parse_exprs}\NormalTok{(model_fun)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{rename_at}\NormalTok{(}\KeywordTok{vars}\NormalTok{(}\KeywordTok{starts_with}\NormalTok{(}\StringTok{"map2"}\NormalTok{)), }\OperatorTok{~}\NormalTok{names) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\OperatorTok{!!!}\StringTok{ }\KeywordTok{parse_exprs}\NormalTok{(mae_fun)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{rename_at}\NormalTok{(}\KeywordTok{vars}\NormalTok{(}\KeywordTok{starts_with}\NormalTok{(}\StringTok{"map2"}\NormalTok{)), }\OperatorTok{~}\NormalTok{names_mae) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarize_at}\NormalTok{(}\KeywordTok{vars}\NormalTok{(}\KeywordTok{starts_with}\NormalTok{(}\StringTok{"mae"}\NormalTok{)), }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(.)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\DataTypeTok{key =} \StringTok{"n_variables"}\NormalTok{, }\DataTypeTok{value =} \StringTok{"mae"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in leaps.setup(x, y, wt = wt, nbest = nbest, nvmax = nvmax,
+## force.in = force.in, : 1 linear dependencies found
+\end{verbatim}
+
+\begin{verbatim}
+## Reordering variables and trying again:
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in leaps.setup(x, y, wt = wt, nbest = nbest, nvmax = nvmax,
+## force.in = force.in, : 1 linear dependencies found
+\end{verbatim}
+
+\begin{verbatim}
+## Reordering variables and trying again:
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in leaps.setup(x, y, wt = wt, nbest = nbest, nvmax = nvmax,
+## force.in = force.in, : 1 linear dependencies found
+\end{verbatim}
+
+\begin{verbatim}
+## Reordering variables and trying again:
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in leaps.setup(x, y, wt = wt, nbest = nbest, nvmax = nvmax,
+## force.in = force.in, : 1 linear dependencies found
+\end{verbatim}
+
+\begin{verbatim}
+## Reordering variables and trying again:
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in leaps.setup(x, y, wt = wt, nbest = nbest, nvmax = nvmax,
+## force.in = force.in, : 1 linear dependencies found
+\end{verbatim}
+
+\begin{verbatim}
+## Reordering variables and trying again:
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in leaps.setup(x, y, wt = wt, nbest = nbest, nvmax = nvmax,
+## force.in = force.in, : 1 linear dependencies found
+\end{verbatim}
+
+\begin{verbatim}
+## Reordering variables and trying again:
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in leaps.setup(x, y, wt = wt, nbest = nbest, nvmax = nvmax,
+## force.in = force.in, : 1 linear dependencies found
+\end{verbatim}
+
+\begin{verbatim}
+## Reordering variables and trying again:
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in leaps.setup(x, y, wt = wt, nbest = nbest, nvmax = nvmax,
+## force.in = force.in, : 1 linear dependencies found
+\end{verbatim}
+
+\begin{verbatim}
+## Reordering variables and trying again:
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in leaps.setup(x, y, wt = wt, nbest = nbest, nvmax = nvmax,
+## force.in = force.in, : 1 linear dependencies found
+\end{verbatim}
+
+\begin{verbatim}
+## Reordering variables and trying again:
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in leaps.setup(x, y, wt = wt, nbest = nbest, nvmax = nvmax,
+## force.in = force.in, : 1 linear dependencies found
+\end{verbatim}
+
+\begin{verbatim}
+## Reordering variables and trying again:
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{best_subset_cv }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{arrange}\NormalTok{(mae)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 14 x 2
+##    n_variables   mae
+##    <chr>       <dbl>
+##  1 mae_14       808.
+##  2 mae_13       814.
+##  3 mae_7        818.
+##  4 mae_11       822.
+##  5 mae_12       822.
+##  6 mae_9        823.
+##  7 mae_10       824.
+##  8 mae_8        825.
+##  9 mae_6        859.
+## 10 mae_5        861.
+## 11 mae_4        871.
+## 12 mae_3        884.
+## 13 mae_2        985.
+## 14 mae_1       1116.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{(best_subset_cv }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =} \DecValTok{1}\OperatorTok{:}\DecValTok{14}\NormalTok{, }\DataTypeTok{y =}\NormalTok{ mae)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{() }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{color =} \StringTok{"blue"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"number of variables"}\NormalTok{, }\DataTypeTok{title =} \StringTok{"Best subset selection"}\NormalTok{, }\DataTypeTok{subtitle =} \StringTok{"for promo data"}\NormalTok{) ->}\StringTok{ }\NormalTok{best_plot)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{ITMagination_zadanie_files/figure-latex/unnamed-chunk-75-1.pdf}
+
+Widzimy, ze model z 9 zmiennymi pozbyl sie zmiennych DayOfWeek,
+SchoolHoliday, StoreTypec i Day.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{coef}\NormalTok{(}\KeywordTok{regsubsets}\NormalTok{(Sales}\OperatorTok{~}\NormalTok{., }\DataTypeTok{data =}\NormalTok{ train_promo, }\DataTypeTok{nvmax =} \DecValTok{14}\NormalTok{), }\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Reordering variables and trying again:
+\end{verbatim}
+
+\begin{verbatim}
+##         (Intercept)           Customers              Promo1 
+##        8.055887e+04        7.748623e+00        1.112741e+03 
+##          StoreTypeb          StoreTyped CompetitionDistance 
+##       -5.402225e+03        1.161206e+03        6.275933e-02 
+##     Promo2SinceWeek     Promo2SinceYear               Month 
+##        8.979328e+00       -4.015340e+01        1.636932e+01 
+##                 Day        actual_promo 
+##        2.167701e+00       -1.792019e+01
+\end{verbatim}
+
+\hypertarget{decision-tree-1}{%
+\paragraph{Decision Tree}\label{decision-tree-1}}
+
+Modele drzew decyzyjnych byly poddawane cross walidacji dla roznych
+wariantow parametrow minsplit i maxdepth. Niestety wyniki statystyki MAE
+dla kazdego z tych wariantow byly dokladnie takie same.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\NormalTok{promo_cv }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{tree_max25 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\StringTok{ }\KeywordTok{rpart}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ Sales}\OperatorTok{~}\NormalTok{., }\DataTypeTok{data =}\NormalTok{ .x, }\DataTypeTok{control =} \KeywordTok{rpart.control}\NormalTok{(}\DataTypeTok{maxdepth =} \DecValTok{25}\NormalTok{))),}
+         \DataTypeTok{tree_max20 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\StringTok{ }\KeywordTok{rpart}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ Sales}\OperatorTok{~}\NormalTok{., }\DataTypeTok{data =}\NormalTok{ .x, }\DataTypeTok{control =} \KeywordTok{rpart.control}\NormalTok{(}\DataTypeTok{maxdepth =} \DecValTok{20}\NormalTok{))),}
+         \DataTypeTok{tree_max10 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\StringTok{ }\KeywordTok{rpart}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ Sales}\OperatorTok{~}\NormalTok{., }\DataTypeTok{data =}\NormalTok{ .x, }\DataTypeTok{control =} \KeywordTok{rpart.control}\NormalTok{(}\DataTypeTok{maxdepth =} \DecValTok{10}\NormalTok{))),}
+         \DataTypeTok{tree_max30 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\StringTok{ }\KeywordTok{rpart}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ Sales}\OperatorTok{~}\NormalTok{., }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{predict_max25 =} \KeywordTok{map2}\NormalTok{(tree_max25, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{predict_max20 =} \KeywordTok{map2}\NormalTok{(tree_max20, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{predict_max10 =} \KeywordTok{map2}\NormalTok{(tree_max10, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{predict_max30 =} \KeywordTok{map2}\NormalTok{(tree_max30, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_max25 =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_max25, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{mae_max20 =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_max20, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{mae_max10 =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_max10, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{mae_max30 =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_max30, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))))}\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarize_at}\NormalTok{(}\KeywordTok{vars}\NormalTok{(}\KeywordTok{starts_with}\NormalTok{(}\StringTok{"mae"}\NormalTok{)), }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(.)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\DataTypeTok{key =} \StringTok{"max_split"}\NormalTok{, }\DataTypeTok{value =} \StringTok{"mae"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 4 x 2
+##   max_split   mae
+##   <chr>     <dbl>
+## 1 mae_max25 1048.
+## 2 mae_max20 1048.
+## 3 mae_max10 1048.
+## 4 mae_max30 1048.
+\end{verbatim}
+
+\hypertarget{gams-1}{%
+\paragraph{GAMs}\label{gams-1}}
+
+Modele GAM stowrzylem dokladnie takie same jak do danych bez promo.
+Dodalem tylko odpowiednio zamodelowane zmienne dotyczace zmiennej
+Promo2.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{train_promo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{colnames}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] "DayOfWeek"           "Sales"               "Customers"          
+##  [4] "Promo"               "SchoolHoliday"       "StoreType"          
+##  [7] "Assortment"          "CompetitionDistance" "Promo2SinceWeek"    
+## [10] "Promo2SinceYear"     "Month"               "Day"                
+## [13] "Year"                "actual_promo"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{bs}\NormalTok{(train_promo}\OperatorTok{$}\NormalTok{Promo2SinceWeek, }\DecValTok{6}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{attr}\NormalTok{(}\StringTok{"knots"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 25% 50% 75% 
+##  13  22  37
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{formula_}\DecValTok{1}\NormalTok{_p <-}\StringTok{ }\NormalTok{Sales }\OperatorTok{~}\StringTok{ }\NormalTok{Customers }\OperatorTok{+}\StringTok{ }\NormalTok{Promo }\OperatorTok{+}\StringTok{ }\NormalTok{SchoolHoliday }\OperatorTok{+}\StringTok{ }\NormalTok{StoreType }\OperatorTok{+}\StringTok{ }\NormalTok{Assortment }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(CompetitionDistance,}\DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Day, }\DecValTok{3}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Month, }\DecValTok{3}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{Year }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(DayOfWeek, }\DecValTok{3}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{actual_promo }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Promo2SinceWeek,}\DecValTok{3}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Promo2SinceYear, }\DecValTok{3}\NormalTok{)}
+
+\NormalTok{formula_}\DecValTok{1}\NormalTok{_coinst_p <-}\StringTok{ }\NormalTok{Sales}\OperatorTok{~}\StringTok{ }\NormalTok{Customers }\OperatorTok{+}\StringTok{ }\NormalTok{Promo }\OperatorTok{+}\StringTok{ }\NormalTok{SchoolHoliday }\OperatorTok{+}\StringTok{ }\NormalTok{StoreType }\OperatorTok{+}\StringTok{ }\NormalTok{Assortment }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(CompetitionDistance,}\DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Day, }\DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Month, }\DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{Year }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(DayOfWeek, }\DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{actual_promo }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Promo2SinceWeek,}\DecValTok{3}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Promo2SinceYear, }\DecValTok{2}\NormalTok{)}
+
+\NormalTok{formula_}\DecValTok{2}\NormalTok{_p <-}\StringTok{ }\NormalTok{Sales}\OperatorTok{~}\StringTok{ }\NormalTok{Customers }\OperatorTok{+}\StringTok{ }\NormalTok{Promo }\OperatorTok{+}\StringTok{ }\NormalTok{SchoolHoliday }\OperatorTok{+}\StringTok{ }\NormalTok{StoreType }\OperatorTok{+}\StringTok{ }\NormalTok{Assortment }\OperatorTok{+}\StringTok{ }\KeywordTok{ns}\NormalTok{(CompetitionDistance,}\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Day, }\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Month, }\DecValTok{3}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{Year }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(DayOfWeek, }\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{actual_promo }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Promo2SinceWeek,}\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{poly}\NormalTok{(Promo2SinceYear, }\DecValTok{3}\NormalTok{)}
+
+\NormalTok{formula_}\DecValTok{3}\NormalTok{_p <-}\StringTok{ }\NormalTok{Sales}\OperatorTok{~}\StringTok{ }\NormalTok{Customers }\OperatorTok{+}\StringTok{ }\NormalTok{Promo }\OperatorTok{+}\StringTok{ }\NormalTok{SchoolHoliday }\OperatorTok{+}\StringTok{ }\NormalTok{StoreType }\OperatorTok{+}\StringTok{ }\NormalTok{Assortment }\OperatorTok{+}\StringTok{ }\KeywordTok{ns}\NormalTok{(CompetitionDistance,}\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{bs}\NormalTok{(Day, }\DecValTok{5}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{bs}\NormalTok{(Month, }\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{Year }\OperatorTok{+}\StringTok{ }\KeywordTok{bs}\NormalTok{(DayOfWeek, }\DecValTok{5}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{actual_promo }\OperatorTok{+}\StringTok{ }\KeywordTok{bs}\NormalTok{(Promo2SinceWeek,}\DecValTok{6}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{bs}\NormalTok{(Promo2SinceYear, }\DecValTok{5}\NormalTok{)}
+
+\NormalTok{formula_}\DecValTok{4}\NormalTok{_p <-}\StringTok{ }\NormalTok{Sales}\OperatorTok{~}\StringTok{ }\NormalTok{Customers }\OperatorTok{+}\StringTok{ }\NormalTok{Promo }\OperatorTok{+}\StringTok{ }\NormalTok{SchoolHoliday }\OperatorTok{+}\StringTok{ }\NormalTok{StoreType }\OperatorTok{+}\StringTok{ }\NormalTok{Assortment }\OperatorTok{+}\StringTok{ }\KeywordTok{ns}\NormalTok{(CompetitionDistance,}\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{ns}\NormalTok{(Day, }\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{ns}\NormalTok{(Month, }\DecValTok{3}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{Year }\OperatorTok{+}\StringTok{ }\KeywordTok{ns}\NormalTok{(DayOfWeek, }\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{actual_promo }\OperatorTok{+}\StringTok{ }\KeywordTok{ns}\NormalTok{(Promo2SinceWeek,}\DecValTok{5}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{ns}\NormalTok{(Promo2SinceYear, }\DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\NormalTok{promo_cv }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{model_1 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{lm}\NormalTok{(formula_}\DecValTok{1}\NormalTok{_p, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{predict_1 =} \KeywordTok{map2}\NormalTok{(model_}\DecValTok{1}\NormalTok{, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_1 =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_}\DecValTok{1}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{model_1_coinst =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{lm}\NormalTok{(formula_}\DecValTok{1}\NormalTok{_coinst_p, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{predict_1_coinst =} \KeywordTok{map2}\NormalTok{(model_}\DecValTok{1}\NormalTok{_coinst, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_1_coinst =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_}\DecValTok{1}\NormalTok{_coinst, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{model_2 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{lm}\NormalTok{(formula_}\DecValTok{2}\NormalTok{_p, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{predict_2 =} \KeywordTok{map2}\NormalTok{(model_}\DecValTok{2}\NormalTok{, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_2 =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_}\DecValTok{2}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{model_3 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{gam}\NormalTok{(formula_}\DecValTok{3}\NormalTok{_p, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{predict_3 =} \KeywordTok{map2}\NormalTok{(model_}\DecValTok{3}\NormalTok{, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_3 =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_}\DecValTok{3}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{model_4 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{gam}\NormalTok{(formula_}\DecValTok{4}\NormalTok{_p, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{predict_4 =} \KeywordTok{map2}\NormalTok{(model_}\DecValTok{4}\NormalTok{, validate, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_4 =} \KeywordTok{map2_dbl}\NormalTok{(truths, predict_}\DecValTok{4}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y)))}
+\NormalTok{         ) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarize_at}\NormalTok{(}\KeywordTok{vars}\NormalTok{(}\KeywordTok{starts_with}\NormalTok{(}\StringTok{"mae"}\NormalTok{)), }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(.)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\DataTypeTok{key =} \StringTok{"model"}\NormalTok{, }\DataTypeTok{value =} \StringTok{"mae"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{arrange}\NormalTok{(mae)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+\end{verbatim}
+
+\begin{verbatim}
+## # A tibble: 5 x 2
+##   model          mae
+##   <chr>        <dbl>
+## 1 mae_3         725.
+## 2 mae_4         740.
+## 3 mae_2         740.
+## 4 mae_1         759.
+## 5 mae_1_coinst  766.
+\end{verbatim}
+
+\hypertarget{porownanie-najlepszych-modeli-dla-modelu-testowego-1}{%
+\subsection{Porownanie najlepszych modeli dla modelu
+testowego}\label{porownanie-najlepszych-modeli-dla-modelu-testowego-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\KeywordTok{tibble}\NormalTok{(}\DataTypeTok{train =} \KeywordTok{list}\NormalTok{(train_promo), }\DataTypeTok{test =} \KeywordTok{list}\NormalTok{(test_promo)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{truths =} \KeywordTok{map}\NormalTok{(test, }\StringTok{"Sales"}\NormalTok{),}
+         \DataTypeTok{model_lm =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{lm}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ Sales}\OperatorTok{~}\NormalTok{., }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{pred_lm =} \KeywordTok{map2}\NormalTok{(model_lm, test, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_lm =} \KeywordTok{map2_dbl}\NormalTok{(truths, pred_lm, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{model_bs =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{regsubsets}\NormalTok{(Sales}\OperatorTok{~}\NormalTok{., }\DataTypeTok{data =}\NormalTok{ .x, }\DataTypeTok{nvmax =} \DecValTok{14}\NormalTok{)),}
+         \DataTypeTok{pred_lm_12 =} \KeywordTok{map2}\NormalTok{(model_bs, test, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y, }\DataTypeTok{id =} \DecValTok{12}\NormalTok{)),}
+         \DataTypeTok{mae_lm_12 =} \KeywordTok{map2_dbl}\NormalTok{(truths, pred_lm_}\DecValTok{12}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{pred_lm_11 =} \KeywordTok{map2}\NormalTok{(model_bs, test, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y, }\DataTypeTok{id =} \DecValTok{11}\NormalTok{)),}
+         \DataTypeTok{mae_lm_11 =} \KeywordTok{map2_dbl}\NormalTok{(truths, pred_lm_}\DecValTok{11}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{pred_lm_10 =} \KeywordTok{map2}\NormalTok{(model_bs, test, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y, }\DataTypeTok{id =} \DecValTok{10}\NormalTok{)),}
+         \DataTypeTok{mae_lm_10 =} \KeywordTok{map2_dbl}\NormalTok{(truths, pred_lm_}\DecValTok{10}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{pred_lm_13 =} \KeywordTok{map2}\NormalTok{(model_bs, test, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y, }\DataTypeTok{id =} \DecValTok{13}\NormalTok{)),}
+         \DataTypeTok{mae_lm_13 =} \KeywordTok{map2_dbl}\NormalTok{(truths, pred_lm_}\DecValTok{13}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{model_tree =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{rpart}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ Sales}\OperatorTok{~}\NormalTok{., }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{pred_tree =} \KeywordTok{map2}\NormalTok{(model_tree, test, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_tree =} \KeywordTok{map2_dbl}\NormalTok{(truths, pred_tree, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{model_gam_3 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{gam}\NormalTok{(formula_}\DecValTok{3}\NormalTok{_p, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{pred_gam_3 =} \KeywordTok{map2}\NormalTok{(model_gam_}\DecValTok{3}\NormalTok{, test, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_gam_3 =} \KeywordTok{map2_dbl}\NormalTok{(truths, pred_gam_}\DecValTok{3}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y))),}
+         \DataTypeTok{model_gam_4 =} \KeywordTok{map}\NormalTok{(train, }\OperatorTok{~}\KeywordTok{gam}\NormalTok{(formula_}\DecValTok{4}\NormalTok{_p, }\DataTypeTok{data =}\NormalTok{ .x)),}
+         \DataTypeTok{pred_gam_4 =} \KeywordTok{map2}\NormalTok{(model_gam_}\DecValTok{4}\NormalTok{, test, }\OperatorTok{~}\KeywordTok{predict}\NormalTok{(.x, }\DataTypeTok{newdata =}\NormalTok{ .y)),}
+         \DataTypeTok{mae_gam_4 =} \KeywordTok{map2_dbl}\NormalTok{(truths, pred_gam_}\DecValTok{4}\NormalTok{, }\OperatorTok{~}\KeywordTok{mean}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.x}\OperatorTok{-}\NormalTok{.y)))}
+\NormalTok{         ) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\KeywordTok{starts_with}\NormalTok{(}\StringTok{"mae"}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}\DataTypeTok{key =} \StringTok{"model"}\NormalTok{, }\DataTypeTok{value =} \StringTok{"MAE"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{arrange}\NormalTok{(MAE)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in predict.lm(.x, newdata = .y): prediction from a rank-deficient
+## fit may be misleading
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in leaps.setup(x, y, wt = wt, nbest = nbest, nvmax = nvmax,
+## force.in = force.in, : 1 linear dependencies found
+\end{verbatim}
+
+\begin{verbatim}
+## Reordering variables and trying again:
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
+## ifelse(type == : prediction from a rank-deficient fit may be misleading
+\end{verbatim}
+
+\begin{verbatim}
+## # A tibble: 8 x 2
+##   model       MAE
+##   <chr>     <dbl>
+## 1 mae_gam_3  722.
+## 2 mae_gam_4  737.
+## 3 mae_lm     793.
+## 4 mae_lm_10  810.
+## 5 mae_lm_13  810.
+## 6 mae_lm_11  825.
+## 7 mae_lm_12  825.
+## 8 mae_tree  1038.
+\end{verbatim}
+
+\hypertarget{wnioski-dla-danych-no_promo-1}{%
+\subsection{Wnioski dla danych
+no\_promo}\label{wnioski-dla-danych-no_promo-1}}
+
+Najlepszym modelem, podobnie jak w danych ze sklepow bez promocji,
+okazal sie model GAM nr 3, ktory wygladal nastepujaco:
+
+\begin{itemize}
+\tightlist
+\item
+  zmienne Customer i Year byly zwyklymi funkcjami liniowymi,
+\item
+  zmienne Promo, SchoolHoliday, StoreType, Assortment i actual\_promo
+  byly zmiennymi kategorycznymi,
+\item
+  Zmienna CompetitionDistance zostala zamodelowana jako natural spline z
+  czterema stopniami swobody (podzial na cztery czesci),
+\item
+  Zmienne Day i DayOfWeek zostaly zamodelowane jako spline'y z piecomia
+  stopniami swobody (podzial na trzy czesci),
+\item
+  Zmienna Month zostala zamodelowana jako spline z czterema stopniami
+  swobody (podzial na dwie czesci),
+\item
+  Zmienna Promo2SinceWeek zostala zamodelowana jako spline z szescioma
+  stopniami swobody (podzial na cztery czesci),
+\item
+  Zmienna Promo2SinceYear zostala zamodelowana jako spline z piecioma
+  stopniami swobody (podzial na trzy czesci).
+\end{itemize}
+
+Model ten przewiduje dzienna sprzedaz ze srednim bledem wynoszacym ok
+721 jednostek co jest poprawa wzgledem modelu dotyczacego sklepow bez
+Promo2.
+
+\hypertarget{potencjalne-dalsze-kroki-1}{%
+\subsection{Potencjalne dalsze kroki}\label{potencjalne-dalsze-kroki-1}}
+
+Dalsze kroki sa tu takie same jak do modelu bez Promo2 - mozemy wybrac
+bardziej skomplikowany model lub zmienic metody modelowania
+poszczegolnych zmiennych.
+
+\hypertarget{wnioski}{%
+\section{Wnioski}\label{wnioski}}
+
+Po przeprowadzeniu wstepnej analizy danych zdecydowalem sie na
+zastosowanie dwoch zasad eksperckich przed przystapieniem do budowy
+modelu: * dane, ktore wprowadzane sa do modelu powinny byc tylko dla
+dni, w ktorych sklepy byly otwarte. Dla danych z dni zamkniecia sklepow,
+ze 100\% skutecznoscia mozna przyporzadkowac 0 jako wartosc sprzedazy, *
+nalezy stworzyc dwa oddzielne modele - jeden dla sklepow gdzie
+obowiazuje Promo2 i drugi dla reszty.
+
+Mozna pomyslec o przetestowaniu modeli random forest lub boostingowych.
+Nie zostaly one uzyte w tym zadaniu ze wzgledu na fakt, ze wymagaja
+duzej mocy obliczeniowej.Inna metoda polepszenia jakosci modeli jest
+zamodelowanie zmiennych w inny sposob i przetestownaiu tych modeli przy
+uzyciu cross walidacji.
+
+Sredni absolutny blad modeli oscyluje w wartosci ok. 800 jednostek.
+Oznacza to, ze do dokladnego przewidzenia sprzedazy jeszcze troche
+brakuje, ale model bardzo dobrze sprawdza sie w porownywaniu
+przewidywanej sprzedazy pomiedzy dniami lub sklepami.
+
+
+\end{document}

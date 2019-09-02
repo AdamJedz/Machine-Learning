@@ -2,7 +2,7 @@
 title: "ITMagination"
 author: "Igor Adamiec"
 date: "8/29/2019"
-output: html_document
+output: pdf_document
 ---
 # Wczytanie danch i wstępna analiza danych
 
@@ -359,7 +359,7 @@ Jako kolejna rule ekspercka zdecydowalem sie wprowadzic fakt wystepowania Promo2
 
 ```{r}
 data_no_promo <- data %>% filter(Promo2==0) %>% select(-c(Promo2, Promo2SinceWeek, Promo2SinceYear,PromoInterval, actual_promo))
-data_promo <- data %>% filter(Promo == 1)
+data_promo <- data %>% filter(Promo2 == 1)
 ```
 
 # Tworzenie modelu dla sklepow bez obowiazujacego Promo2
@@ -610,6 +610,322 @@ Aby polepszyc wlasciwosci modelu mozna pojsc w dwie strony:
 * Wkorzystujac modele addytywne i szukajac jeszcze lepszego zamodelowania poszczegolnych zmiennych,
 
 * Wykorzystujac bardziej zaawansowane metody nieparametryczne niz zwykle drzeaa decyzyjne. Mozna uzyc modeli typu random forest lub inne modele boostujace i znalezc dla nich najlepsze hyperparametry.
+
+# Tworzenie modelu dla sklepow z obowiazujacym Promo2
+
+Dla danych zawierajacych sklepy uczestniczace w regularnych promocjach kroki usuwania outlierow i tworzenia modeli beda takie same jak w przypadku danych bez Promo2. Jedyne roznice moga wystepowac przy parametrach modeli badz modelowaniu poszczegolnych zmiennych.
+
+## Znalezienie outlierow i wspolliniowosci
+```{r}
+model_simple <- lm(Sales~., data = data_promo %>% select(-c(Store, Date, Promo2, PromoInterval)))
+```
+```{r}
+model_simple %>% summary()
+```
+
+
+```{r}
+model_simple %>% augment() %>% ggplot(aes(x = .fitted, y = .std.resid)) + geom_point()
+```
+
+```{r}
+data_promo_no_outliers <- model_simple %>% augment() %>% 
+  filter(abs(.std.resid) < 3) %>% 
+  select(colnames(data_promo %>% select(-c(Store, Date, Promo2, PromoInterval))))
+```
+
+
+
+```{r}
+model_simple <- lm(Sales~., data = data_promo_no_outliers)
+```
+
+```{r}
+model_simple %>% augment() %>% ggplot(aes(x = .fitted, y = .std.resid)) + geom_point()
+```
+
+```{r}
+data_promo_no_outliers <- model_simple %>% augment() %>% 
+  filter(abs(.std.resid) < 3) %>% 
+  select(colnames(data_promo %>% select(-c(Store, Date, Promo2, PromoInterval))))
+```
+
+```{r}
+model_simple <- lm(Sales~., data = data_promo_no_outliers)
+```
+
+```{r}
+model_simple %>% augment() %>% ggplot(aes(x = .fitted, y = .std.resid)) + geom_point()
+```
+
+```{r}
+data_promo_no_outliers <- model_simple %>% augment() %>% 
+  filter(abs(.std.resid) < 3) %>% 
+  select(colnames(data_promo %>% select(-c(Store, Date, Promo2, PromoInterval))))
+```
+
+```{r}
+data_promo_no_outliers %>% count(StoreType)
+```
+
+```{r}
+model_simple <- lm(Sales~., data = data_promo_no_outliers)
+```
+
+```{r}
+model_simple %>% 
+  augment() %>% 
+  ggplot(aes(x = .fitted, y = .std.resid)) +
+  geom_point()
+```
+
+```{r}
+model_simple %>% 
+  augment() %>% 
+  ggplot(aes(x = .hat, y = .std.resid)) +
+  geom_point()
+```
+
+
+```{r}
+data_promo_no_outliers <- model_simple %>% augment() %>% 
+  filter(.hat < .001) %>% 
+  select(colnames(data_promo %>% select(-c(Store, Date, Promo2, PromoInterval))))
+```
+
+```{r}
+model_simple <- lm(Sales~., data = data_promo_no_outliers)
+```
+
+```{r}
+model_simple %>% 
+  augment() %>% 
+  ggplot(aes(x = .hat, y = .std.resid)) +
+  geom_point()
+```
+
+```{r}
+#vif(model_simple)
+```
+
+
+## Podzial na zbiory treningowe i testowe
+
+```{r}
+set.seed(1)
+split <- initial_split(data_promo_no_outliers, prop = .8)
+train_promo <- training(split)
+test_promo <- testing(split)
+```
+
+## 10 krotna cross walidacja
+
+```{r}
+set.seed(1)
+(promo_cv <- vfold_cv(train_promo) %>% 
+  mutate(train = map(splits, ~training(.x)),
+         validate = map(splits, ~testing(.x)),
+         truths = map(validate, "Sales")))
+```
+
+### Wybieram kilka modeli i z kazdego z nich wezme taki z najlepszy MAE
+
+#### Best Subset Selection dla danych promo
+
+Najlepsza statystyka charakteryzowaly sie modele, ktore posiadaly 10 zmiennych wzwyz
+
+```{r}
+predict.regsubsets <- function(object, newdata, id, ...) {
+  mat <- model.matrix(Sales~., newdata)
+  coefi <- coef(object, id = id)
+  xvars <- names(coefi)
+  fin <- mat[, xvars] %*% coefi 
+  fin[,1]
+}
+  
+```
+
+
+```{r}
+params <- 1:14
+
+names <- paste0(rep("variables", each = length(params)), "_", 1:14)
+model_fun <- glue::glue('map2(model, validate, ~predict(.x, .y, id = {1:14}))') %>% paste(., collapse = ";")
+
+names_mae <- paste0(rep("mae", each = length(params)), "_", 1:14)
+mae_fun <- glue::glue('map2_dbl(truths, variables_{1:14}, ~mean(abs(.x-.y)))') %>% paste(., collapse = ";")
+```
+
+```{r}
+best_subset_cv <- promo_cv %>% 
+  mutate(model = map(train, ~regsubsets(Sales~., data = .x, nvmax = 14))) %>% 
+  mutate(!!! parse_exprs(model_fun)) %>% 
+  rename_at(vars(starts_with("map2")), ~names) %>% 
+  mutate(!!! parse_exprs(mae_fun)) %>% 
+  rename_at(vars(starts_with("map2")), ~names_mae) %>% 
+  summarize_at(vars(starts_with("mae")), ~mean(.)) %>% 
+  gather(key = "n_variables", value = "mae")
+
+best_subset_cv %>% 
+  arrange(mae)
+
+(best_subset_cv %>% 
+  ggplot(aes(x = 1:14, y = mae)) +
+  geom_line() + geom_point(color = "blue") +
+  labs(x = "number of variables", title = "Best subset selection", subtitle = "for promo data") -> best_plot)
+```
+
+Widzimy, ze model z 9 zmiennymi pozbyl sie zmiennych DayOfWeek, SchoolHoliday, StoreTypec i  Day.
+
+```{r warning = FALSE}
+coef(regsubsets(Sales~., data = train_promo, nvmax = 14), 10)
+```
+
+#### Decision Tree
+
+Modele drzew decyzyjnych byly poddawane cross walidacji dla roznych wariantow parametrow minsplit i maxdepth. Niestety wyniki statystyki MAE dla kazdego z tych wariantow byly dokladnie takie same.
+
+```{r}
+set.seed(1)
+promo_cv %>% 
+  mutate(tree_max25 = map(train, ~ rpart(formula = Sales~., data = .x, control = rpart.control(maxdepth = 25))),
+         tree_max20 = map(train, ~ rpart(formula = Sales~., data = .x, control = rpart.control(maxdepth = 20))),
+         tree_max10 = map(train, ~ rpart(formula = Sales~., data = .x, control = rpart.control(maxdepth = 10))),
+         tree_max30 = map(train, ~ rpart(formula = Sales~., data = .x)),
+         predict_max25 = map2(tree_max25, validate, ~predict(.x, newdata = .y)),
+         predict_max20 = map2(tree_max20, validate, ~predict(.x, newdata = .y)),
+         predict_max10 = map2(tree_max10, validate, ~predict(.x, newdata = .y)),
+         predict_max30 = map2(tree_max30, validate, ~predict(.x, newdata = .y)),
+         mae_max25 = map2_dbl(truths, predict_max25, ~mean(abs(.x-.y))),
+         mae_max20 = map2_dbl(truths, predict_max20, ~mean(abs(.x-.y))),
+         mae_max10 = map2_dbl(truths, predict_max10, ~mean(abs(.x-.y))),
+         mae_max30 = map2_dbl(truths, predict_max30, ~mean(abs(.x-.y))))%>% 
+  summarize_at(vars(starts_with("mae")), ~mean(.)) %>% 
+  gather(key = "max_split", value = "mae")
+
+```
+
+#### GAMs
+
+Modele GAM stowrzylem dokladnie takie same jak do danych bez promo. Dodalem tylko odpowiednio zamodelowane zmienne dotyczace zmiennej Promo2.
+
+```{r}
+train_promo %>% colnames()
+```
+
+```{r}
+bs(train_promo$Promo2SinceWeek, 6) %>% attr("knots")
+```
+
+```{r}
+formula_1_p <- Sales ~ Customers + Promo + SchoolHoliday + StoreType + Assortment + poly(CompetitionDistance,2) + poly(Day, 3) + poly(Month, 3) + Year + poly(DayOfWeek, 3) + actual_promo + poly(Promo2SinceWeek,3) + poly(Promo2SinceYear, 3)
+
+formula_1_coinst_p <- Sales~ Customers + Promo + SchoolHoliday + StoreType + Assortment + poly(CompetitionDistance,2) + poly(Day, 2) + poly(Month, 2) + Year + poly(DayOfWeek, 2) + actual_promo + poly(Promo2SinceWeek,3) + poly(Promo2SinceYear, 2)
+
+formula_2_p <- Sales~ Customers + Promo + SchoolHoliday + StoreType + Assortment + ns(CompetitionDistance,4) + poly(Day, 4) + poly(Month, 3) + Year + poly(DayOfWeek, 4) + actual_promo + poly(Promo2SinceWeek,4) + poly(Promo2SinceYear, 3)
+
+formula_3_p <- Sales~ Customers + Promo + SchoolHoliday + StoreType + Assortment + ns(CompetitionDistance,4) + bs(Day, 5) + bs(Month, 4) + Year + bs(DayOfWeek, 5) + actual_promo + bs(Promo2SinceWeek,6) + bs(Promo2SinceYear, 5)
+
+formula_4_p <- Sales~ Customers + Promo + SchoolHoliday + StoreType + Assortment + ns(CompetitionDistance,4) + ns(Day, 4) + ns(Month, 3) + Year + ns(DayOfWeek, 4) + actual_promo + ns(Promo2SinceWeek,5) + ns(Promo2SinceYear, 4)
+```
+
+```{r}
+set.seed(1)
+promo_cv %>% 
+  mutate(model_1 = map(train, ~lm(formula_1_p, data = .x)),
+         predict_1 = map2(model_1, validate, ~predict(.x, newdata = .y)),
+         mae_1 = map2_dbl(truths, predict_1, ~mean(abs(.x-.y))),
+         model_1_coinst = map(train, ~lm(formula_1_coinst_p, data = .x)),
+         predict_1_coinst = map2(model_1_coinst, validate, ~predict(.x, newdata = .y)),
+         mae_1_coinst = map2_dbl(truths, predict_1_coinst, ~mean(abs(.x-.y))),
+         model_2 = map(train, ~lm(formula_2_p, data = .x)),
+         predict_2 = map2(model_2, validate, ~predict(.x, newdata = .y)),
+         mae_2 = map2_dbl(truths, predict_2, ~mean(abs(.x-.y))),
+         model_3 = map(train, ~gam(formula_3_p, data = .x)),
+         predict_3 = map2(model_3, validate, ~predict(.x, newdata = .y)),
+         mae_3 = map2_dbl(truths, predict_3, ~mean(abs(.x-.y))),
+         model_4 = map(train, ~gam(formula_4_p, data = .x)),
+         predict_4 = map2(model_4, validate, ~predict(.x, newdata = .y)),
+         mae_4 = map2_dbl(truths, predict_4, ~mean(abs(.x-.y)))
+         ) %>% 
+  summarize_at(vars(starts_with("mae")), ~mean(.)) %>% 
+  gather(key = "model", value = "mae") %>% 
+  arrange(mae)
+```
+
+## Porownanie najlepszych modeli dla modelu testowego
+
+```{r}
+set.seed(1)
+tibble(train = list(train_promo), test = list(test_promo)) %>% 
+  mutate(truths = map(test, "Sales"),
+         model_lm = map(train, ~lm(formula = Sales~., data = .x)),
+         pred_lm = map2(model_lm, test, ~predict(.x, newdata = .y)),
+         mae_lm = map2_dbl(truths, pred_lm, ~mean(abs(.x-.y))),
+         model_bs = map(train, ~regsubsets(Sales~., data = .x, nvmax = 14)),
+         pred_lm_12 = map2(model_bs, test, ~predict(.x, newdata = .y, id = 12)),
+         mae_lm_12 = map2_dbl(truths, pred_lm_12, ~mean(abs(.x-.y))),
+         pred_lm_11 = map2(model_bs, test, ~predict(.x, newdata = .y, id = 11)),
+         mae_lm_11 = map2_dbl(truths, pred_lm_11, ~mean(abs(.x-.y))),
+         pred_lm_10 = map2(model_bs, test, ~predict(.x, newdata = .y, id = 10)),
+         mae_lm_10 = map2_dbl(truths, pred_lm_10, ~mean(abs(.x-.y))),
+         pred_lm_13 = map2(model_bs, test, ~predict(.x, newdata = .y, id = 13)),
+         mae_lm_13 = map2_dbl(truths, pred_lm_13, ~mean(abs(.x-.y))),
+         model_tree = map(train, ~rpart(formula = Sales~., data = .x)),
+         pred_tree = map2(model_tree, test, ~predict(.x, newdata = .y)),
+         mae_tree = map2_dbl(truths, pred_tree, ~mean(abs(.x-.y))),
+         model_gam_3 = map(train, ~gam(formula_3_p, data = .x)),
+         pred_gam_3 = map2(model_gam_3, test, ~predict(.x, newdata = .y)),
+         mae_gam_3 = map2_dbl(truths, pred_gam_3, ~mean(abs(.x-.y))),
+         model_gam_4 = map(train, ~gam(formula_4_p, data = .x)),
+         pred_gam_4 = map2(model_gam_4, test, ~predict(.x, newdata = .y)),
+         mae_gam_4 = map2_dbl(truths, pred_gam_4, ~mean(abs(.x-.y)))
+         ) %>% 
+  select(starts_with("mae")) %>% 
+  gather(key = "model", value = "MAE") %>% 
+  arrange(MAE)
+```
+
+## Wnioski dla danych no_promo
+
+Najlepszym modelem, podobnie jak w danych ze sklepow bez promocji, okazal sie model GAM nr 3, ktory wygladal nastepujaco:
+
+* zmienne Customer i Year byly zwyklymi funkcjami liniowymi,
+* zmienne Promo, SchoolHoliday, StoreType, Assortment i actual_promo  byly zmiennymi kategorycznymi,
+* Zmienna CompetitionDistance zostala zamodelowana jako natural spline z czterema stopniami swobody (podzial na cztery czesci),
+* Zmienne Day i DayOfWeek zostaly zamodelowane jako spline'y z piecomia stopniami swobody (podzial na trzy czesci),
+* Zmienna Month zostala zamodelowana jako spline z czterema stopniami swobody (podzial na dwie czesci),
+* Zmienna Promo2SinceWeek zostala zamodelowana jako spline z szescioma stopniami swobody (podzial na cztery czesci),
+* Zmienna Promo2SinceYear zostala zamodelowana jako spline z piecioma stopniami swobody (podzial na trzy czesci).
+
+Model ten przewiduje dzienna sprzedaz ze srednim bledem wynoszacym ok 721 jednostek co jest poprawa wzgledem modelu dotyczacego sklepow bez Promo2.
+
+## Potencjalne dalsze kroki
+
+Dalsze kroki sa tu takie same jak do modelu bez Promo2 - mozemy wybrac bardziej skomplikowany model lub zmienic metody modelowania poszczegolnych zmiennych.
+
+# Wnioski
+
+Po przeprowadzeniu wstepnej analizy danych zdecydowalem sie na zastosowanie dwoch zasad eksperckich przed przystapieniem do budowy modelu:
+* dane, ktore wprowadzane sa do modelu powinny byc tylko dla dni, w ktorych sklepy byly otwarte. Dla danych z dni zamkniecia sklepow, ze 100% skutecznoscia mozna przyporzadkowac 0 jako wartosc sprzedazy,
+* nalezy stworzyc dwa oddzielne modele - jeden dla sklepow gdzie obowiazuje Promo2 i drugi dla reszty. 
+
+Mozna pomyslec o przetestowaniu modeli random forest lub boostingowych. Nie zostaly one uzyte w tym zadaniu ze wzgledu na fakt, ze wymagaja duzej mocy obliczeniowej.Inna metoda polepszenia jakosci modeli jest zamodelowanie zmiennych w inny sposob i przetestownaiu tych modeli przy uzyciu cross walidacji.
+
+Sredni absolutny blad modeli oscyluje w wartosci ok. 800 jednostek. Oznacza to, ze do dokladnego przewidzenia sprzedazy jeszcze troche brakuje, ale model bardzo dobrze sprawdza sie w porownywaniu przewidywanej sprzedazy pomiedzy dniami lub sklepami.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
