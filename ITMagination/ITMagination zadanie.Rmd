@@ -616,6 +616,9 @@ Aby polepszyc wlasciwosci modelu mozna pojsc w dwie strony:
 Dla danych zawierajacych sklepy uczestniczace w regularnych promocjach kroki usuwania outlierow i tworzenia modeli beda takie same jak w przypadku danych bez Promo2. Jedyne roznice moga wystepowac przy parametrach modeli badz modelowaniu poszczegolnych zmiennych.
 
 ## Znalezienie outlierow i wspolliniowosci
+
+Aby wykryc wszystkich outlierow stworzylem model lioniowy ze wszystkimi zmiennymi i usunalem te obserwacje, dla ktorych wartosc bezwzgledna ze znormalizowanych reszt byla wieksza niz trzy. Proces trzeba bylo powtorzyc kilka razy.
+
 ```{r}
 model_simple <- lm(Sales~., data = data_promo %>% select(-c(Store, Date, Promo2, PromoInterval)))
 ```
@@ -914,6 +917,7 @@ Mozna pomyslec o przetestowaniu modeli random forest lub boostingowych. Nie zost
 
 Sredni absolutny blad modeli oscyluje w wartosci ok. 800 jednostek. Oznacza to, ze do dokladnego przewidzenia sprzedazy jeszcze troche brakuje, ale model bardzo dobrze sprawdza sie w porownywaniu przewidywanej sprzedazy pomiedzy dniami lub sklepami.
 
+Dodatkowo, w celu polepszenia jakosci modelu mozna bardziej dokladnie wykryc wartosci odstajace. Zamiast stworzyc model liniowy ze wszystkimi zmiennymi, mozna stworzyc kilka pojedynczych modeli z lepszym dopasowaniem i na ich podstawie wykryc wartosci nietypowe.
 
 
 
