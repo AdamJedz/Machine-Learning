@@ -100,7 +100,7 @@ data %>%
   summarise(Sales = mean(Sales)) %>% 
   ggplot(aes(x = Date, y = Sales)) +
   geom_line(color = "blue") +
-  labs(title = "Średnia sprzedaży ze wszystkich sklepów w dni, w które był one otwarte")
+  labs(title = "Srednia sprzedazy ze wszystkich sklepow w dni, w które byly one otwarte")
 ```
 
 Do zbioru danych dodalem trzy nowe zmienne opisujace dzien, miesiac i rok. Ponizsze wykresy przedstawiaja trendy w sprzedazy dla tych zmiennych.
@@ -129,7 +129,7 @@ data %>%
   summarise(Sales = sum(as.numeric(Sales))) %>% 
   ggplot(aes(x = Year, y = Sales)) + 
   geom_col(aes(fill = as.factor(Year)), show.legend = F) +
-  labs(title = "Suma sprzedaży względem roku")
+  labs(title = "Suma sprzedazy wzgledem roku")
 ```
 
 ### Zmienna Month
@@ -165,7 +165,7 @@ data %>%
   ggplot(aes(x = Customers, y = Sales)) +
   geom_point(alpha = .25) +
   geom_smooth(se = F, method = "lm") +
-  labs(title = "Wykres zależności pomiędzy wartością Sales a ilością klientów w danym dniu dla danego sklepu")
+  labs(title = "Wykres zaleznosci pomiedzy wartoscia Sales a iloscia klientow w danym dniu dla danego sklepu")
   
 ```
 
@@ -177,12 +177,13 @@ Mozna zauwazyc, ze we wszystkie dni, w ktore sklepy byly zamkniete sprzedaz zaws
 data %>% 
   ggplot(aes(x = Open, y = Sales)) +
   geom_boxplot(aes(fill = Open), show.legend = F) +
-  labs(title = "Średnia sprzedaż w dni otwarcia i zamkniecia sklepów")
+  labs(title = "Srednia sprzedaz w dni otwarcia i zamkniecia sklepow")
 ```
 
 ```{r}
 data %>% filter(Open == 0) %>% count(Sales)
 ```
+
 ### Zmienna Promo
 
 Wykres sredniej sprzedazy ze wzgledu na istnienie promocji pokazuje nam, ze w dni, podczas ktorych promocja byla aktywna, srednia sprzedaz byla troche wieksza.
@@ -192,7 +193,7 @@ data %>%
   filter(Open == 1) %>% 
   ggplot(aes(x = Promo, y = Sales)) +
   geom_boxplot(aes(fill = Promo), show.legend = F) + 
-  labs(title = "Średnia sprzedaż w dni normalne i dni promocji")
+  labs(title = "Srednia sprzedaz w dni normalne i dni promocji")
 ```
 
 ### Zmienna StateHoliday
@@ -208,7 +209,7 @@ data %>%
   filter(Open == 1) %>% 
   ggplot(aes(x = SchoolHoliday, y = Sales)) +
   geom_boxplot(aes(fill = SchoolHoliday), show.legend = F) +
-  labs(title = "Średnia sprzedaż ze względu na zmienna ScgoolHoliday")
+  labs(title = "Srednia sprzedaz ze wzgledu na zmienna ScgoolHoliday")
 ```
 
 ### Zmienna Storetype
@@ -220,7 +221,7 @@ data %>%
   filter(Open == 1) %>% 
   ggplot(aes(x = StoreType, y = Sales)) +
   geom_boxplot(aes(fill = StoreType), show.legend = F) +
-  labs(title = "Średnia sprzedaż dla poszczególnych rodzajów sklepów")
+  labs(title = "Srednia sprzedaz dla poszczegolnych rodzajow sklepow")
 ```
 
 ### Zmienna Assortment
@@ -232,7 +233,7 @@ data %>%
   filter(Open == 1) %>% 
   ggplot(aes(x = Assortment, y = Sales)) +
   geom_boxplot(aes(fill = Assortment), show.legend = F) +
-  labs(title = "Średnia sprzedaż ze względu na rodzaj asortymentu")
+  labs(title = "Srednia sprzedaz ze wzgledu na rodzaj asortymentu")
 ```
 
 ```{r}
@@ -250,7 +251,7 @@ Dodatkowo brakuje 2642 wartosci. Z tego powodu postanowilem je zaimputowac stosu
 data %>% 
   ggplot(aes(x = CompetitionDistance, y = Sales)) +
   geom_point(alpha = .25) +
-  labs(title = "Zależność sprzedazy od odleglosci od konkurencji")
+  labs(title = "Zaleznosc sprzedazy od odleglosci od konkurencji")
 ```
 
 ```{r}
@@ -273,7 +274,7 @@ Wykres pokazujacy rozniece w sredniej sprzedazy pomiedzy sklepami, ktore biora u
 data %>% 
   ggplot(aes(x = Promo2, y = Sales)) +
   geom_boxplot(aes(fill = Promo2), show.legend = F) +
-  labs(title = "Zależność sprzedaży od faktu czy sklep bierze udział w regularnych promocjach")
+  labs(title = "Zależnosc sprzedazy od faktu czy sklep bierze udzial w regularnych promocjach")
 ```
 
 ### Zmienna Promo2SinceWeek
@@ -285,7 +286,7 @@ data %>%
   filter(Promo2 == 1) %>% 
   ggplot(aes(x = as.factor(Promo2SinceWeek), y = Sales)) +
   geom_boxplot(aes(fill = as.factor(Promo2SinceWeek)), show.legend = F) +
-  labs(title = "Zależność sprzedaży od czasu, od kiedy sklep bierze udział w Promo2", x = "Promo2SinceWeek")
+  labs(title = "Zaleznosc sprzedazy od czasu, od kiedy sklep bierze udzial w Promo2", x = "Promo2SinceWeek")
 ```
 
 ### Zmienna Promo2SinceYear
@@ -297,7 +298,7 @@ data %>%
   filter(Promo2 == 1) %>% 
   ggplot(aes(x = as.factor(Promo2SinceYear), y = Sales)) +
   geom_boxplot(aes(fill = as.factor(Promo2SinceYear)), show.legend = F) +
-  labs(title = "Zależność sprzedarz od roku, w któym sklep bierze udział w Promo2", x = "Promo2SinceYear")
+  labs(title = "Zaleznosc sprzedarz od roku, w ktorym sklep bierze udzial w Promo2", x = "Promo2SinceYear")
 ```
 
 ### Zmienna PromoInterval
@@ -913,9 +914,9 @@ Po przeprowadzeniu wstepnej analizy danych zdecydowalem sie na zastosowanie dwoc
 * dane, ktore wprowadzane sa do modelu powinny byc tylko dla dni, w ktorych sklepy byly otwarte. Dla danych z dni zamkniecia sklepow, ze 100% skutecznoscia mozna przyporzadkowac 0 jako wartosc sprzedazy,
 * nalezy stworzyc dwa oddzielne modele - jeden dla sklepow gdzie obowiazuje Promo2 i drugi dla reszty. 
 
-Mozna pomyslec o przetestowaniu modeli random forest lub boostingowych. Nie zostaly one uzyte w tym zadaniu ze wzgledu na fakt, ze wymagaja duzej mocy obliczeniowej.Inna metoda polepszenia jakosci modeli jest zamodelowanie zmiennych w inny sposob i przetestownaiu tych modeli przy uzyciu cross walidacji.
+Mozna pomyslec o przetestowaniu modeli random forest lub boostingowych. Nie zostaly one uzyte w tym zadaniu ze wzgledu na fakt, ze wymagaja duzej mocy obliczeniowej. Inna metoda polepszenia jakosci modeli jest zamodelowanie zmiennych w inny sposob i przetestownaiu tych modeli przy uzyciu cross walidacji.
 
-Sredni absolutny blad modeli oscyluje w wartosci ok. 800 jednostek. Oznacza to, ze do dokladnego przewidzenia sprzedazy jeszcze troche brakuje, ale model bardzo dobrze sprawdza sie w porownywaniu przewidywanej sprzedazy pomiedzy dniami lub sklepami.
+Sredni absolutny blad modeli oscyluje w wartosci ok. 800 jednostek. Oznacza to, ze do dokladnego przewidzenia sprzedazy jeszcze troche brakuje, ale model bardzo dobrze sprawdza sie w porownywaniu przewidywanej sprzedazy pomiedzy dniami lub sklepami - wiemy, dla ktorego sklepu sprzedaz bedzie wieksza w danym dniu lub ktory dzien bedzie lepszy dla danego sklepu.
 
 Dodatkowo, w celu polepszenia jakosci modelu mozna bardziej dokladnie wykryc wartosci odstajace. Zamiast stworzyc model liniowy ze wszystkimi zmiennymi, mozna stworzyc kilka pojedynczych modeli z lepszym dopasowaniem i na ich podstawie wykryc wartosci nietypowe.
 
